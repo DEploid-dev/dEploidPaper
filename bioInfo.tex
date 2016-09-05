@@ -1,0 +1,188 @@
+\documentclass{bioinfo}
+\copyrightyear{2016} \pubyear{2016}
+\graphicspath{{./figures/}}
+
+\access{Advance Access Publication Date: Day Month Year}
+\appnotes{Original Paper}
+
+
+\begin{document}
+\firstpage{1}
+
+\subtitle{\textcolor{red}{Genetics and population analysis}}
+
+\title[Deconvolute mixed genomes]{DEploid: Untangling multiplicity of infection in {\it Plasmodium falciparum}.}
+\author[Zhu \textit{et~al}.]{Sha Zhu\,$^{\text{\sfb 1,}*}$, Jacob Almagro Garcia\,$^{\text{\sfb 1}}$ and Gil McVean\,$^{\text{\sfb 1}*}$}
+\address{$^{\text{\sf 1}}$Wellcome Trust Centre for Human Genetics, University of Oxford, Oxford OX3 7BN, UK }
+
+\corresp{$^\ast$To whom correspondence should be addressed.}
+
+\history{Received on \textcolor{red}{XXXXX}; revised on \textcolor{red}{XXXXX}; accepted on \textcolor{red}{XXXXX}}
+
+\editor{Associate Editor: \textcolor{red}{XXXXXXX}}
+
+\abstract{\textbf{Motivation:}
+Multiplicity of infection in the malarial parasite {\it Plasmodium falciparum} affects  key phenotypic  traits, including drug resistance and risk of severe disease. Advances in protocols and sequencing technology have made possible  to obtain  high-coverage genome-wide  sequence data from blood samples taken in the field. However, analyzing and interpreting such data is challenging  because of the high rate of multiple  infections present in the field.\\
+\textbf{Results:} The software package {\it DEploid} learns haplotype structure from a reference panel of  clonal isolates, and deconvolutes sequences of mixed samples. It reports the number of strains, the mixing proportions and the haplotypes present in an isolate. allowing researchers to study malaria infection history with an unprecedented level of detail.\\
+\textbf{Availability and implementation:} The open source implementation {\it DEploid} is freely available at \href{https://github.com/mcveanlab/PfDeconv}{https://github.com/mcveanlab/PfDeconv} under the conditions of the GPLv3 license.\\
+\textbf{Contact:} \href{joe.zhu@well.ox.ac.uk}{joe.zhu@well.ox.ac.uk} or \href{mcvean@well.ox.ac.uk}{mcvean@well.ox.ac.uk}\\
+\textbf{Supplementary information:} Supplementary data are available at \textit{Bioinformatics} online.}
+
+\maketitle
+
+\section{Introduction}
+Malaria is still one of the top global health problems. Transmitted by mosquitos of the genus Anopheles, the majority of malaria related deaths are caused by the  Plasmodium falciparum parasite (WHO, 2015). . Patients are often infected with  more than one parasite strain, due to bites from multiple mosquitoes, mosquitoes carrying multiple genetic types or a combination of both. Multiplicity of infection  can lead to competitions among co-existing strains  and may increase  disease development \citep{deRoode2005}, higher transmission rates \citep{Arnot1998} and even the spread of drug resistance \citep{deRoode2004}.
+
+The presence of multiple strains of {\it P. falciparum} makes fine scale analysis of genetic variation very challenging since genetic differences between the genetic types of this haploid organism will render as heterozygous loci. Mixed calls also confounds methods that exploit haplotype data to detect, among other phenomena, the occurrence of natural selection or recent demographic events. In light of these difficulties, researchers usually focus on clonal infections or resort to heuristics methods for resolving heterozygous genotypes. The former approach discards valuable information regarding genetic diversity and inbreeding whereas the latter tends to create chimeric haplotypes that are not suitable for analysis, unless mixed calls are very sparse.
+
+{\it Phasing} or deconvoluting the strains of a mixed infection is a harder problem than phasing diploid organisms because the levels of mixture within isolates (i.e. the abundance of each genetic type) vary greatly and are unknown.  Existing tools for phasing diploid organisms, such as Beagle \citep{Browning2007} and IMPUTE2 \citep{Howie2009}, are not designed to cope with this. \citet{Galinsky2015} and \citet{2015} have attempted to address the mixed infection problem by solving the mixed proportion from allele frequencies, yet the haplotypes within a mixed isolate remain unclear.
+
+%As part of the Pf3k project, we have developed the program pfDeconv to deconvolute the 2512 {\it P. falciparum} sequence data with mixed infection. The program uncovers the mixture on the parasite level by reporting the number of parasite strains and proportions of each strain. As we investigate deeper, the problem becomes more challenging. Ultimately, our program reveals the mixture on the genetics level, and untangles the mixed sequence. We believe that investigation on mixed infection should be carried out as a combination of both strain proportion and haplotypes, and our program, for the first time, can report both information simultaneously.
+
+As part of the Pf3k project \citep{Pf3k2016}, an effort to map the genetic diversity of {\it P. falciparum} at global scale, we have developed the  DEploid, a software package for  deconvoluting  mixed infections. The program provides estimates for the number of different genetic types present in the isolate, the proportion or abundance of each strain and their sequences (i.e. haplotypes). To our knowledge, DEploid is the first package able to deconvolute strain haplotypes and provides a unique opportunity for researchers to study inbreeding and infection history at fine scale.
+
+
+\begin{methods}
+\section{Methods}
+Overall, we use Markov chain Monte Carlo (MCMC) methods to learn the number of parasite strains and the proportions of allele frequencies, and use sampling method to infer the haplotype of each strain. In practice, more parasite strains are assumed than it needs to be. Thus, the number of parasite strains are fixed; and the noisy strains with proportions below one percent are ``zeroed-out''. More specifically,
+\begin{itemize}
+\item we take into account over-dispersion in read counts, modelling the read count distribution as a Beta-binomial distribution: The read counts of alternative alleles are identically and independently distributed (i.i.d.) with a probability, which is a random variable with a beta-distribution.
+
+\item A Metropolis-Hastings algorithm is used to sample proportions given the haplotypes, and updated sparsely.
+\end{itemize}
+
+We treat the clonal sample sequences as the back-bone of the haplotype structure, combine with information from the targeted sequence data to infer haplotypes by sampling. Specifically, we use \citet{Li2003}’s hidden Markov model framework as a starting point, with the following modifications:
+
+\begin{itemize}
+\item Randomly update a single strain or two strains simultaneously.\\
+A crucial difference between our method and LS's model is that mixed samples can have more than two strains, with unknown proportions. We randomly choose the strains to update, then apply LS's algorithm to sample the path (see Fig.~\ref{LS}) using Gibbs sampler with given proportion rather than 50/50 in the cases of diploid samples.
+\item Updating the haplotypes from the paths, take into account of miss copying. Our model benefits from combining information from both the reference haplotypes as well as the data. For {\em de novo} mutations which are not found reference panel, our method will infer mutations based on read count from data.
+\begin{figure}[h]%figure1
+\centerline{
+\includegraphics[width=0.45\textwidth]{topPlusBottom.png}
+}
+\caption{A demonstration of the \citet{Li2003} method. strain haplotype 1 is made up from reference haplotype segments of 1 and 2; and strain haplotype 2 is made up from reference haplotype segments of 3 and 4.}\label{LS}
+\end{figure}
+
+\end{itemize}
+
+\subsection{Validation}
+We apply our program to 27 lab-mixed {\em in vitro} samples \citep{Wendler2015} to validate our methods and program. Our method successfully recovers the proportions with haplotypes of the input. Detailed validation steps are described in the supplement material as well as the Pf3k pilot phase main article. An example is given in Fig.~\ref{hap}.
+\end{methods}
+\begin{figure}[h]%figure1
+\centerline{
+\includegraphics[width=0.45\textwidth]{{PG0412.C_panelseed2compareHap}.png}
+}
+\caption{Method validation with lab-controlled mixing of strains HB3 and 7G8, with proportions of $15\%$ and $85\%$ respectively \citep{Wendler2015}. PfDeconv infers the proportions as $16\%$ vs. $84\%$, with a $ < 2\%$ error rate in the haplotypes of length 16,000 across 14 chromosomes. White bars in the figure indicate reference alleles; black bars indicate alternative alleles; red bars mark wrongly inferred positions.}\label{hap}
+\end{figure}
+
+
+\section{Discussion}
+The program DEploid and its analysis pipeline is originally developed for {\it P. falciparum} studies. With some specific minor parameter changes, pfDeconv can be used for deconvolute {\it P. vivax} sequence data. The framework is suitable for deconvoluting mixed genomes with unknown proportions. It can thus be extended to a wider range of applications, such as deconvoluting cancer tumour cell genomes or Ebola virus genomes.
+
+
+
+\section*{Acknowledgements}
+We thank valuable insights and suggestions from Roberto Amato, Jack O'Brien, Richard Pearson, and Jason Wendler for providing the data of artificial samples.
+
+\section*{Funding}
+This project is funded by the Wellcome Trust grant [100956/Z/13/Z].\\
+~\\
+\noindent{\em Conflict of Interest: none declared.}
+%~\\
+
+
+%\bibliographystyle{natbib}
+%\bibliographystyle{achemnat}
+%\bibliographystyle{plainnat}
+%\bibliographystyle{abbrv}
+%\bibliographystyle{bioinformatics}
+%
+%\bibliographystyle{plain}
+%\bibliographystyle{apacite}
+%
+%\bibliography{Document}
+
+
+\begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{Arnot}{Arnot}{1998}]{Arnot1998}
+Anita, D. (1998).
+\newblock Unstable malaria in Sudan: the influence of the dry season: clone
+  multiplicity of {\it Plasmodium falciparum} infections in individuals exposed to
+  variable levels of disease transmission.
+\newblock {\em Transactions of The Royal Society of Tropical Medicine and
+  Hygiene\/}~{\em 92\/}(6), 580--585.
+
+\bibitem[\protect\citeauthoryear{Browning and Browning}{Browning and
+  Browning}{2007}]{Browning2007}
+Browning, S.~R. and B.~L. Browning (2007).
+\newblock Rapid and accurate haplotype phasing and missing-data inference for
+  whole-genome association studies by use of localised haplotype clustering.
+\newblock {\em The American Journal of Human Genetics\/}~{\em 81\/}(5), 1084--1097.
+
+\bibitem[\protect\citeauthoryear{de~Roode, Culleton, Bell, and Read}{de~Roode
+  et~al.}{2004}]{deRoode2004}
+de~Roode, J., R.~Culleton, A.~Bell, and A.~Read (2004).
+\newblock Competitive release of drug resistance following drug treatment of
+  mixed {\it Plasmodium Chabaudi} infections.
+\newblock {\em Malaria Journal\/}~{\em 3\/}(33), 1--6.
+
+\bibitem[\protect\citeauthoryear{de~Roode, Pansini, Cheesman, Helinski,
+  Huijben, Wargo, Bell, Chan, Walliker, and Read}{de~Roode
+  et~al.}{2005}]{deRoode2005}
+de~Roode, J.~C., R.~Pansini, S.~J. Cheesman, M.~E.~H. Helinski, S.~Huijben,
+  A.~R. Wargo, A.~S. Bell, B.~H.~K. Chan, D.~Walliker, and A.~F. Read (2005).
+\newblock Virulence and competitive ability in genetically diverse malaria
+  infections.
+\newblock {\em Proceedings of the National Academy of Sciences of the United
+  States of America\/}~{\em 102\/}(21), 7624--7628.
+
+\bibitem[\protect\citeauthoryear{Galinsky}{Galinsky et~al.}{2015}]{Galinsky2015}
+Galinsky, K., Valim, C., Salmier, A., de Thoisy, B., Legrand, E., Faust, A., Baniecki, M. L., Ndiaye, D., Daniels, R. F., Hartl, D. L., Sabeti, P. C., Wirth, D. F., Volkman, S. K., Neafsey, Daniel E.(2015).
+\newblock COIL: a methodology for evaluating malarial complexity of infection using likelihood from single nucleotide polymorphism data.
+\newblock {\em Malaria Journal\/}~{\em14\/}(4), 1--9.
+
+\bibitem[\protect\citeauthoryear{Hastings and D\'Alessandro}{Hastings and
+  D\'Alessandro}{2000}]{Hastings2000}
+Hastings, I. and U.~D'Alessandro (2000).
+\newblock Modelling a predictable disaster: the rise and spread of
+  drug-resistant malaria.
+\newblock {\em Parasitology Today\/}~{\em 16\/}(8), 340--347.
+
+\bibitem[\protect\citeauthoryear{Howie, Donnelly, and Marchini}{Howie
+  et~al.}{2009}]{Howie2009}
+Howie, B.~N., P.~Donnelly, and J.~Marchini (2009).
+\newblock A flexible and accurate genotype imputation method for the next
+  generation of genome-wide association studies.
+\newblock {\em PLoS Genet\/}~{\em 5\/}(6), 1--15.
+
+\bibitem[\protect\citeauthoryear{Li and Stephens}{Li and
+  Stephens}{2003}]{Li2003}
+Li, N. and M.~Stephens (2003).
+\newblock {Modeling linkage disequilibrium and identifying recombination
+  hotspots using single-nucleotide polymorphism data}.
+\newblock {\em Genetics\/}~{\em 165\/}(4), 2213--2233.
+
+\bibitem[\protect\citeauthoryear{Pf3k}{Pf3k}{2016}]{Pf3k2016}
+The Pf3k Project: pilot data release 5 (2016).
+%\newblock {\em The Pf3k Project: pilot data release 5}.
+\newblock {www.malariagen.net/data/pf3k-5} [accessed 1 June 2016]
+
+\bibitem[\protect\citeauthoryear{John D.~O'Brien}{John
+  D.~O'Brien}{2015}]{Jack2015}
+O'Brien, D.J., Z. Iqbal, L. Amenga-Etego (2015).
+\newblock An integrative statistical model for inferring strain admixture
+  within clinical {\it Plasmodium falciparum} isolates. arXiv:1505.08171
+
+\bibitem[\protect\citeauthoryear{Wendler}{Wendler}{2015}]{Wendler2015}
+Wendler, J. (2015).
+\newblock {\em Accessing complex genomic variation in} {P}lasmodium falciparum {\em natural infection}.
+\newblock Ph.\ D. thesis, University of Oxford.
+
+%\bibitem{pfdeconv}
+%Zhu, S., PfDeconv (2016).
+%\newblock {GitHub repository}, \newblock {https://github.com/mcveanlab/PfDeconv}  [accessed 1 June 2016]
+
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,61 @@
+\input{supplementReset.tex}
+\begin{center}
+\textbf{\large Supplemental Materials of some Implementation details}
+\end{center}
+
+
+%\section{Section 1}
+\section{Implementation details}
+This section includes implementation details with handling arithmetic problems.
+\begin{enumerate}
+\item Apply expression $\Gamma(x)\Gamma(y) = \Gamma(x+y)B(x,y)$ \citep{wiki:GammatoBeta:sup} to Eqn.~\eqref{eqn:llk}, we have the following:
+$$L(q_{i} | D) \propto \frac{B(a + 100 \times \pi_i, r+100\times(1-\pi)}{B(100\times \pi_i, 100\times(1-\pi_i))}.$$
+Take the $\log$ likelihood expression is obtained:
+$$ l(q_i \big{|} D) = \log (B(a + 100 \times \pi_i, r+100\times(1-\pi)) - \log (B(100\times \pi_i, 100\times(1-\pi_i)))).$$
+
+\item During reference panel building stage, we use the PLAF as the prior probability in Eqn.~\eqref{eqn:post:LDfree}, and use $P_0$ and $P_1$ to denote $P(g_s = 0)$ and $P(g_s = 1)$ respectively.
+Let $l_0$ and $l_1$ denote the log likelihood of $g_s = 0$, $g_s = 1$ given data. Let $L = \max(L_0, L_1) $ and $ l = \max(l_0, l_1) $
+
+We normalize the posterior probabilities as:
+$$\begin{cases}
+P(g_s = 0 | D) & = \frac{P(g_s = 0 | D)}{P(g_s = 0 | D) + P(g_s = 1 | D)} \\
+P(g_s = 1 | D) & = \frac{P(g_s = 0 | D)}{P(g_s = 0 | D) + P(g_s = 1 | D)}
+\end{cases}
+$$
+where
+
+\begin{align*}
+P(g_s = 0 | D) & = \frac{P(g_s = 0 | D)}{P(g_s = 0 | D) + P(g_s = 1 | D)} \\
+               & = \frac{P(g_s = 0)\cdot L_0}{P(g_s = 0)\cdot L_0 + P(g_s = 1)\cdot L_1} = \frac{(P(g_s = 0)\cdot L_0)/L}{(P(g_s = 0)\cdot L_0 + P(g_s = 1)\cdot L_1)/L} \\
+               & = \frac{P(g_s = 0)\cdot L_0/L}{P(g_s = 0)\cdot L_0/L + P(g_s = 1)\cdot L_1/L}
+\end{align*}
+Similarly, we have $$P(g_s = 1 | D) = \frac{P(g_s = 1)\cdot L_1/L}{P(g_s = 0)\cdot L_0/L + P(g_s = 1)\cdot L_1/L},$$
+where we substitue $L_0/L$ and $L_1/L$ as $\exp(l_0 - l)$ and $\exp(l_1 - l)$ respectively.
+
+We normalize the log likelihood with its maximum at every site, in order to avoid truncation errors occured during probability summations. This approach is also applied to equations~\eqref{eqn:gp_given_D}, \eqref{eqn:post.two:LDfree} and \eqref{eqn:gp_given_D:two}.
+\end{enumerate}
+%\subsection{}
+%#    emiss <- exp(logemiss);
+%#    lk.0 = emiss[,1]
+%#    lk.1 = emiss[,2]
+%#    emiss = cbind( lk.0 * (1-miss.copy.rate) + lk.1 * miss.copy.rate,
+%#                   lk.1 * (1-miss.copy.rate) + lk.0 * miss.copy.rate)
+
+    %# omu stands for 1 minus u, 1 minus miss.copy.rate
+    %t1omu = logemiss[,1]+log(1-miss.copy.rate)
+    %t2omu = logemiss[,2]+log(1-miss.copy.rate)
+    %t1u = logemiss[,1]+log(miss.copy.rate)
+    %t2u = logemiss[,2]+log(miss.copy.rate)
+    %tmax = apply(cbind(t1omu, t2omu, t1u, t2u), 1, max)
+    %emiss = cbind( exp(t1omu-tmax) + exp(t2u-tmax),
+                   %exp(t2omu-tmax) + exp(t1u-tmax))
+%#    emiss<-emiss/apply(emiss, 1, sum); # sum of the row
+
+
+\begin{thebibliography}{}
+\bibitem[\protect\citeauthoryear{Wikipedia}{Wikipedia}{2003}]{wiki:GammatoBeta:sup}
+Wikipedia (2003).
+\newblock Relationship between gamma function and beta function.
+\newblock [Online; accessed 2016-02-01].
+\end{thebibliography}
+

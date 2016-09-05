@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage{fullpage,amsmath,url,cases}
+\usepackage{natbib,longtable,graphicx,tikz}
+\usepackage{subfig}
+\usepackage{url}
+%\@ifundefined{showcaptionsetup}{}{%
+%\PassOptionsToPackage{caption=false}{subfig}}
+
+\usepackage{todonotes}
+
+%\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{decorations.pathreplacing}
+
+\usetikzlibrary{shapes,arrows}
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20,
+    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{action} = [rectangle, draw, fill=blue!20,
+    text width=10em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{input} = [draw, ellipse,fill=red!20,
+    minimum height=2em]
+\tikzstyle{output} = [draw, rounded corners, fill=green!20, text centered, text width=8em,
+    minimum height=2em]
+
+\usetikzlibrary{calc}
+
+\usepackage{setspace}
+\linespread{1.5}
+
+
+\usepackage{hyperref}
+\usetikzlibrary{shapes.geometric}
+
+
+\usepackage{xcolor}
+\usepackage{colortbl}
+%\definecolor{mygrey}{rgb}{.9,.9,.9}
+\definecolor{RubineRed}{RGB}{240, 0, 240}       % RubineRed  Approximate PANTONE RUBINE-RED
+
+
+\begin{document}
+
+\setcounter{section}{0}
+
+\input{bioInfoSupplementMethods.tex}
+\input{bioInfoSupplementImplement.tex}
+\input{bioInfoSupplementValidation.tex}
+
+\end{document}

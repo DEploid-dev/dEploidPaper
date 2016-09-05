@@ -1,0 +1,185 @@
+\input{supplementReset.tex}
+
+\begin{center}
+\textbf{\large Supplemental Materials of the Deconvolution Method Validation}
+\end{center}
+
+\section{Method validation on lab controlled strains} \label{sup:sec:validate}
+A set of {\it in vitro} mixtures of parasites were created by \citet{Wendler2015:sup} to simulate mixed infection, which is an ideal validation data set in our use. In this data set, DNA was extracted from four laboratory parasite lines, such as 3D7, Dd2, HB3 and 7G8, and mixed with different ratios of mixed infection (Table~\ref{tab:jason}), and submitted to the MalariaGEN \citep{MalariaGen2008:sup} pipeline for Illumina sequencing.
+
+\begin{table}[ht]\centering
+\begin{tabular}[c]{@{}l|llll@{}}
+sample    & 3D7 (F) & Dd2 (C) & HB3 (C) & 7G8 (C)\\ \hline
+%{\tt PG0218\-C} & 100 & 0 & 0 & 0\tabularnewline
+{\tt PG0389\-C} & 90 & 10 & 0 & 0\tabularnewline
+{\tt PG0390\-C} & 80 & 20 & 0 & 0\tabularnewline
+{\tt PG0391\-C} & 67 & 33 & 0 & 0\tabularnewline
+{\tt PG0392\-C} & 33 & 67 & 0 & 0\tabularnewline
+{\tt PG0393\-C} & 20 & 80 & 0 & 0\tabularnewline
+{\tt PG0394\-C} & 10 & 90 & 0 & 0\tabularnewline
+%{\tt PG0190\-C} & 0 & 100 & 0 & 0\tabularnewline
+{\tt PG0395\-C} & 0 & 33.3 & 33.3 & 33.3\tabularnewline
+{\tt PG0396\-C} & 0 & 25 & 25 & 50\tabularnewline
+{\tt PG0397\-C} & 0 & 14.3 & 14.3 & 71.4\tabularnewline
+{\tt PG0398\-C} & 0 & 0 & 100 & 0\tabularnewline
+{\tt PG0399\-C} & 0 & 0 & 99 & 1\tabularnewline
+{\tt PG0400\-C} & 0 & 0 & 95 & 5\tabularnewline
+{\tt PG0401\-C} & 0 & 0 & 90 & 10\tabularnewline
+{\tt PG0402\-C} & 0 & 0 & 85 & 15\tabularnewline
+{\tt PG0403\-C} & 0 & 0 & 80 & 20\tabularnewline
+{\tt PG0404\-C} & 0 & 0 & 75 & 25\tabularnewline
+{\tt PG0405\-C} & 0 & 0 & 70 & 30\tabularnewline
+{\tt PG0406\-C} & 0 & 0 & 60 & 40\tabularnewline
+{\tt PG0407\-C} & 0 & 0 & 50 & 50\tabularnewline
+{\tt PG0408\-C} & 0 & 0 & 40 & 60\tabularnewline
+{\tt PG0409\-C} & 0 & 0 & 30 & 70\tabularnewline
+{\tt PG0410\-C} & 0 & 0 & 25 & 75\tabularnewline
+{\tt PG0411\-C} & 0 & 0 & 20 & 80\tabularnewline
+{\tt PG0412\-C} & 0 & 0 & 15 & 85\tabularnewline
+%{\tt PG0049\-CW2} & 0 & 0 & 10 & 90\tabularnewline
+{\tt PG0413\-C} & 0 & 0 & 5 & 95\tabularnewline
+{\tt PG0414\-C} & 0 & 0 & 1 & 99\tabularnewline
+{\tt PG0415\-C} & 0 & 0 & 0 & 100\tabularnewline
+\end{tabular}
+\caption{\color{red}caption}
+\label{tab:jason}
+\end{table}
+
+The {\em P. falciparum} genetic crosses project \citep{Miles2015:sup} finds that due to sequencing error or applying different variant calling methods, genotype calls vary at the same position given the same strain of {\em P. falciparum}. Thus we apply inference methods to mutiple samples that contains the same parasite strains, and infer the genotypes of a reference strain.
+
+
+\subsection{Use inference method to reconstruct the reference strains}
+\begin{enumerate}
+\item Mixtures of strains 3D7 and Dd2
+Since 3D7 is reference strain, we can assume that strain Dd2 is the only source of `ALT' reads in samples {\tt PG0389-C}, {\tt PG0390-C}, {\tt PG0391-C}, {\tt PG0392-C}, {\tt PG0393-C} and {\tt PG0394-C}. Assume markers are independent from each other, let $y$ be the read count for `ALT' allele and $x$ be the weighted coverage, of which the weight are the proportions that are used during the mixing (see Table~\ref{tab:jason}), we use the following regression model to infer the Dd2 variant calling, $$y = \beta_0 + \beta_{Dd2} x,$$
+from which significant coefficent $\beta_{Dd2}$ implies a Dd2 variant (Fig.~\ref{fig:dd2_gt1}).
+
+\item Mixtures of strains HB3 and 7G8.
+Similarly, for sample from {\tt PG0398-C} to {\tt PG0415-C},  we let variables $x_1$, $x_2$ be the weighted coverages, of which the weights are the mixing proportions for strains HB3 and 7G8 respectively. We use regression model $y = \beta_0 + \beta_{Hb3} x_1 + \beta_{7G8} x_2$ to investigate the relationships between the total allele count and weighted coverage of HB3 and 7G8. Hb3 variant is inferred as coefficients $\beta_{Hb3}$ is significant (Fig.~\ref{fig:hb3:7g8:both} and \ref{fig:hb3}), so is 7G8 (Fig.~\ref{fig:hb3:7g8:both} and \ref{fig:7g8}).
+\end{enumerate}
+
+
+
+\begin{figure}[h]
+\subfloat[]{\label{fig:dd2_gt0}
+\includegraphics[width=0.5\textwidth]{figures/validation/dd2marker709668.png}
+}
+\subfloat[]{\label{fig:dd2_gt1}
+\includegraphics[width=0.5\textwidth]{figures/validation/dd2marker281734.png}
+}
+\caption{\textcolor{red}{XXXXXXXXXXXXXX}}
+\end{figure}
+
+
+\begin{figure}[h]
+\subfloat[]{\label{fig:hb3:7g8:both}
+\includegraphics[width=0.33\textwidth]{figures/validation/marker73802.png}
+}
+\subfloat[]{\label{fig:hb3}
+\includegraphics[width=0.33\textwidth]{figures/validation/marker518472.png}
+}
+\subfloat[]{\label{fig:7g8}
+\includegraphics[width=0.33\textwidth]{figures/validation/marker128657.png}
+}
+\caption{\textcolor{red}{XXXXXXXXXXXXXX}}
+\end{figure}
+
+
+\subsection{Validation performance}
+
+\subsubsection{Assessing quality of the proportion inference}
+\textcolor{red}{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+
+\begin{table}[ht]
+\caption{\color{red}{Inferred proportions from Jason's samples}}
+\begin{center}
+\missingfigure[figwidth=6cm]{With updated proportions!!!}
+\end{center}
+%\begin{tabular}[c]{@{}l|llll@{}}
+%sample    & 3D7 (F) & Dd2 (C) & HB3 (C) & 7G8 (C)\\ \hline
+%%{\tt PG0218\-C} & 100 & 0 & 0 & 0\tabularnewline
+%{\tt PG0389\-C} & 90 & 10 & 0 & 0\tabularnewline
+%{\tt PG0390\-C} & 80 & 20 & 0 & 0\tabularnewline
+%{\tt PG0391\-C} & 67 & 33 & 0 & 0\tabularnewline
+%{\tt PG0392\-C} & 33 & 67 & 0 & 0\tabularnewline
+%{\tt PG0393\-C} & 20 & 80 & 0 & 0\tabularnewline
+%{\tt PG0394\-C} & 10 & 90 & 0 & 0\tabularnewline
+%%{\tt PG0190\-C} & 0 & 100 & 0 & 0\tabularnewline
+%{\tt PG0395\-C} & 0 & 33.3 & 33.3 & 33.3\tabularnewline
+%{\tt PG0396\-C} & 0 & 25 & 25 & 50\tabularnewline
+%{\tt PG0397\-C} & 0 & 14.3 & 14.3 & 71.4\tabularnewline
+%{\tt PG0398\-C} & 0 & 0 & 100 & 0\tabularnewline
+%{\tt PG0399\-C} & 0 & 0 & 99 & 1\tabularnewline
+%{\tt PG0400\-C} & 0 & 0 & 95 & 5\tabularnewline
+%{\tt PG0401\-C} & 0 & 0 & 90 & 10\tabularnewline
+%{\tt PG0402\-C} & 0 & 0 & 85 & 15\tabularnewline
+%{\tt PG0403\-C} & 0 & 0 & 80 & 20\tabularnewline
+%{\tt PG0404\-C} & 0 & 0 & 75 & 25\tabularnewline
+%{\tt PG0405\-C} & 0 & 0 & 70 & 30\tabularnewline
+%{\tt PG0406\-C} & 0 & 0 & 60 & 40\tabularnewline
+%{\tt PG0407\-C} & 0 & 0 & 50 & 50\tabularnewline
+%{\tt PG0408\-C} & 0 & 0 & 40 & 60\tabularnewline
+%{\tt PG0409\-C} & 0 & 0 & 30 & 70\tabularnewline
+%{\tt PG0410\-C} & 0 & 0 & 25 & 75\tabularnewline
+%{\tt PG0411\-C} & 0 & 0 & 20 & 80\tabularnewline
+%{\tt PG0412\-C} & 0 & 0 & 15 & 85\tabularnewline
+%%{\tt PG0049\-CW2} & 0 & 0 & 10 & 90\tabularnewline
+%{\tt PG0413\-C} & 0 & 0 & 5 & 95\tabularnewline
+%{\tt PG0414\-C} & 0 & 0 & 1 & 99\tabularnewline
+%{\tt PG0415\-C} & 0 & 0 & 0 & 100\tabularnewline
+%\end{tabular}
+\label{tab:jason}
+\end{table}
+
+
+
+\subsubsection{Assesing haplotype qualities when given different panels}
+
+\begin{figure}
+\begin{center}
+\missingfigure[figwidth=6cm]{Haplotype quality when no panel was used!!!}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\missingfigure[figwidth=6cm]{Haplotype quality when some random panel was used!!!}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\missingfigure[figwidth=6cm]{Haplotype quality when the perfect panel was used!!!}
+\end{center}
+\end{figure}
+
+
+
+
+\begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{MalariaGEN}{MalariaGEN}{2008}]{MalariaGen2008:sup}
+MalariaGEN (2008).
+\newblock A global network for investigating the genomic epidemiology of
+  malaria.
+\newblock {\em Nature\/}~{\em 456\/}(7223), 732 -- 737.
+
+\bibitem[\protect\citeauthoryear{Miles, Iqbal, Vauterin, Pearson, Campino,
+  Theron, Gould, Mead, Drury, O{\textquoteright}Brien, Ruano~Rubio, MacInnis,
+  Mwangi, Samarakoon, Ranford-Cartwright, Ferdig, Hayton, Su, Wellems, Rayner,
+  McVean, and Kwiatkowski}{Miles et~al.}{2015}]{Miles2015:sup}
+Miles, A., Z.~Iqbal, P.~Vauterin, R.~Pearson, S.~Campino, M.~Theron, K.~Gould,
+  D.~Mead, E.~Drury, J.~O{\textquoteright}Brien, V.~Ruano~Rubio, B.~MacInnis,
+  J.~Mwangi, U.~Samarakoon, L.~Ranford-Cartwright, M.~Ferdig, K.~Hayton, X.~Su,
+  T.~Wellems, J.~Rayner, G.~McVean, and D.~Kwiatkowski (2015).
+\newblock Genome variation and meiotic recombination in plasmodium falciparum:
+  insights from deep sequencing of genetic crosses.
+\newblock {\em bioRxiv\/}.
+
+\bibitem[\protect\citeauthoryear{Wendler}{Wendler}{2015}]{Wendler2015:sup}
+Wendler, J. (2015).
+\newblock {\em Accessing complex genomic variation in {P}lasmodium falciparum
+  natural infection}.
+\newblock Ph.\ D. thesis, University of Oxford.
+
+\end{thebibliography}
