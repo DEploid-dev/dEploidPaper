@@ -20,11 +20,10 @@ echo "
 
 plaf=${root}/labStrains_PLAF.txt
 panel=/well/mcvean/joezhu/pf3k/pf3k_5_1_final/panels/labStrainsPanelFinal.csv
-exludeAt=/users/mcvean/joezhu/pf3k_mixed_infection/fieldSamples/clusters/labStrainsExclude.csv
+exludeAt=/users/mcvean/joezhu/pf3k_mixed_infection/fieldSamples/clusters/labStrainsExclude.txt
+vcf=${root}/vcf/${sample}.wg.vcf.gz
 
 prefix=${sample}_seed\${SGE_TASK_ID}k$@
-
-vcf=${root}/vcf/${sample}.wg.vcf.gz
 common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${exludeAt} -o \${prefix}\"
 dEploidCommon=\"\${common} -panel \${panel} -seed \${SGE_TASK_ID} -nSample 250 -rate 8 -burn 0.67 -exportPostProb\"
 rCommon=\"\${common} -dEprefix \${prefix}\"
@@ -33,6 +32,10 @@ rCommon=\"\${common} -dEprefix \${prefix}\"
 R --slave \"--args \${rCommon} \" < ~/DEploid/utilities/interpretDEploid.r
 
 prefix=${sample}_seed\${SGE_TASK_ID}k5
+common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${exludeAt} -o \${prefix}\"
+dEploidCommon=\"\${common} -panel \${panel} -seed \${SGE_TASK_ID} -nSample 250 -rate 8 -burn 0.67 -exportPostProb\"
+rCommon=\"\${common} -dEprefix \${prefix}\"
+
 (time dEploid \${dEploidCommon} -k 5) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
 R --slave \"--args \${rCommon} \" < ~/DEploid/utilities/interpretDEploid.r
 
