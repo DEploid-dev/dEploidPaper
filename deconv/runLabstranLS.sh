@@ -1,5 +1,5 @@
 #!/bin/bash
-currentDir="~/pf3k_mixed_infection/labStrains/"
+currentDir="~/dEploidPaper/deconv"
 root="/well/mcvean/joezhu/pf3k/pf3k_5_1_final/"
 function run_dEploid {
     mkdir ${root}"dEploidOut/"${sample}
