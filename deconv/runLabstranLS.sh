@@ -44,9 +44,9 @@ R --slave \"--args \${rCommon} \" < ~/DEploid/utilities/interpretDEploid.r
     qsub ${sample}.sh
 }
 
-while read sample ; do
-    run_dEploid 2
-done < labSampleNames2Strains
+#while read sample ; do
+#    run_dEploid 2
+#done < labSampleNames2Strains
 
 cd ${currentDir}
 while read sample ; do
