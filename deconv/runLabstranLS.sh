@@ -28,27 +28,32 @@ common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${exludeAt} -o \${prefix}\"
 dEploidCommon=\"\${common} -panel \${panel} -seed \${SGE_TASK_ID} -nSample 250 -rate 8 -burn 0.67 -exportPostProb\"
 rCommon=\"\${common} -dEprefix \${prefix}\"
 
-#(time dEploid \${dEploidCommon} -k $@) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
+(time dEploid \${dEploidCommon} -k $@) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
 R --slave \"--args \${rCommon} \" < ~/DEploid/utilities/interpretDEploid.r
 
-prefix=${sample}_seed\${SGE_TASK_ID}k5
-common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${exludeAt} -o \${prefix}\"
-dEploidCommon=\"\${common} -panel \${panel} -seed \${SGE_TASK_ID} -nSample 250 -rate 8 -burn 0.67 -exportPostProb\"
-rCommon=\"\${common} -dEprefix \${prefix}\"
+#prefix=${sample}_seed\${SGE_TASK_ID}k5
+#common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${exludeAt} -o \${prefix}\"
+#dEploidCommon=\"\${common} -panel \${panel} -seed \${SGE_TASK_ID} -nSample 250 -rate 8 -burn 0.67 -exportPostProb\"
+#rCommon=\"\${common} -dEprefix \${prefix}\"
 
-#(time dEploid \${dEploidCommon} -k 5) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
-R --slave \"--args \${rCommon} \" < ~/DEploid/utilities/interpretDEploid.r
+##(time dEploid \${dEploidCommon} -k 5) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
+#R --slave \"--args \${rCommon} \" < ~/DEploid/utilities/interpretDEploid.r
 
 
 " > ${sample}.sh
     qsub ${sample}.sh
 }
 
+while read sample ; do
+    run_dEploid 3
+done < labSampleNames
+
+
 #while read sample ; do
 #    run_dEploid 2
 #done < labSampleNames2Strains
 
-cd ${currentDir}
-while read sample ; do
-    run_dEploid 3
-done < labSampleNames3Strains
+#cd ${currentDir}
+#while read sample ; do
+    #run_dEploid 3
+#done < labSampleNames3Strains
