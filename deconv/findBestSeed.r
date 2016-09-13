@@ -39,6 +39,7 @@ k=3
 
     for ( sampleName in sampleNames ){
         dic = c()
+        dicSeed = c()
         for ( seed in 1:15){
             tmpFileName = paste(root, sampleName, "/", sampleName, "_seed", seed, suffix, "dic.log", sep = "")
             if ( !file.exists(tmpFileName) ){
@@ -46,9 +47,11 @@ k=3
                 next
             }
             dic = c (dic, read.table ( tmpFileName, header = F)$V2[3] )
+            dicSeed = c(dicSeed, seed)
         }
         if ( length(dic) > 0 ){
-            chosenSeed = c( chosenSeed, which.min(dic) )
+            index.of.seed = sort.int(dic,index.return=T)$ix
+            chosenSeed = rbind( chosenSeed, dicSeed[index.of.seed] )
             printSampleNames = c(printSampleNames, sampleName)
         }
     }

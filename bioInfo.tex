@@ -140,7 +140,7 @@ Choose haplotype strain $s$ uniformly at random from these $K$ strains, consider
 q_{i,-s} = \sum_{k\neq s} w_k \cdot h_k = \textrm{Eqn.~\eqref{eqn:qij_full_sum}} -  w_s \cdot h_s \label{eqn:qij_full_sum_minus_s}
 \end{equation}
 
-Therefore, updating strain $s$ of state $0$ and $1$, so the WSAF is
+Therefore, updating strain $s$ of state $0$ and $1$, so the WSAF becomes
 \begin{align}
 q_{i,g_s=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s}} \label{eqn:qij0}\\
 q_{i,g_s=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s}} + w_s \times 1 \label{eqn:qij1}
@@ -236,11 +236,11 @@ A crucial difference between our method and \citet{Li2003}'s model is that mixed
 \begin{figure}[ht]
 \centering
 \begin{tabular}{c||ccccccccccccccccc}
-\rowcolor{yellow!50}\cellcolor{white}Reference haplotype  1 & 0&1&0&0&0&0&1&0&0&0&0&1&0&0&1&0&1\\
-\rowcolor{blue!50}\cellcolor{white}Reference haplotype  2 & 0&1&0&1&0&0&0&0&0&0&0&1&0&0&1&0&1\\
-\rowcolor{red!50}\cellcolor{white}Reference haplotype  3 & 0&1&0&0&0&0&0&0&1&0&0&1&0&0&1&0&1\\
-\rowcolor{green!50}\cellcolor{white}Reference haplotype  4 & 0&1&0&0&0&0&1&0&1&0&1&0&0&0&1&0&0\\
-\rowcolor{RubineRed!90}\cellcolor{white}Reference haplotype  5 & 0&0&1&0&0&0&0&1&0&0&0&1&0&0&1&0&1\\
+\rowcolor{yellow!50}    \cellcolor{white}Ref. Haplotype  1 & 0&1&0&0&0&0&1&0&0&0&0&1&0&0&1&0&1\\
+\rowcolor{blue!50}      \cellcolor{white}Ref. Haplotype  2 & 0&1&0&1&0&0&0&0&0&0&0&1&0&0&1&0&1\\
+\rowcolor{red!50}       \cellcolor{white}Ref. Haplotype  3 & 0&1&0&0&0&0&0&0&1&0&0&1&0&0&1&0&1\\
+\rowcolor{green!50}     \cellcolor{white}Ref. Haplotype  4 & 0&1&0&0&0&1&1&0&1&0&1&0&0&0&1&0&0\\
+\rowcolor{RubineRed!90} \cellcolor{white}Ref. Haplotype  5 & 0&0&1&0&0&0&0&1&0&0&0&1&0&0&1&0&1\\
 %\end{tabular}
 %\end{center}
 %\vspace{0.8cm}
@@ -248,10 +248,10 @@ A crucial difference between our method and \citet{Li2003}'s model is that mixed
 %\begin{tabular}{c||ccccccccccccccccc}
 \multicolumn{3}{c}{ }\\
 \multicolumn{3}{c}{ }\\
-Strain haplotype 1 & \cellcolor{blue!50}0&\cellcolor{blue!50}1&\cellcolor{blue!50}0&\cellcolor{blue!50}1&\cellcolor{green!50}0&\cellcolor{green!50}0&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{yellow!50}0&\cellcolor{yellow!50}0&\cellcolor{yellow!50}1&\cellcolor{yellow!50}0&\cellcolor{yellow!50}0&\cellcolor{yellow!50}1&\cellcolor{yellow!50}0&\cellcolor{yellow!50}1\\
-Strain haplotype 2 & 0&1&0&0&0&0&1&0&0&0&0&1&0&0&1&0&1\\
-Strain haplotype 3 & \cellcolor{red!50}0&\cellcolor{red!50}1&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{yellow!50}1&\cellcolor{yellow!50}0&\cellcolor{yellow!50}0&\cellcolor{green!50}1&\cellcolor{green!50}0&\cellcolor{green!50}{\color{red}1}\\
-Strain haplotype 4 & 0&1&0&0&0&0&1&0&0&0&0&1&0&0&1&0&1\\
+Strain 1 & \cellcolor{blue!50}0&\cellcolor{blue!50}1&\cellcolor{blue!50}0&\cellcolor{blue!50}1&\cellcolor{green!50}0&\cellcolor{green!50}1&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{yellow!50}0&\cellcolor{yellow!50}0&\cellcolor{yellow!50}1&\cellcolor{yellow!50}0&\cellcolor{yellow!50}0&\cellcolor{yellow!50}1&\cellcolor{yellow!50}0&\cellcolor{yellow!50}1\\
+Strain 2 & \cellcolor{red!50}0&\cellcolor{red!50}1&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{yellow!50}1&\cellcolor{yellow!50}0&\cellcolor{yellow!50}0&\cellcolor{green!50}1&\cellcolor{green!50}0&\cellcolor{green!50}{\color{red}1}\\
+%Strain 3 & 0&1&0&0&0&0&1&0&0&0&0&1&0&0&1&0&1\\
+%Strain 4 & 0&1&0&0&0&0&1&0&0&0&0&1&0&0&1&0&1\\
 \end{tabular}
 \caption{Illustration of \citet{Li2003}'s algorithm. Strain haplotype 1 is made up from reference haplotype segments of 1, 2, and 4; and strain haplotype 3 is made up from reference haplotype segments of 1, 2, 3 and 4. With miss copying, we allow strain states differ from the path: At the end position of strain 3, the path is copied from reference haplotype 4, with the state of ``0''.
 }\label{fig:ls}
@@ -432,12 +432,13 @@ P(g_{p_1} = 1-*, g_{p_2} = 1-\# \big{|} D) \cdot \mu \cdot \mu, & g_{s_1} \neq g
 \item Randomly update a single strain or two strains simultaneously.\\
 A crucial difference between our method and LS's model is that mixed samples can have more than two strains, with unknown proportions. We randomly choose the strains to update, then apply LS's algorithm to sample the path (see Fig.~\ref{LS}) using Gibbs sampler with given proportion rather than 50/50 in the cases of diploid samples.
 \item Updating the haplotypes from the paths, take into account of miss copying. Our model benefits from combining information from both the reference haplotypes as well as the data. For {\em de novo} mutations which are not found reference panel, our method will infer mutations based on read count from data.
-\begin{figure}[h]%figure1
-\centerline{
-\includegraphics[width=0.45\textwidth]{topPlusBottom.png}
-}
-\caption{A demonstration of the \citet{Li2003} method. strain haplotype 1 is made up from reference haplotype segments of 1 and 2; and strain haplotype 2 is made up from reference haplotype segments of 3 and 4.}\label{LS}
-\end{figure}
+
+%\begin{figure}[h]%figure1
+%\centerline{
+%\includegraphics[width=0.45\textwidth]{topPlusBottom.png}
+%}
+%\caption{A demonstration of the \citet{Li2003} method. strain haplotype 1 is made up from reference haplotype segments of 1 and 2; and strain haplotype 2 is made up from reference haplotype segments of 3 and 4.}\label{LS}
+%\end{figure}
 
 \end{itemize}
 
@@ -447,18 +448,21 @@ We apply our program to 27 lab-mixed {\em in vitro} samples \citep{Wendler2015} 
 
 
 
-\begin{figure}[h]%figure1
-\centerline{
-\includegraphics[width=0.45\textwidth]{{PG0412.C_panelseed2compareHap}.png}
-}
-\caption{Method validation with lab-controlled mixing of strains HB3 and 7G8, with proportions of $15\%$ and $85\%$ respectively \citep{Wendler2015}. PfDeconv infers the proportions as $16\%$ vs. $84\%$, with a $ < 2\%$ error rate in the haplotypes of length 16,000 across 14 chromosomes. White bars in the figure indicate reference alleles; black bars indicate alternative alleles; red bars mark wrongly inferred positions.}\label{hap}
-\end{figure}
+%\begin{figure}[h]%figure1
+%\centerline{
+%\includegraphics[width=0.45\textwidth]{{PG0412.C_panelseed2compareHap}.png}
+%}
+%\caption{Method validation with lab-controlled mixing of strains HB3 and 7G8, with proportions of $15\%$ and $85\%$ respectively \citep{Wendler2015}. PfDeconv infers the proportions as $16\%$ vs. $84\%$, with a $ < 2\%$ error rate in the haplotypes of length 16,000 across 14 chromosomes. White bars in the figure indicate reference alleles; black bars indicate alternative alleles; red bars mark wrongly inferred positions.}\label{hap}
+%\end{figure}
 
-\section{Imputation}
+\section{Performance}
 
+\subsection{Accuracy}
+
+\subsection{Run-time assessment}
 
 \section{Discussion}
-The program DEploid and its analysis pipeline is originally developed for {\it P. falciparum} studies. With some specific minor parameter changes, DEploid can be used for deconvolute {\it P. vivax} sequence data. The framework is suitable for deconvoluting mixed genomes with unknown proportions. It can thus be extended to a wider range of applications, such as deconvoluting cancer tumour cell genomes or Ebola virus genomes.
+The program DEploid and its analysis pipeline is originally developed for {\it P. falciparum} studies. With some specific minor parameter changes, DEploid can be used for deconvolute {\it P. vivax} sequence data \citep{Pearson2016}. The framework is suitable for deconvoluting mixed genomes with unknown proportions. It can thus be extended to a wider range of applications, such as deconvoluting cancer tumour cell genomes or Ebola virus genomes.
 
 
 
@@ -469,19 +473,6 @@ We thank valuable insights and suggestions from Roberto Amato, John O'Brien, Ric
 This project is funded by the Wellcome Trust grant [100956/Z/13/Z].\\
 ~\\
 \noindent{\em Conflict of Interest: none declared.}
-%~\\
-
-
-%\bibliographystyle{natbib}
-%\bibliographystyle{achemnat}
-%\bibliographystyle{plainnat}
-%\bibliographystyle{abbrv}
-%\bibliographystyle{bioinformatics}
-%
-%\bibliographystyle{plain}
-%\bibliographystyle{apacite}
-%
-%\bibliography{Document}
 
 
 \begin{thebibliography}{}
@@ -543,6 +534,25 @@ Li, N. and M.~Stephens (2003).
 \newblock {Modeling linkage disequilibrium and identifying recombination
   hotspots using single-nucleotide polymorphism data}.
 \newblock {\em Genetics\/}~{\em 165\/}(4), 2213--2233.
+
+\bibitem[\protect\citeauthoryear{Pearson, Amato, Auburn, Miotto,
+  Almagro-Garcia, Amaratunga, Suon, Mao, Noviyanti, Trimarsanto, Marfurt,
+  Anstey, William, Boni, Dolecek, Tran, White, Michon, Siba, Tavul, Harrison,
+  Barry, Mueller, Ferreira, Karunaweera, Randrianarivelojosia, Gao, Hubbart,
+  Hart, Jeffery, Drury, Mead, Kekre, Campino, Manske, Cornelius, MacInnis,
+  Rockett, Miles, Rayner, Fairhurst, Nosten, Price, and Kwiatkowski}{Pearson
+  et~al.}{2016}]{Pearson2016}
+Pearson, R.~D., R.~Amato, S.~Auburn, O.~Miotto, J.~Almagro-Garcia,
+  C.~Amaratunga, S.~Suon, S.~Mao, R.~Noviyanti, H.~Trimarsanto, J.~Marfurt,
+  N.~M. Anstey, T.~William, M.~F. Boni, C.~Dolecek, H.~T. Tran, N.~J. White,
+  P.~Michon, P.~Siba, L.~Tavul, G.~Harrison, A.~Barry, I.~Mueller, M.~U.
+  Ferreira, N.~Karunaweera, M.~Randrianarivelojosia, Q.~Gao, C.~Hubbart,
+  L.~Hart, B.~Jeffery, E.~Drury, D.~Mead, M.~Kekre, S.~Campino, M.~Manske,
+  V.~J. Cornelius, B.~MacInnis, K.~A. Rockett, A.~Miles, J.~C. Rayner, R.~M.
+  Fairhurst, F.~Nosten, R.~N. Price, and D.~P. Kwiatkowski (2016, June).
+\newblock {Genomic analysis of local variation and recent evolution in
+  Plasmodium vivax}.
+\newblock {\em Nat Genet\/}~{\em 48}, 959--964.
 
 \bibitem[\protect\citeauthoryear{Pf3k}{Pf3k}{2016}]{Pf3k2016}
 The Pf3k Project: pilot data release 5 (2016).

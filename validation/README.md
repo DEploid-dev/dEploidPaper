@@ -1,4 +1,11 @@
-This will contain comparison of panel free, panel of asiaGroup1, and perfect panel for Jason's sample. On chrom 14 only, to show differences.
+This will contain comparison of four panels,
+1. panel free
+2. panel of asiaGroup1
+3. panel of asiaGroup1 + hb3
+4. panel of asiaGroup1 + hb3 + 7g8
+5. panel of asiaGroup1 + hb3 + 7g8 + dd2
+6. perfect panel for Jason's sample.
+On chrom 14 only, to show differences.
 
 Use the following code, to preprocess data.
 ```R
