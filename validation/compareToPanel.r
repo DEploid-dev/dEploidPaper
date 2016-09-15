@@ -39,7 +39,7 @@ Ref2Name = "7G8"
 #          "PG0412-C.14.asiaPlus",
 #          "PG0412-C.14.labPanel")
 
-sampleName = "PG0407-C"
+sampleName = "PG0406-C"
 cases = paste(sampleName, c(".14.noPanel",
                             ".14.asia",
                             ".14.asiaPlus",
