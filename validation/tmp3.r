@@ -49,7 +49,7 @@ Ref3Name = "Dd2"
         tmpRef3 = Ref3[beginAt[chrom]:endAt[chrom]]
 
         if ( length(prop.corrected) == 3 ){
-            rearranged.Index = getIndex3(hap.corrected, tmpRef1, tmpRef2, tmpRef3, tmpProp)
+            rearranged.Index = getIndex3(tmpHap, tmpRef1, tmpRef2, tmpRef3, tmpProp)
             tmpHap = tmpHap[,rearranged.Index]
             tmpProp = tmpProp = prop.corrected[rearranged.Index]
         }
@@ -69,3 +69,4 @@ Ref3Name = "Dd2"
     dev.off()
 
 #}
+warnings()
