@@ -235,25 +235,26 @@ A crucial difference between our method and \citet{Li2003}'s model is that mixed
 
 \begin{figure}[ht]
 \centering
-\begin{tabular}{c||ccccccccccccccccc}
-\rowcolor{yellow!50}    \cellcolor{white}Ref. Haplotype  1 & 0&1&0&0&0&0&1&0&0&0&0&1&0&0&1&0&1\\
-\rowcolor{blue!50}      \cellcolor{white}Ref. Haplotype  2 & 0&1&0&1&0&0&0&0&0&0&0&1&0&0&1&0&1\\
-\rowcolor{red!50}       \cellcolor{white}Ref. Haplotype  3 & 0&1&0&0&0&0&0&0&1&0&0&1&0&0&1&0&1\\
-\rowcolor{green!50}     \cellcolor{white}Ref. Haplotype  4 & 0&1&0&0&0&1&1&0&1&0&1&0&0&0&1&0&0\\
-\rowcolor{RubineRed!90} \cellcolor{white}Ref. Haplotype  5 & 0&0&1&0&0&0&0&1&0&0&0&1&0&0&1&0&1\\
-%\end{tabular}
-%\end{center}
-%\vspace{0.8cm}
-%\begin{center}Within sample
 %\begin{tabular}{c||ccccccccccccccccc}
-\multicolumn{3}{c}{ }\\
-\multicolumn{3}{c}{ }\\
-Strain 1 & \cellcolor{blue!50}0&\cellcolor{blue!50}1&\cellcolor{blue!50}0&\cellcolor{blue!50}1&\cellcolor{green!50}0&\cellcolor{green!50}1&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{yellow!50}0&\cellcolor{yellow!50}0&\cellcolor{yellow!50}1&\cellcolor{yellow!50}0&\cellcolor{yellow!50}0&\cellcolor{yellow!50}1&\cellcolor{yellow!50}0&\cellcolor{yellow!50}1\\
-Strain 2 & \cellcolor{red!50}0&\cellcolor{red!50}1&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{yellow!50}1&\cellcolor{yellow!50}0&\cellcolor{yellow!50}0&\cellcolor{green!50}1&\cellcolor{green!50}0&\cellcolor{green!50}{\color{red}1}\\
-%Strain 3 & 0&1&0&0&0&0&1&0&0&0&0&1&0&0&1&0&1\\
-%Strain 4 & 0&1&0&0&0&0&1&0&0&0&0&1&0&0&1&0&1\\
-\end{tabular}
-\caption{Illustration of \citet{Li2003}'s algorithm. Strain haplotype 1 is made up from reference haplotype segments of 1, 2, and 4; and strain haplotype 3 is made up from reference haplotype segments of 1, 2, 3 and 4. With miss copying, we allow strain states differ from the path: At the end position of strain 3, the path is copied from reference haplotype 4, with the state of ``0''.
+%\rowcolor{yellow!50}    \cellcolor{white}Ref. Haplotype  1 & 0&1&0&0&0&0&1&0&0&0&0&1&0&0&1&0&1\\
+%\rowcolor{blue!50}      \cellcolor{white}Ref. Haplotype  2 & 0&1&0&1&0&0&0&0&0&0&0&1&0&0&1&0&1\\
+%\rowcolor{red!50}       \cellcolor{white}Ref. Haplotype  3 & 0&1&0&0&0&0&0&0&1&0&0&1&0&0&1&0&1\\
+%\rowcolor{green!50}     \cellcolor{white}Ref. Haplotype  4 & 0&1&0&0&0&1&1&0&1&0&1&0&0&0&1&0&0\\
+%\rowcolor{RubineRed!90} \cellcolor{white}Ref. Haplotype  5 & 0&0&1&0&0&0&0&1&0&0&0&1&0&0&1&0&1\\
+%%\end{tabular}
+%%\end{center}
+%%\vspace{0.8cm}
+%%\begin{center}Within sample
+%%\begin{tabular}{c||ccccccccccccccccc}
+%\multicolumn{3}{c}{ }\\
+%\multicolumn{3}{c}{ }\\
+%Strain 1 & \cellcolor{blue!50}0&\cellcolor{blue!50}1&\cellcolor{blue!50}0&\cellcolor{blue!50}1&\cellcolor{green!50}0&\cellcolor{green!50}1&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{yellow!50}0&\cellcolor{yellow!50}0&\cellcolor{yellow!50}1&\cellcolor{yellow!50}0&\cellcolor{yellow!50}0&\cellcolor{yellow!50}1&\cellcolor{yellow!50}0&\cellcolor{yellow!50}1\\
+%Strain 2 & \cellcolor{red!50}0&\cellcolor{red!50}1&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{red!50}0&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{blue!50}0&\cellcolor{yellow!50}1&\cellcolor{yellow!50}0&\cellcolor{yellow!50}0&\cellcolor{green!50}1&\cellcolor{green!50}0&\cellcolor{green!50}{\color{red}1}\\
+%%Strain 3 & 0&1&0&0&0&0&1&0&0&0&0&1&0&0&1&0&1\\
+%%Strain 4 & 0&1&0&0&0&0&1&0&0&0&0&1&0&0&1&0&1\\
+%\end{tabular}
+\includegraphics[width=0.5\textwidth]{coupled-painting.png}
+\caption{Illustration of \citet{Li2003}'s algorithm. Strain 1 haplotype is made up from reference haplotype segments of 1 and 2; and strain 2 haplotype is made up from reference haplotype segments of 3 and 4. With miss copying, we allow strain states differ from the path: At the third last position of strain 1, the path is copied from reference haplotype 2, with the state of ``0''.
 }\label{fig:ls}
 \end{figure}
 
@@ -433,12 +434,6 @@ P(g_{p_1} = 1-*, g_{p_2} = 1-\# \big{|} D) \cdot \mu \cdot \mu, & g_{s_1} \neq g
 A crucial difference between our method and LS's model is that mixed samples can have more than two strains, with unknown proportions. We randomly choose the strains to update, then apply LS's algorithm to sample the path (see Fig.~\ref{LS}) using Gibbs sampler with given proportion rather than 50/50 in the cases of diploid samples.
 \item Updating the haplotypes from the paths, take into account of miss copying. Our model benefits from combining information from both the reference haplotypes as well as the data. For {\em de novo} mutations which are not found reference panel, our method will infer mutations based on read count from data.
 
-%\begin{figure}[h]%figure1
-%\centerline{
-%\includegraphics[width=0.45\textwidth]{topPlusBottom.png}
-%}
-%\caption{A demonstration of the \citet{Li2003} method. strain haplotype 1 is made up from reference haplotype segments of 1 and 2; and strain haplotype 2 is made up from reference haplotype segments of 3 and 4.}\label{LS}
-%\end{figure}
 
 \end{itemize}
 
@@ -446,16 +441,61 @@ A crucial difference between our method and LS's model is that mixed samples can
 We apply our program to 27 lab-mixed {\em in vitro} samples \citep{Wendler2015} to validate our methods and program. Our method successfully recovers the proportions with haplotypes of the input. Detailed validation steps are described in the supplement material as well as the Pf3k pilot phase main article. An example is given in Fig.~\ref{hap}.
 \end{methods}
 
+\begin{table}[ht]\centering
+\begin{tabular}[c]{@{}l|llll@{}}
+sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
+{\tt	PG0389-C}	&	88.5	(90)	&	11.5	(10)	&		0	&		0	\tabularnewline
+{\tt	PG0390-C}	&	79.8	(80)	&	20.2	(20)	&		0	&		0	\tabularnewline
+{\tt	PG0391-C}	&	66.1	(67)	&	33.9	(33)	&		0	&		0	\tabularnewline
+{\tt	PG0392-C}	&	31.2	(33)	&	68.8	(67	&		0	&		0	\tabularnewline
+{\tt	PG0393-C}	&	18.4	(20)	&	81.6	(80)	&		0	&		0	\tabularnewline
+{\tt	PG0394-C}	&	9.1	(10)	&	90.1	(90)	&		0	&		0	\tabularnewline
+{\tt	PG0395-C}	&		0	&	33.6	(33.3)	&	35	(33.3)	&	31.3	(33.3)	\tabularnewline
+{\tt	PG0396-C}	&		0	&	25.9	(25)	&	26.1	(25)	&	48	(50)	\tabularnewline
+{\tt	PG0397-C}	&		0	&	14.7	(14.3)	&	15.3	(14.3)	&	69.9	(71.4)	\tabularnewline
+{\tt	PG0398-C}	&		0	&		0	&	45.1+54.9	(100)	&		0	\tabularnewline
+{\tt	PG0399-C}	&		0	&		0	&	56.7+40.9	(99)	&	2.4	(1)	\tabularnewline
+{\tt	PG0400-C}	&		0	&		0	&	39.5+57.5	(95)	&	3	(5)	\tabularnewline
+{\tt	PG0401-C}	&		0	&		0	&	33.3+56.7	(90)	&	10	(10)	\tabularnewline
+{\tt	PG0402-C}	&		0	&		0	&	85.2	(85)	&	14.8	(15)	\tabularnewline
+{\tt	PG0403-C}	&		0	&		0	&	80.1	(80)	&	19.3	(20)	\tabularnewline
+{\tt	PG0404-C}	&		0	&		0	&	75.4	(75)	&	24.6	(25)	\tabularnewline
+{\tt	PG0405-C}	&		0	&		0	&	70.6	(70)	&	29.4	(30)	\tabularnewline
+{\tt	PG0406-C}	&		0	&		0	&	61	(60)	&	39	(40)	\tabularnewline
+{\tt	PG0407-C}	&		0	&		0	&	50.5	(50)	&	49.5	(50)	\tabularnewline
+{\tt	PG0408-C}	&		0	&		0	&	40.1	(40)	&	59.2	(60)	\tabularnewline
+{\tt	PG0409-C}	&		0	&		0	&	30.1	(30)	&	69.1	(70)	\tabularnewline
+{\tt	PG0410-C}	&		0	&		0	&	25.9	(25)	&	73,4	(75)	\tabularnewline
+{\tt	PG0411-C}	&		0	&		0	&	21.4	(20)	&	78.5	(80)	\tabularnewline
+{\tt	PG0412-C}	&		0	&		0	&	15.2	(15)	&	84,8	(85)	\tabularnewline
+{\tt	PG0413-C}	&		0	&		0	&	3.8	(5)	&	96.2	(95)	\tabularnewline
+{\tt	PG0414-C}	&		0	&		0	&	0	(1)	&	29.9+70.1	(99)	\tabularnewline
+{\tt	PG0415-C}	&		0	&		0	&		0	&	30.0+70.0	(100)	\tabularnewline
+
+\end{tabular}
+\caption{\color{red}caption}
+\label{tab:jason}
+\end{table}
 
 
-%\begin{figure}[h]%figure1
-%\centerline{
-%\includegraphics[width=0.45\textwidth]{{PG0412.C_panelseed2compareHap}.png}
-%}
-%\caption{Method validation with lab-controlled mixing of strains HB3 and 7G8, with proportions of $15\%$ and $85\%$ respectively \citep{Wendler2015}. PfDeconv infers the proportions as $16\%$ vs. $84\%$, with a $ < 2\%$ error rate in the haplotypes of length 16,000 across 14 chromosomes. White bars in the figure indicate reference alleles; black bars indicate alternative alleles; red bars mark wrongly inferred positions.}\label{hap}
-%\end{figure}
+
+\begin{figure}[h]%figure1
+\centerline{
+\includegraphics[width=0.45\textwidth]{{differentPanelForSample.PG0396-C}.png}
+}
+\caption{}\label{hap}
+\end{figure}
 
 \section{Performance}
+
+\begin{figure}[h]%figure1
+\centerline{
+\includegraphics[width=0.45\textwidth]{{switchVsMisCopyErrlog}.png}
+}
+\caption{}\label{hap}
+\end{figure}
+
+
 
 \subsection{Accuracy}
 

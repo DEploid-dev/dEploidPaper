@@ -1,5 +1,5 @@
 rm(list=ls())
-png("switchVsMisCopyErrlog.png", width=1500, height = 1500)
+png("switchVsMisCopyErrlog.png", width=800, height = 800)
 plot(c(10,300), c(1150,3200), type="n", log="xy", xlab="Number of Switch Error", ylab ="Number of Miss Copying Error")
 #plot(c(0,110), c(50,1150), type="n")
 
