@@ -440,7 +440,14 @@ A crucial difference between our method and LS's model is that mixed samples can
 \section{Validation}
 A set of {\it in vitro} mixtures of parasites were created by \citet{Wendler2015} to simulate mixed infection, which is an ideal validation data set in our use. In this data set, DNA was extracted from four laboratory parasite lines: 3D7, Dd2, HB3 and 7G8, and mixed with different ratios of mixed infection (see Table~\ref{tab:jason} in brackets), and submitted to the MalariaGEN pipeline \citep{MalariaGen2008} for Illumina sequencing.
 
-We apply our program to 27 lab-mixed {\em in vitro} samples to validate our methods and program. Our method successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). Detailed validation steps are described in the supplement material.
+
+We apply our program to 27 lab-mixed {\em in vitro} samples to validate our methods and program. Our method successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). As discribed in section~ref{sec:updateP}, we start our method with the assumption of there are at most three strains in the mixtures; and discard the strains less than 1\%. Detailed validation steps are described in the supplement material.
+
+Our model overfits the noisy lab-mixed sample with additional strains. Note that in Table~\ref{tab:jason}, we infer six of the HB3 and 7g8 mixtures as mixing of three, two of which haplotypes have subbtle difference with the same , but overall vastly different
+
+The origin of the noise can come from sequncing process or variant calling, which we do not recalabriate using our program.
+
+%Talk about the quality of the proportions
 
 \begin{table}[ht]\centering
 \begin{tabular}[c]{@{}l|llll@{}}
@@ -468,13 +475,13 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 {\tt	PG0409-C}	&		0	&		0	&	30.1	(30)	&	69.1	(70)	\tabularnewline
 {\tt	PG0410-C}	&		0	&		0	&	25.9	(25)	&	73,4	(75)	\tabularnewline
 {\tt	PG0411-C}	&		0	&		0	&	21.4	(20)	&	78.5	(80)	\tabularnewline
-{\tt	PG0412-C}	&		0	&		0	&	15.2	(15)	&	84,8	(85)	\tabularnewline
+{\tt	PG0412-C}	&		0	&		0	&	15.2	(15)	&	84.8	(85)	\tabularnewline
 {\tt	PG0413-C}	&		0	&		0	&	3.8	(5)	&	96.2	(95)	\tabularnewline
 {\tt	PG0414-C}	&		0	&		0	&	0	(1)	&	29.9+70.1	(99)	\tabularnewline
 {\tt	PG0415-C}	&		0	&		0	&		0	&	30.0+70.0	(100)	\tabularnewline
 
 \end{tabular}
-\caption{Inferred and actual (in brackets) percentages of the mixed samples. }
+\caption{Inferred percentages (true in brackets) of the mixed samples.}
 \label{tab:jason}
 \end{table}
 
@@ -484,7 +491,7 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 \centerline{
 \includegraphics[width=0.45\textwidth]{{differentPanelForSample.PG0396-C}.png}
 }
-\caption{}\label{hap}
+\caption{Haplotypes comparison of deconvolution without any reference strain (top) versus with using different reference panels (from the second to the bottom): I. 5 Asian and 5 African clonal strains; II. panel I with the addition of HB3; III. panel II with the addition of 7g8; IV. panel III with the addition of dd2. Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segements from strains 7g8, HB3 and dd2 respectively.}\label{hap}
 \end{figure}
 
 \section{Performance}
@@ -521,13 +528,6 @@ This project is funded by the Wellcome Trust grant [100956/Z/13/Z].\\
 
 
 \begin{thebibliography}{}
-
-\bibitem[\protect\citeauthoryear{MalariaGEN}{MalariaGEN}{2008}]{MalariaGen2008}
-MalariaGEN (2008).
-\newblock A global network for investigating the genomic epidemiology of
-  malaria.
-\newblock {\em Nature\/}~{\em 456\/}(7223), 732 -- 737.
-
 
 \bibitem[\protect\citeauthoryear{Arnot}{Arnot}{1998}]{Arnot1998}
 Anita, D. (1998).
@@ -586,6 +586,12 @@ Li, N. and M.~Stephens (2003).
 \newblock {Modeling linkage disequilibrium and identifying recombination
   hotspots using single-nucleotide polymorphism data}.
 \newblock {\em Genetics\/}~{\em 165\/}(4), 2213--2233.
+
+\bibitem[\protect\citeauthoryear{MalariaGEN}{MalariaGEN}{2008}]{MalariaGen2008}
+MalariaGEN (2008).
+\newblock A global network for investigating the genomic epidemiology of
+  malaria.
+\newblock {\em Nature\/}~{\em 456\/}(7223), 732 -- 737.
 
 \bibitem[\protect\citeauthoryear{Pearson, Amato, Auburn, Miotto,
   Almagro-Garcia, Amaratunga, Suon, Mao, Noviyanti, Trimarsanto, Marfurt,
