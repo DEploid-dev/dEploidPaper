@@ -5,6 +5,7 @@
 \usepackage{cases}
 \graphicspath{{./figures/}}
 \definecolor{RubineRed}{RGB}{240, 0, 240}       % RubineRed  Approximate PANTONE RUBINE-RED
+\usepackage{todonotes}
 
 
 \copyrightyear{2016} \pubyear{2016}
@@ -437,20 +438,20 @@ A crucial difference between our method and LS's model is that mixed samples can
 
 \end{itemize}
 
+
+\subsection{Model selection}
+\todo{DIC calculation}
+
 \section{Validation}
 A set of {\it in vitro} mixtures of parasites were created by \citet{Wendler2015} to simulate mixed infection, which is an ideal validation data set in our use. In this data set, DNA was extracted from four laboratory parasite lines: 3D7, Dd2, HB3 and 7G8, and mixed with different ratios of mixed infection (see Table~\ref{tab:jason} in brackets), and submitted to the MalariaGEN pipeline \citep{MalariaGen2008} for Illumina sequencing.
 
 
-We apply our program to 27 lab-mixed {\em in vitro} samples to validate our methods and program. Our method successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). As discribed in section~ref{sec:updateP}, we start our method with the assumption of there are at most three strains in the mixtures; and discard the strains less than 1\%. Detailed validation steps are described in the supplement material.
+We apply our program to 27 lab-mixed {\em in vitro} samples to validate our methods and program. Our method successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). As discribed in section~\ref{sec:updateP}, we start our method with the assumption of at most three strains present in the mixtures; and discard the strains less than 1\%. Detailed validation steps are described in the supplement material.
 
-Our model overfits the noisy lab-mixed sample with additional strains. Note that in Table~\ref{tab:jason}, we infer six of the HB3 and 7g8 mixtures as mixing of three, two of which haplotypes have subbtle difference with the same , but overall vastly different
-
-The origin of the noise can come from sequncing process or variant calling, which we do not recalabriate using our program.
-
-%Talk about the quality of the proportions
+Our model overfits the noisy lab-mixed sample with additional strains. Note that in Table~\ref{tab:jason}, we infer six of the HB3 and 7g8 mixtures as mixing of three, two of which haplotypes have subbtle difference with the same parasite line, but overall vastly different the last strain. The subbtle variation is caused by few hetrozigous sites with high coverage resulting high leverage in our model (see supplemental Figure\todo{add figure}). The origin of the noisy markers are possibily from sequncing or variant calling process, which are not recalabriated by our program.
 
 \begin{table}[ht]\centering
-\begin{tabular}[c]{@{}l|llll@{}}
+\begin{tabular}[c]{@{}l|llll@{}}\hline
 sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 {\tt	PG0389-C}	&	88.5	(90)	&	11.5	(10)	&		0	&		0	\tabularnewline
 {\tt	PG0390-C}	&	79.8	(80)	&	20.2	(20)	&		0	&		0	\tabularnewline
@@ -479,19 +480,21 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 {\tt	PG0413-C}	&		0	&		0	&	3.8	(5)	&	96.2	(95)	\tabularnewline
 {\tt	PG0414-C}	&		0	&		0	&	0	(1)	&	29.9+70.1	(99)	\tabularnewline
 {\tt	PG0415-C}	&		0	&		0	&		0	&	30.0+70.0	(100)	\tabularnewline
-
+\hline
 \end{tabular}
 \caption{Inferred percentages (true in brackets) of the mixed samples.}
 \label{tab:jason}
 \end{table}
 
+We experimented with using different reference panels for deconvolution. In all cases we estimated the number and proportion of strains accurately, but the accuracty of the haplotype is dependent on having an approriate reference panel (see Figure~\ref{fig:differentRefPanel}).
 
 
+\todo{update figure}
 \begin{figure}[h]%figure1
 \centerline{
 \includegraphics[width=0.45\textwidth]{{differentPanelForSample.PG0396-C}.png}
 }
-\caption{Haplotypes comparison of deconvolution without any reference strain (top) versus with using different reference panels (from the second to the bottom): I. 5 Asian and 5 African clonal strains; II. panel I with the addition of HB3; III. panel II with the addition of 7g8; IV. panel III with the addition of dd2. Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segements from strains 7g8, HB3 and dd2 respectively.}\label{hap}
+\caption{Haplotypes comparison of sample {\tt PG0396-C} chromosome 14 deconvolution without any reference strain (top) versus with using different reference panels (from the second to the bottom): I. 5 Asian and 5 African clonal strains; II. panel I with the addition of HB3; III. panel II with the addition of 7g8; IV. panel III with the addition of dd2. Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segements from strains 7g8, HB3 and dd2 respectively.}\label{fig:differentRefPanel}
 \end{figure}
 
 \section{Performance}
@@ -500,14 +503,16 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 \centerline{
 \includegraphics[width=0.45\textwidth]{{switchVsMisCopyErrlog}.png}
 }
-\caption{}\label{hap}
+\caption{}\label{fig:swithVsMisCopy}
 \end{figure}
 
 
 
 \subsection{Accuracy}
+\todo{add figure}
 
 \subsection{Run-time assessment}
+\todo{add figure}
 
 
 \end{methods}
