@@ -438,8 +438,9 @@ A crucial difference between our method and LS's model is that mixed samples can
 \end{itemize}
 
 \section{Validation}
-We apply our program to 27 lab-mixed {\em in vitro} samples \citep{Wendler2015} to validate our methods and program. Our method successfully recovers the proportions with haplotypes of the input. Detailed validation steps are described in the supplement material as well as the Pf3k pilot phase main article. An example is given in Fig.~\ref{hap}.
-\end{methods}
+A set of {\it in vitro} mixtures of parasites were created by \citet{Wendler2015:sup} to simulate mixed infection, which is an ideal validation data set in our use. In this data set, DNA was extracted from four laboratory parasite lines, such as 3D7, Dd2, HB3 and 7G8, and mixed with different ratios of mixed infection (see main article Table~\ref{tab:jason}), and submitted to the MalariaGEN \citep{MalariaGen2008} pipeline for Illumina sequencing.
+
+We apply our program to 27 lab-mixed {\em in vitro} samples \citep{Wendler2015} to validate our methods and program. Our method successfully recovers the proportions with haplotypes of the input. Detailed validation steps are described in the supplement material.
 
 \begin{table}[ht]\centering
 \begin{tabular}[c]{@{}l|llll@{}}
@@ -473,7 +474,7 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 {\tt	PG0415-C}	&		0	&		0	&		0	&	30.0+70.0	(100)	\tabularnewline
 
 \end{tabular}
-\caption{\color{red}caption}
+\caption{Inferred and actual (in brackets) percentages of the mixed samples. }
 \label{tab:jason}
 \end{table}
 
@@ -501,6 +502,10 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 
 \subsection{Run-time assessment}
 
+
+\end{methods}
+
+
 \section{Discussion}
 The program DEploid and its analysis pipeline is originally developed for {\it P. falciparum} studies. With some specific minor parameter changes, DEploid can be used for deconvolute {\it P. vivax} sequence data \citep{Pearson2016}. The framework is suitable for deconvoluting mixed genomes with unknown proportions. It can thus be extended to a wider range of applications, such as deconvoluting cancer tumour cell genomes or Ebola virus genomes.
 
@@ -516,6 +521,13 @@ This project is funded by the Wellcome Trust grant [100956/Z/13/Z].\\
 
 
 \begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{MalariaGEN}{MalariaGEN}{2008}]{MalariaGen2008}
+MalariaGEN (2008).
+\newblock A global network for investigating the genomic epidemiology of
+  malaria.
+\newblock {\em Nature\/}~{\em 456\/}(7223), 732 -- 737.
+
 
 \bibitem[\protect\citeauthoryear{Arnot}{Arnot}{1998}]{Arnot1998}
 Anita, D. (1998).
