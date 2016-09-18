@@ -469,12 +469,12 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 \label{tab:jason}
 \end{table}
 
-We apply our program to 27 lab-mixed {\em in vitro} samples to validate our methods and program. Our method successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). As discribed in section~\ref{sec:updateP}, we start our method with the assumption of at most three strains present in the mixtures; and discard the strains less than 1\%. Detailed validation steps are described in the supplement material.
+We apply our program to 27 lab-mixed {\em in vitro} samples to validate our methods and program. As discribed in section~\ref{sec:updateP}, we start our method with the assumption of at most three strains present in the mixtures; and discard the strains less than 1\%. Our method successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). The differences between our proportion estimates and the truth is at most 2\%. Detailed validation steps are described in the supplement material.
 
 Our model overfits the noisy lab-mixed sample with additional strains. Note that in Table~\ref{tab:jason}, we infer six of the HB3 and 7g8 mixtures as mixing of three, two of which haplotypes have subbtle difference with the same parasite line, but overall vastly different the last strain. The subbtle variation is caused by few hetrozigous sites with high coverage resulting high leverage in our model (see supplemental Figure~S4.3(a)). The origin of the noisy markers are possibily from sequncing or variant calling process, which are not recalabriated by our program.
 
 
-We experimented with using different reference panels for deconvolution. In all cases we estimated the number and proportion of strains accurately, but the accuracty of the haplotype is dependent on having an approriate reference panel (see Figure~\ref{fig:differentRefPanel}).
+We experimented with using different reference panels for deconvolution. In all cases we estimated the number and proportion of strains accurately, but the accuracy of the haplotype is dependent on having an approriate reference panel (see Figure~\ref{fig:differentRefPanel}).
 
 
 \begin{figure}[h]
@@ -485,6 +485,7 @@ We experimented with using different reference panels for deconvolution. In all 
 \end{figure}
 
 \section{Performance}
+\subsection{Accuracy}
 
 \begin{figure}[h]%figure1
 \centerline{
@@ -508,18 +509,21 @@ We experimented with using different reference panels for deconvolution. In all 
 
 
 
-\subsection{Accuracy}
-\begin{figure}
+\begin{figure}[ht]
 \begin{center}
 \missingfigure[figwidth=6cm]{Haplotype quality when the perfect panel was used!!!}
 \end{center}
 \end{figure}
 
-\subsection{Run-time assessment}
-\begin{figure}
-\begin{center}
-\missingfigure[figwidth=6cm]{Haplotype quality when the perfect panel was used!!!}
-\end{center}
+\subsection{Run-time}
+The complexity of our program is $\mathcal{O}(n^2m)$, where $n$ and $m$ are the number of reference strains and sites respectively. In practice, we divide Pf3k samples into several geographical region and perform deconvolution, with ten most diversed clonal strains as reference panel. The run time of deconvoluting a field sample range from 1 to 6 hours. For example, it takes $5\frac{1}{2}$ hours to process sample {\tt QG0182-C} with 372,884 sites.
+
+%94m31.924s PD0500-C 98,211
+%328m52.036s  QG0182-C 372,884
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.5\textwidth,height=0.4\textwidth]{runTime.png}
 \end{figure}
 
 \end{methods}
