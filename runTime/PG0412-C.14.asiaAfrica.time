@@ -1,0 +1,40 @@
+ MCMC step   1% completed. MCMC step   2% completed. MCMC step   3% completed. MCMC step   4% completed. MCMC step   6% completed. MCMC step   7% completed. MCMC step   8% completed. MCMC step   9% completed. MCMC step  11% completed. MCMC step  12% completed. MCMC step  13% completed. MCMC step  14% completed. MCMC step  16% completed. MCMC step  17% completed. MCMC step  18% completed. MCMC step  19% completed. MCMC step  21% completed. MCMC step  22% completed. MCMC step  23% completed. MCMC step  24% completed. MCMC step  26% completed. MCMC step  27% completed. MCMC step  28% completed. MCMC step  29% completed. MCMC step  31% completed. MCMC step  32% completed. MCMC step  33% completed. MCMC step  34% completed. MCMC step  36% completed. MCMC step  37% completed. MCMC step  38% completed. MCMC step  39% completed. MCMC step  41% completed. MCMC step  42% completed. MCMC step  43% completed. MCMC step  44% completed. MCMC step  46% completed. MCMC step  47% completed. MCMC step  48% completed. MCMC step  49% completed. MCMC step  51% completed. MCMC step  52% completed. MCMC step  53% completed. MCMC step  54% completed. MCMC step  56% completed. MCMC step  57% completed. MCMC step  58% completed. MCMC step  59% completed. MCMC step  61% completed. MCMC step  62% completed. MCMC step  63% completed. MCMC step  64% completed. MCMC step  66% completed. MCMC step  67% completed. MCMC step  68% completed. MCMC step  69% completed. MCMC step  71% completed. MCMC step  72% completed. MCMC step  73% completed. MCMC step  74% completed. MCMC step  76% completed. MCMC step  77% completed. MCMC step  78% completed. MCMC step  79% completed. MCMC step  81% completed. MCMC step  82% completed. MCMC step  83% completed. MCMC step  84% completed. MCMC step  86% completed. MCMC step  87% completed. MCMC step  88% completed. MCMC step  89% completed. MCMC step  91% completed. MCMC step  92% completed. MCMC step  93% completed. MCMC step  94% completed. MCMC step  96% completed. MCMC step  97% completed. MCMC step  98% completed. MCMC step  99% completed. MCMC step 100% completed.
+#########################################
+#        dEploid v0.3-release log        #
+#########################################
+Program was compiled on: Mon-29-Aug-21:40:19-UTC-2016
+dEploid version: 95ca405dc203f630502aa2da86b8511687d47eb1
+
+Input data: 
+     Panel: asiaAfrica.14.panel.txt
+      PLAF: labStrains.14.PLAF.txt
+       VCF: PG0412-C.14.vcf
+
+MCMC parameters: 
+        MCMC burn: 0.5
+      MCMC sample: 800
+ MCMC sample rate: 5
+      Random seed: 1
+      Update Prop: YES
+    Update Single: YES
+      Update Pair: YES
+
+Other parameters:
+    Miss copy prob: 0.01
+  Avrg Cent Morgan: 15000
+                Ne: 10
+
+Run time:
+    Start at: Sun Sep 18 10:29:37 2016
+      End at: Sun Sep 18 10:31:17 2016
+
+Output saved to:
+  Likelihood: PG0412-C.14.asiaAfrica.llk
+ Proportions: PG0412-C.14.asiaAfrica.prop
+  Haplotypes: PG0412-C.14.asiaAfrica.hap
+
+Proportions at the last iteration:
+  0.842968	  0.157032
+real 100.73
+user 98.76
+sys 1.82
