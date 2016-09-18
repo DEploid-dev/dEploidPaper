@@ -118,7 +118,7 @@ fun.plotHapWithProp <- function( hap, prop, fig.title, max.at ){
 
     xrange = c(0, max.at)
     yrange = c(0, 1)
-    plot( xrange, yrange, type= "n", xlim=xrange, ylim = yrange, ylab="Hap proportion", main=fig.title, xlab = "SNP")
+    plot( xrange, yrange, type= "n", xlim=xrange, ylim = yrange, ylab="Hap proportion", main=fig.title, xlab = "SNP", cex.main = 4)
 
     xleft = 0:(haplength-1)
     xright = xleft+1

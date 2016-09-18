@@ -21,14 +21,15 @@ Ref3Name = "Dd2"
 
 sampleName = "PG0396-C"
 cases = paste(sampleName, c(".14.noPanel",
-                            ".14.asia",
-                            ".14.asiaPlus",
-#                            ".14.asiaPlus2",
-                            ".14.labPanel"), sep="")
+                            ".14.asiaAfirca",
+                            ".14.asiaAfirca_hb3",
+                            ".14.asiaAfirca_hb3_7g8",
+                            ".14.asiaAfirca_hb3_7g8_dd2"), sep="")
 
 png(paste("differentPanelForSample.", sampleName, ".png", sep=""), width = 1920, height = 1080)
 par ( mfrow = c(length(cases),1))
 
+#errors = c()
 for ( prefix in cases ){
 print(prefix)
     tmpProp = read.table(paste(prefix,".prop",sep=""), header=F)
@@ -58,8 +59,10 @@ print(prefix)
         }
 
         hapAndError = fun.computeErrors3( tmpHap, tmpRef1, tmpRef2, tmpRef3)
-        tmpTitle = paste(prefix, rownames(table(panel[,1]))[chrom], hapAndError$switchError, "switch errors", hapAndError$mutError, "miss copy errors")
-
+        cat(prefix, " ", hapAndError$switchError, " ", hapAndError$mutError, "\n")
+#        tmpTitle = paste(prefix, rownames(table(panel[,1]))[chrom], hapAndError$switchError, "switch errors", hapAndError$mutError, "miss copy errors")
+        tmpTitle = paste("Switch errors:", hapAndError$switchError, ", miss copy errors:", hapAndError$mutError)
+#        tmpTitle = ""
         fun.plotHapWithProp (hapAndError$hap, tmpProp,
              tmpTitle,
              max(chromLength))
