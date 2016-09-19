@@ -1,4 +1,4 @@
-fun.divide.to.seg <- function(hapLength, numSeg = 51){
+fun.divide.to.seg <- function(hapLength, numSeg = 501){
     return(floor(seq(1, hapLength, length.out =numSeg)))
 }
 
@@ -52,8 +52,8 @@ exportSites <- function ( CHROM, POS, tmpIndex, logFileName){
 
 
 fun.computeErrors2 <- function(hap, ref1, ref2){
-    switchError = 0
-    mutError = 0
+    switchError = c(0, 0)
+    mutError = c(0, 0)
 
     haplength = dim(hap)[1]
     nhap = dim(hap)[2]
@@ -100,8 +100,8 @@ fun.computeErrors2 <- function(hap, ref1, ref2){
         }
         strain = cbind(c(NA,NA), countSwitch)
         strainNext = cbind(countSwitch, c(NA,NA))
-        switchError = sum(rowSums(strain != strainNext, na.rm=T))
-        mutError = sum(hap==2)
+        switchError = rowSums(strain != strainNext, na.rm=T)
+        mutError = rowSum(hap==2)
     }
 
     return ( list ( hap = hap,
@@ -133,8 +133,8 @@ fun.plotHapWithProp <- function( hap, prop, fig.title, max.at ){
 }
 
 fun.computeErrors3 <- function(hap, ref1, ref2, ref3){
-    switchError = 0
-    mutError = 0
+    switchError = c(0, 0, 0)
+    mutError = c(0, 0, 0)
 
     haplength = dim(hap)[1]
     nhap = dim(hap)[2]
@@ -196,8 +196,8 @@ fun.computeErrors3 <- function(hap, ref1, ref2, ref3){
         }
         strain = cbind(c(NA,NA,NA), countSwitch)
         strainNext = cbind(countSwitch, c(NA,NA,NA))
-        switchError = sum(rowSums(strain != strainNext, na.rm=T))
-        mutError = sum(hap==2)
+        switchError = rowSums(strain != strainNext, na.rm=T)
+        mutError = rowSum(hap==2)
     }
 
     return ( list ( hap = hap,

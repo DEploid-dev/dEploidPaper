@@ -46,8 +46,8 @@ Ref2Name = "7G8"
     hap.corrected = hap[,colIndex,drop=FALSE]
 
 
-    switchError = 0
-    mutError = 0
+    switchError = c(0, 0)
+    mutError = c(0, 0)
     for ( chrom in 1:length(beginAt)){
         tmpHap = hap.corrected[beginAt[chrom]:endAt[chrom],,drop=FALSE]
         tmpProp = prop.corrected
@@ -57,7 +57,7 @@ Ref2Name = "7G8"
         if ( length(prop.corrected) == 2 ){
             rearranged.Index = getIndex2(tmpHap, tmpRef1, tmpRef2)
             tmpHap = tmpHap[,rearranged.Index,drop=FALSE]
-            tmpProp = tmpProp = prop.corrected[rearranged.Index]
+            tmpProp = prop.corrected[rearranged.Index]
         }
 
         hapAndError = fun.computeErrors2( tmpHap, tmpRef1, tmpRef2)
@@ -71,7 +71,7 @@ Ref2Name = "7G8"
         mutError = mutError + hapAndError$mutError
     }
     if ( length(prop.corrected) == 2 ){
-        write.table(c(switchError, mutError), file = paste(prefix,".errorCount", sep=""), quote = F, row.names=F, col.names=F)
+        write.table(c(prop.corrected, switchError, mutError), file = paste(prefix,".errorCount", sep=""), quote = F, row.names=F, col.names=F)
     }
     dev.off()
 
