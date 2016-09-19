@@ -1,5 +1,5 @@
 rm ( list = ls () )
-if("ggplot2" %in% rownames(installed.packages()) == FALSE) {install.packages("ggplot2",repos="http://ftp.ussg.iu.edu/CRAN/")}
+#if("ggplot2" %in% rownames(installed.packages()) == FALSE) {install.packages("ggplot2",repos="http://ftp.ussg.iu.edu/CRAN/")}
 library(ggplot2)
 
 #PG0412-C.121314.asiaAfirca_hb3_7g8_dd2.time  PG0412-C.1314.asiaAfirca_hb3.time
@@ -10,13 +10,15 @@ library(ggplot2)
 #PG0412-C.1314.asiaAfirca_hb3_7g8.time        PG0412-C.14.asiaAfrica.time
 
 
-panels = paste("asiaAfrica", c("", "_hb3", "_hb3_7g8", "_hb3_7g8_dd2"), sep="")
+#panels = paste("asiaAfrica", c("", "_hb3", "_hb3_7g8", "_hb3_7g8_dd2"), sep="")
+panels = c("labStrains", "asiaAfrica", "asiaAfrica2")
 chroms = c("14", "1314", "121314")
 #     5992 PG0412-C.121314.vcf
 #     4627 PG0412-C.1314.vcf
 #     2591 PG0412-C.14.vcf
 seqlength = as.character(c(2591, 4627, 5992))
-panelSize = as.character(c(10, 11, 12, 13))
+#panelSize = as.character(c(10, 11, 12, 13))
+panelSize = as.character(c(4, 10, 16))
 prefix = "PG0412-C."
 
 Time_data = data.frame( Panel = character(), Chrom = character(), PanelSize = character(), SeqLength = character(), Runtime = numeric(0), se = numeric(0) , stringsAsFactors=FALSE)
@@ -60,7 +62,7 @@ library(scales)     # Need the scales package
 myBar = ggplot(Time_data, aes(x=PanelSize, y=Runtime, fill=SeqLength)) +
     ylab("Time / seconds")+
     geom_bar(position=position_dodge(), stat="identity") +
-    scale_y_continuous(limits=c(90,500),oob = rescale_none)
+    scale_y_continuous(limits=c(40,1200),oob = rescale_none)
 png("runTime.png", width = 800, height = 800)
 myBar+ theme(text = element_text(size=20))
 dev.off()

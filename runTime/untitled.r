@@ -35,6 +35,8 @@ panel = panel[nonZeroIndex,][testIndex,]
 asiaAfricaPanel = cbind( asiaPanel[nonZeroIndex,1:7][testIndex,], africaPanel[nonZeroIndex,3:7][testIndex,])
 write.table(asiaAfricaPanel, file = "asiaAfrica.14.panel.txt", quote=F, sep="\t", row.names=F)
 
+asiaAfricaPanel2 = cbind( asiaPanel[nonZeroIndex,1:10][testIndex,], africaPanel[nonZeroIndex,3:10][testIndex,])
+write.table(asiaAfricaPanel2, file = "asiaAfrica2.14.panel.txt", quote=F, sep="\t", row.names=F)
 
 asiaAfricaPanel[["HB3gt.from.regression"]] = panel[["HB3gt.from.regression"]]
 write.table(asiaAfricaPanel, file = "asiaAfrica_hb3.14.panel.txt", quote=F, sep="\t", row.names=F)
@@ -62,8 +64,12 @@ write.table (plaftab[nonZeroIndex,][testIndex,], file = "labStrains.1314.PLAF.tx
 asiaAfricaPanel = cbind( asiaPanel[nonZeroIndex,1:7][testIndex,], africaPanel[nonZeroIndex,3:7][testIndex,])
 write.table(asiaAfricaPanel, file = "asiaAfrica.1314.panel.txt", quote=F, sep="\t", row.names=F)
 
+asiaAfricaPanel2 = cbind( asiaPanel[nonZeroIndex,1:10][testIndex,], africaPanel[nonZeroIndex,3:10][testIndex,])
+write.table(asiaAfricaPanel2, file = "asiaAfrica2.1314.panel.txt", quote=F, sep="\t", row.names=F)
+
 panel = read.table("labStrains.wg.panel.txt", header=T)
 panel = panel[nonZeroIndex,][testIndex,]
+write.table (panel, file = "labStrains.1314.panel.txt", quote=F, sep="\t", row.names=F)
 
 asiaAfricaPanel[["HB3gt.from.regression"]] = panel[["HB3gt.from.regression"]]
 write.table(asiaAfricaPanel, file = "asiaAfrica_hb3.1314.panel.txt", quote=F, sep="\t", row.names=F)
@@ -90,8 +96,14 @@ write.table (plaftab[nonZeroIndex,][testIndex,], file = "labStrains.121314.PLAF.
 asiaAfricaPanel = cbind( asiaPanel[nonZeroIndex,1:7][testIndex,], africaPanel[nonZeroIndex,3:7][testIndex,])
 write.table(asiaAfricaPanel, file = "asiaAfrica.121314.panel.txt", quote=F, sep="\t", row.names=F)
 
+asiaAfricaPanel2 = cbind( asiaPanel[nonZeroIndex,1:10][testIndex,], africaPanel[nonZeroIndex,3:10][testIndex,])
+write.table(asiaAfricaPanel2, file = "asiaAfrica2.121314.panel.txt", quote=F, sep="\t", row.names=F)
+
+
 panel = read.table("labStrains.wg.panel.txt", header=T)
 panel = panel[nonZeroIndex,][testIndex,]
+write.table (panel, file = "labStrains.121314.panel.txt", quote=F, sep="\t", row.names=F)
+
 
 asiaAfricaPanel[["HB3gt.from.regression"]] = panel[["HB3gt.from.regression"]]
 write.table(asiaAfricaPanel, file = "asiaAfrica_hb3.121314.panel.txt", quote=F, sep="\t", row.names=F)
