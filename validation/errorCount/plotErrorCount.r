@@ -1,62 +1,98 @@
 rm(list=ls())
-png("switchVsMisCopyErr.png", width=1500, height = 1500)
-plot(c(10,300), c(1150,3200), type="n", xlab="Number of Switch Error", ylab ="Number of Miss Copying Error")
-#plot(c(0,110), c(50,1150), type="n")
+png("switchVsMisCopyErrlog.png", width=1000, height = 1000)
 
-sample3 = read.table("../labSampleNames3Strains", header=F, stringsAsFactors=F)$V1
-for (samplei in sample3){
-    tmpErrors = c()
-    tmpSeed=c()
-    for ( seed in 1:15 ){
-        prefix = paste(samplei, "_seed", seed, "k3", sep="")
-        fileName = paste(prefix, ".errorCount", sep ="")
-        if ( file.exists(fileName) ){
-            a = system(paste("tail -1 ", prefix, ".log",sep=""), intern=T)
-            prop = as.numeric(unlist(strsplit(a, split="\t")))
-            nStrain = sum(which(prop>0.01))
-#            cat (seed, " ", prop, "\n")
-            tmpErrors = cbind(tmpErrors, read.table(fileName, header=F)$V1)
-            tmpSeed=c(tmpSeed, seed)
-        }
-    }
-    centre = rowMeans(tmpErrors)
-#    points(centre[1], centre[2])
-    errorBar = apply(tmpErrors,1,sd)
-#    lines(c(centre[1]-errorBar[1], centre[1]+errorBar[1]), c(centre[2],centre[2]))
-#    lines(c(centre[1], centre[1]), c(centre[2]-errorBar[2],centre[2]+errorBar[2]))
-    text(centre[1], centre[2], label=samplei, col="blue")
-}
 
+simpleMix = paste("PG03", 89:94, "-C", sep="")
+#plot(c(0,1), c(0, 2000), type="n")
+mytable = data.frame ( prop = numeric(0), switchError = numeric(0), missCopy = numeric(0), sampleName = character(), strainName = character(), labStrain = character(), stringsAsFactors = F)
+mytablei = 1
 
 sample2 = read.table("../labSampleNames2Strains", header=F, stringsAsFactors=F)$V1
 for (samplei in sample2){
-    tmpErrors = c()
-    tmpSeed=c()
     for ( seed in 1:15 ){
         prefix = paste(samplei, "_seed", seed, "k2", sep="")
         fileName = paste(prefix, ".errorCount", sep ="")
         if ( file.exists(fileName) ){
-            a = system(paste("tail -1 ", prefix, ".log",sep=""), intern=T)
-            prop = as.numeric(unlist(strsplit(a, split="\t")))
-            nStrain = sum(which(prop>0.01))
-#            cat (seed, " ", prop, "\n")
-            tmpErrors = cbind(tmpErrors, read.table(fileName, header=F)$V1)
-            tmpSeed=c(tmpSeed, seed)
+            tmpInfo = read.table(fileName, header=F)
+            for ( i in 1:dim(tmpInfo)[1] ){
+                mytable[mytablei,]$prop = tmpInfo$V1[i]
+                mytable[mytablei,]$switchError = tmpInfo$V2[i]
+                mytable[mytablei,]$missCopy = tmpInfo$V3[i]
+                mytable[mytablei,]$sampleName = samplei
+                mytable[mytablei,]$strainName = paste(samplei,".", i, sep="")
+                labStrain = ""
+                if ( i == 1 ){
+                    labStrain = "hb3"
+                    if ( samplei %in% simpleMix) { labStrain = "3d7" }
+                } else {
+                    labStrain = "7g8"
+                    if ( samplei %in% simpleMix) { labStrain = "dd2" }
+                }
+                mytable[mytablei,]$labStrain = labStrain
+                mytablei = mytablei+1
+            }
         }
     }
-    centre = rowMeans(tmpErrors)
-#    points(centre[1], centre[2])
-#    points(tmpErrors[1,], tmpErrors[2,])
-#    text(tmpErrors[1,], tmpErrors[2,], labels=tmpSeed)
-    errorBar = apply(tmpErrors,1,sd)
-#    lines(c(centre[1]-errorBar[1], centre[1]+errorBar[1]), c(centre[2],centre[2]))
-#    lines(c(centre[1], centre[1]), c(centre[2]-errorBar[2],centre[2]+errorBar[2]))
-    if ( samplei %in% c("PG0389-C", "PG0394-C", "PG0398-C", "PG0399-C", "PG0400-C", "PG0401-C", "PG0413-C", "PG0414-C", "PG0415-C") ){
-        text(centre[1], centre[2], label=samplei, col = "red")
-    } else {
-        text(centre[1], centre[2], label=samplei)
-    }
 }
+
+sample3 = read.table("../labSampleNames3Strains", header=F, stringsAsFactors=F)$V1
+for (samplei in sample3){
+    for ( seed in 1:15 ){
+        prefix = paste(samplei, "_seed", seed, "k3", sep="")
+        fileName = paste(prefix, ".errorCount", sep ="")
+        if ( file.exists(fileName) ){
+            tmpInfo = read.table(fileName, header=F)
+            for ( i in 1:dim(tmpInfo)[1] ){
+                mytable[mytablei,]$prop = tmpInfo$V1[i]
+                mytable[mytablei,]$switchError = tmpInfo$V2[i]
+                mytable[mytablei,]$missCopy = tmpInfo$V3[i]
+                mytable[mytablei,]$sampleName = samplei
+                mytable[mytablei,]$strainName = paste(samplei,".", i, sep="")
+                labStrain = ""
+                if ( i == 1 ){
+                    labStrain = "hb3"
+                } else if ( i == 2) {
+                    labStrain = "7g8"
+                } else {
+                    labStrain = "dd2"
+                }
+                mytable[mytablei,]$labStrain = labStrain
+                mytablei = mytablei+1
+            }
+        }
+    }
+
+}
+
+mytable[["color"]] = 2
+mytable$color[mytable$sampleName %in% c("PG0395-C","PG0396-C","PG0397-C")] = 4
+mytable[["marker"]] = factor(mytable$labStrain)
+
+par(mfrow = c(2,1))
+
+plot(mytable$prop, mytable$switchError, ylab= "Number of switches when copying", xlab="Strain proportion", col=mytable$color, log="y", xlim = c(0,1), type="n", cex.lab=1.5)
+strains = unique(mytable$strainName)
+for ( strain in strains ){
+    tmpIndex = which(mytable$strainName == strain)
+    tmpMarker = as.numeric(unique(mytable$marker[tmpIndex]))
+    tmpColor = unique(mytable$color[tmpIndex])
+    points( mean(mytable$prop[tmpIndex]), mean(mytable$switchError[tmpIndex]), pch = tmpMarker, col=tmpColor, cex=1.5)
+}
+legend("topright", legend = levels(mytable$marker), pch = c(1,2,3,4), cex=2)
+legend("top", legend = c("Mixture of 2", "Mixture of 3"), text.col = c(2,4), cex=2)
+
+
+plot(mytable$prop, mytable$missCopy/18571, ylab= "Genotype error rate", xlab="Strain proportion", col=mytable$color, log="y", xlim = c(0,1), type="n", cex.lab=1.5)
+strains = unique(mytable$strainName)
+for ( strain in strains ){
+    tmpIndex = which(mytable$strainName == strain)
+    tmpMarker = as.numeric(unique(mytable$marker[tmpIndex]))
+    tmpColor = unique(mytable$color[tmpIndex])
+    points( mean(mytable$prop[tmpIndex]), mean(mytable$missCopy[tmpIndex])/18571, pch = tmpMarker, col=tmpColor, cex=1.5)
+}
+legend("topright", legend = levels(mytable$marker), pch = c(1,2,3,4), cex=2)
+legend("top", legend = c("Mixture of 2", "Mixture of 3"), text.col = c(2,4), cex=2)
+
 dev.off()
 
 

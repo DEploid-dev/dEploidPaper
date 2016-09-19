@@ -26,10 +26,18 @@ cases = paste(sampleName, c(".14.noPanel",
                             ".14.asiaAfirca_hb3_7g8",
                             ".14.asiaAfirca_hb3_7g8_dd2"), sep="")
 
+
 png(paste("differentPanelForSample.", sampleName, ".png", sep=""), width = 1920, height = 1080)
+
 par ( mfrow = c(length(cases),1))
 
+panelNames = c("No panel",
+               "Panel I: 5 Asia + 5 Africa",
+               "Panel II: Panel I + Hb3",
+               "Panel II: Panel II + 7G8",
+               "Panel IV: Panel III + Dd2")
 #errors = c()
+paneli=1
 for ( prefix in cases ){
 print(prefix)
     tmpProp = read.table(paste(prefix,".prop",sep=""), header=F)
@@ -61,7 +69,7 @@ print(prefix)
         hapAndError = fun.computeErrors3( tmpHap, tmpRef1, tmpRef2, tmpRef3)
         cat(prefix, " ", hapAndError$switchError, " ", hapAndError$mutError, "\n")
 #        tmpTitle = paste(prefix, rownames(table(panel[,1]))[chrom], hapAndError$switchError, "switch errors", hapAndError$mutError, "miss copy errors")
-        tmpTitle = paste("Switch errors:", hapAndError$switchError, ", miss copy errors:", hapAndError$mutError)
+        tmpTitle = paste(panelNames[paneli]," total switch errors:", sum(hapAndError$switchError), ", total genotype errors:", sum(hapAndError$mutError))
 #        tmpTitle = ""
         fun.plotHapWithProp (hapAndError$hap, tmpProp,
              tmpTitle,
@@ -70,6 +78,7 @@ print(prefix)
         mutError = mutError + hapAndError$mutError
     }
     write.table(c(switchError, mutError), file = paste(prefix,".errorCount", sep=""), quote = F, row.names=F, col.names=F)
+    paneli= paneli+1
 }
 
 dev.off()
