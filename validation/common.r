@@ -1,4 +1,4 @@
-fun.divide.to.seg <- function(hapLength, numSeg = 501){
+fun.divide.to.seg <- function(hapLength, numSeg = 51){
     return(floor(seq(1, hapLength, length.out =numSeg)))
 }
 
@@ -101,7 +101,7 @@ fun.computeErrors2 <- function(hap, ref1, ref2){
         strain = cbind(c(NA,NA), countSwitch)
         strainNext = cbind(countSwitch, c(NA,NA))
         switchError = rowSums(strain != strainNext, na.rm=T)
-        mutError = rowSum(hap==2)
+        mutError = colSums(hap==2)
     }
 
     return ( list ( hap = hap,
@@ -197,7 +197,7 @@ fun.computeErrors3 <- function(hap, ref1, ref2, ref3){
         strain = cbind(c(NA,NA,NA), countSwitch)
         strainNext = cbind(countSwitch, c(NA,NA,NA))
         switchError = rowSums(strain != strainNext, na.rm=T)
-        mutError = rowSum(hap==2)
+        mutError = colSums(hap==2)
     }
 
     return ( list ( hap = hap,
