@@ -55,7 +55,7 @@ Ref3Name = "Dd2"
         }
 
         hapAndError = fun.computeErrors3( tmpHap, tmpRef1, tmpRef2, tmpRef3)
-        tmpTitle = paste(prefix, rownames(table(panel[,1]))[chrom], sum(hapAndError$switchError), "switch errors", sum(hapAndError$mutError), "miss copy errors")
+        tmpTitle = paste(rownames(table(panel[,1]))[chrom], sum(hapAndError$switchError), "switch errors", sum(hapAndError$mutError), "miss copy errors")
 
         fun.plotHapWithProp (hapAndError$hap, tmpProp,
              tmpTitle,

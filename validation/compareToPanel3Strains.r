@@ -31,11 +31,11 @@ png(paste("differentPanelForSample.", sampleName, ".png", sep=""), width = 1920,
 
 par ( mfrow = c(length(cases),1))
 
-panelNames = c("No panel",
-               "Panel I: 5 Asia + 5 Africa",
-               "Panel II: Panel I + Hb3",
-               "Panel II: Panel II + 7G8",
-               "Panel IV: Panel III + Dd2")
+panelNames = c("No panel,",
+               "Panel I: 5 Asia + 5 Africa,",
+               "Panel II: Panel I + Hb3,",
+               "Panel II: Panel II + 7G8,",
+               "Panel IV: Panel III + Dd2,")
 #errors = c()
 paneli=1
 for ( prefix in cases ){

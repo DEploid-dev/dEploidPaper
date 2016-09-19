@@ -1,5 +1,10 @@
-fun.divide.to.seg <- function(hapLength, numSeg = 51){
-    return(floor(seq(1, hapLength, length.out =numSeg)))
+fun.divide.to.seg <- function(hapLength, by = 50){
+#    return(floor(seq(1, hapLength, length.out =numSeg)))
+    myseq = seq(1, hapLength, by = by)
+    if ((hapLength-1)%%by != 0){
+        myseq = c(myseq, hapLength)
+    }
+    return(myseq)
 }
 
 getIndex3 <- function (mixedSample, ref1, ref2, ref3, prop){

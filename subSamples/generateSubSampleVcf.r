@@ -14,11 +14,11 @@ fun.writeSubVcf <- function( vcfName, newVcfName, coverage ){
     vcf[["FORMAT"]] = rep("GT:AD", length(vcf[["FORMAT"]]))
     vcf[,10] = paste( ".:", coverage$refCount, ",", coverage$altCount, sep = "")
     write.table(vcf, file = newVcfName, append = T, sep = "\t", quote = F, row.names = F)
-
+    system(paste("bgzip", newVcfName))
 }
 
 set.seed(1)
-sampleName = "PG0413-C"
+sampleName = "PG0402-C"
 originalVcf = paste("../validation/", sampleName, ".14.vcf", sep="")
 
 coverage = fun.extract.vcf(originalVcf)
