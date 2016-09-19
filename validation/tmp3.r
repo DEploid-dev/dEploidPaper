@@ -37,7 +37,7 @@ Ref3Name = "Dd2"
 
     prop.corrected = prop[colIndex]
     hap.corrected = hap[,colIndex,drop=FALSE]
-
+    printed.prop = prop.corrected[getIndex3(hap.corrected, Ref1, Ref2, Ref3, c(1,1,1))]
 
     switchError = c(0, 0, 0)
     mutError = c(0, 0, 0)
@@ -55,7 +55,7 @@ Ref3Name = "Dd2"
         }
 
         hapAndError = fun.computeErrors3( tmpHap, tmpRef1, tmpRef2, tmpRef3)
-        tmpTitle = paste(prefix, rownames(table(panel[,1]))[chrom], hapAndError$switchError, "switch errors", hapAndError$mutError, "miss copy errors")
+        tmpTitle = paste(prefix, rownames(table(panel[,1]))[chrom], sum(hapAndError$switchError), "switch errors", sum(hapAndError$mutError), "miss copy errors")
 
         fun.plotHapWithProp (hapAndError$hap, tmpProp,
              tmpTitle,
@@ -64,7 +64,7 @@ Ref3Name = "Dd2"
         mutError = mutError + hapAndError$mutError
     }
     if ( length(prop.corrected) == 3 ){
-        write.table(c(prop.corrected, switchError, mutError), file = paste(prefix,".errorCount", sep=""), quote = F, row.names=F, col.names=F)
+        write.table(cbind(printed.prop, switchError, mutError), file = paste(prefix,".errorCount", sep=""), quote = F, row.names=F, col.names=F)
     }
     dev.off()
 
