@@ -1,0 +1,1 @@
+../validation/labStrains.14.PLAF.txt
