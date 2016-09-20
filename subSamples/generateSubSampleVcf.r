@@ -18,11 +18,12 @@ fun.writeSubVcf <- function( vcfName, newVcfName, coverage ){
 }
 
 set.seed(1)
-sampleName = "PG0402-C"
-originalVcf = paste("../validation/", sampleName, ".14.vcf", sep="")
+sampleName = "PG0406-C"
+originalVcf = paste("../validation/", sampleName, ".eg.vcf", sep="")
 
 coverage = fun.extract.vcf(originalVcf)
-for ( i in 1:10 ){
+
+for ( i in c(2,5,8,10) ){
     currentP = i/10
     tmpCoverage = coverage
     tmpCoverage$refCount = rbinom(length(coverage$refCount), coverage$refCount, currentP)
