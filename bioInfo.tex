@@ -5,7 +5,9 @@
 \usepackage{cases}
 \graphicspath{{./figures/}}
 \definecolor{RubineRed}{RGB}{240, 0, 240}       % RubineRed  Approximate PANTONE RUBINE-RED
+
 \usepackage{todonotes}
+\usepackage{hyperref}
 
 
 \copyrightyear{2016} \pubyear{2016}
@@ -22,8 +24,9 @@
 }
 
 \title[Deconvolute mixed genomes]{DEploid: Untangling multiplicity of infection in {\it Plasmodium falciparum}.}
-\author[Zhu \textit{et~al}.]{Sha Joe Zhu\,$^{\text{\sfb 1},*}$, Jacob Almagro Garcia\,$^{\text{\sfb 1}}$ and Gil McVean\,$^{\text{\sfb 1},*}$}
-\address{$^{\text{\sf 1}}$Wellcome Trust Centre for Human Genetics, University of Oxford, Oxford OX3 7BN, UK }
+\author[Zhu \textit{et~al}.]{Sha Joe Zhu\,$^{\text{\sfb 1},*}$, Jacob Almagro Garcia\,$^{\text{\sfb 1}}$ and Gil McVean\,$^{\text{\sfb 1,2},*}$}
+\address{$^{\text{\sf 1}}$ Wellcome Trust Centre for Human Genetics, University of Oxford, Oxford OX3 7BN, UK \\
+$^{\text{\sf 2}}$ Big data institute, University of Oxford, Oxford OX3 7BN, UK }
 
 \corresp{$^\ast$To whom correspondence should be addressed.}
 
@@ -41,7 +44,7 @@ Multiplicity of infection in the malarial parasite {\it Plasmodium falciparum} a
 \maketitle
 
 \section{Introduction}
-Malaria is still one of the top global health problems. Transmitted by mosquitos of the genus Anopheles, the majority of malaria related deaths are caused by the  Plasmodium falciparum parasite (WHO, 2015). . Patients are often infected with  more than one parasite strain, due to bites from multiple mosquitoes, mosquitoes carrying multiple genetic types or a combination of both. Multiplicity of infection  can lead to competitions among co-existing strains  and may increase  disease development \citep{deRoode2005}, higher transmission rates \citep{Arnot1998} and even the spread of drug resistance \citep{deRoode2004}.
+Malaria is still one of the top global health problems. Transmitted by mosquitos of the genus Anopheles, the majority of malaria related deaths are caused by the  Plasmodium falciparum parasite \citep{WHO2016}. Patients are often infected with  more than one parasite strain, due to bites from multiple mosquitoes, mosquitoes carrying multiple genetic types or a combination of both. Multiplicity of infection  can lead to competitions among co-existing strains  and may increase  disease development \citep{deRoode2005}, higher transmission rates \citep{Arnot1998} and even the spread of drug resistance \citep{deRoode2004}.
 
 The presence of multiple strains of {\it P. falciparum} makes fine scale analysis of genetic variation very challenging since genetic differences between the genetic types of this haploid organism will render as heterozygous loci. Mixed calls also confounds methods that exploit haplotype data to detect, among other phenomena, the occurrence of natural selection or recent demographic events. In light of these difficulties, researchers usually focus on clonal infections or resort to heuristics methods for resolving heterozygous genotypes. The former approach discards valuable information regarding genetic diversity and inbreeding whereas the latter tends to create chimeric haplotypes that are not suitable for analysis, unless mixed calls are very sparse.
 
@@ -54,7 +57,8 @@ As part of the Pf3k project \citep{Pf3k2016}, an effort to map the genetic diver
 \begin{methods}
 
 \section{Methods}
-Overall, we use Markov chain Monte Carlo (MCMC) methods to learn the number of parasite strains and the proportions of allele frequencies, and use sampling method to infer the haplotype of each strain.
+Overall, we use Markov chain Monte Carlo (MCMC) methods to learn the number of parasite strains and the proportions of allele frequencies, and use sampling method to infer the haplotype of each strain. The goal is firstly construct a high quality reference panel from the clonal samples, and then deconvolute the mixed samples with the reference panel using \citet{Li2003}’s hidden Markov model.
+
 
 %In practice, more parasite strains are assumed than it needs to be. Thus, the number of parasite strains are fixed; and the noisy strains with proportions below one percent are ``zeroed-out''. More specifically,
 %\begin{itemize}
@@ -66,41 +70,12 @@ Overall, we use Markov chain Monte Carlo (MCMC) methods to learn the number of p
 %We treat the clonal sample sequences as the back-bone of the haplotype structure, combine with information from the targeted sequence data to infer haplotypes by sampling. Specifically, we use \citet{Li2003}’s hidden Markov model framework as a starting point, with the following modifications:
 
 \subsection{Notations}
-Let's first introduce some of the notation. Suppose that our data $D$ are the allele counts of sample $j$ at a given site $i$, denoted as $r_{j,i}$ and $a_{j,i}$ for reference and alternative allels respectively. The allele frequencies within sample (WSAF) $p_{j,i}$ and at the population level (PLAF) $f_i$ can be calculated by $ \frac{a_{j,i}}{a_{j,i} + r_{j,i}}$ and $ \frac{\sum_j a_{j,i}}{\sum_j a_{j,i} + \sum_j r_{j,i}}$.
+Let's first introduce some of the notation (see Table~\ref{tab:notation}). Suppose that our data $D$ are the allele counts of sample $j$ at a given site $i$, denoted as $r_{j,i}$ and $a_{j,i}$ for reference and alternative allels respectively. The allele frequencies within sample (WSAF) $p_{j,i}$ and at the population level (PLAF) $f_i$ can be calculated by $ \frac{a_{j,i}}{a_{j,i} + r_{j,i}}$ and $ \frac{\sum_j a_{j,i}}{\sum_j a_{j,i} + \sum_j r_{j,i}}$.
 
 Since all data in this section is subjected to the same sample, we drop the subscript $j$ from now on. Let $\mathbf w = [w_1,\dots, w_k]$ and $\mathbf{h}_{i} = [h_{1,i},\dots,h_{k,i}]$ denote the proportions and haplotypes of $k$ parasite strain at site $i$. \citet{Jack2016} suggest to express the expected WSAF $q_{i}$:
 \begin{equation}
 q_i= (\mathbf{w}\cdot\mathbf{h}_{i})  =  \sum_{k=1}^{K} w_k \cdot h_{k,i} .\label{eqn:qij_full_sum}
 \end{equation}.
-
-\subsubsection{Likelihood of data given the expected WSAF}
-Suppose unadjusted allele frequency is $q_i$, given the reads error rate $e$, the expected allele frequency of `REF' read as `ALT' is $(1 - q_i)e$, and the expected allele frequency of `ALT' read as `REF' is $q_ie$. Thus, we adjust the WSAF take into account of read error as follows:
-\begin{equation}
-\pi_i = q_i + (1 - q_i)e - q_ie = q_i + (1 - 2q_i)e.\label{eqn:adj_q}
-\end{equation}
-
-We take into account over-dispersion in read counts, modelling the count distribution as a Beta-binomial distribution. Specifically, the read counts of `ALT' are identically and independently distributed (i.i.d.) with probability $\pi_{i}$ (adjusted), i.e. $a_i \sim Binom(\pi_{i}, a_i + r_i)$, and $\pi_{i}\sim Beta(\alpha, \beta)$, where $\pi_{i} = \alpha/(\alpha+\beta)$. From exprience, we set $\alpha = 100\cdot q_{i} $ and $\beta = 100\cdot (1-q_{i})$. Hence we can express the likelihood of the data using:
-\begin{equation}
-L(q_{i} | D) = P(D|q_{i}) \propto \frac{\Gamma(a_i + 100\cdot \pi_{i}) \Gamma(r_i + 100\cdot (1-\pi_{i}))}{\Gamma(100\cdot \pi_{i})\Gamma(100\cdot (1-\pi_{i}))}, \label{eqn:llk}
-\end{equation}
-of which expected WSAF $q_i$ is adjusted through Eqn.\eqref{eqn:adj_q}.
-
-%\begin{table}[h]\centering
-%\begin{tabular}{c|c}\hline
-%Marker index & $i$ \\
-%Sample index & $j$ \\
-%Read count for reference allele & $r$ \\
-%Read count for alternative allele & $a$ \\
-%Population level allele frequency (PLAF) & $f$ \\
-%Number of strains within sample & $k$ \\
-%Proportion of strains & $\mathbf w$ \\
-%haplotypes of $k$ parasite strain at site $i$ & $\mathbf{h}_{i}$ \\
-%Observed within sample allele frequency (WSAF) & $p$ \\
-%Unadjusted expected WSAF & $q$ \\
-%Adjusted expected WSAF & $\pi$ \\\hline
-%\end{tabular}
-%\caption{Notation summary}
-%\end{table}
 
 \begin{table}[h]\centering
 \begin{tabular}{c|c}\hline
@@ -116,11 +91,24 @@ $p$              & Observed within sample allele frequency (WSAF) \\
 $q$              & Unadjusted expected WSAF  \\
 $\pi$            & Adjusted expected WSAF \\\hline
 \end{tabular}
-\caption{Notation summary}
+\caption{Notation summary}\label{tab:notation}
 \end{table}
 
+\subsubsection{Likelihood of data given the expected WSAF}
+Suppose unadjusted allele frequency is $q_i$, given the reads error rate $e$, the expected allele frequency of `REF' read as `ALT' is $(1 - q_i)e$, and the expected allele frequency of `ALT' read as `REF' is $q_ie$. Thus, we adjust the WSAF take into account of read error as follows:
+\begin{equation}
+\pi_i = q_i + (1 - q_i)e - q_ie = q_i + (1 - 2q_i)e.\label{eqn:adj_q}
+\end{equation}
+
+We take into account over-dispersion in read counts, modelling the count distribution as a Beta-binomial distribution. Specifically, the read counts of `ALT' are identically and independently distributed (i.i.d.) with probability $\pi_{i}$ (adjusted), i.e. $a_i \sim Binom(\pi_{i}, a_i + r_i)$, and $\pi_{i}\sim Beta(\alpha, \beta)$, where $\pi_{i} = \alpha/(\alpha+\beta)$. From exprience, we set $\alpha = 100\cdot q_{i} $ and $\beta = 100\cdot (1-q_{i})$. Hence we can express the likelihood of the data using:
+\begin{equation}
+L(q_{i} | D) = P(D|q_{i}) \propto \frac{\Gamma(a_i + 100\cdot \pi_{i}) \Gamma(r_i + 100\cdot (1-\pi_{i}))}{\Gamma(100\cdot \pi_{i})\Gamma(100\cdot (1-\pi_{i}))}, \label{eqn:llk}
+\end{equation}
+of which expected WSAF $q_i$ is adjusted through Eqn.\eqref{eqn:adj_q}.
+
+
 \subsection{Technical details}
-Overall, we generate MCMC samples for the proportions $\mathbf w$ and the haplotypes $\mathbf h$ for given number of strains. In particular, we assume there are more strains than we actually need, start the MCMC chain with a fixed $k$. As the values of proportion drops, ``zero-out'' the ``noisy'' strain. As for the MCMC moves, we use a Metropolis-Hastings algorithm to sample proportions $\mathbf w$ given $\mathbf h$ (see section~\ref{sec:updateP}); and use Gib sampler to update $\mathbf h$ of given $\mathbf w$, which are further divied into cases when building the reference panel (see section~\ref{sec:ref:build}) and deconvolute mixed samples (see section~\ref{sec:deconvolute}).
+Overall, we generate MCMC samples for the proportions $\mathbf w$ and the haplotypes $\mathbf h$ for given number of strains. In particular, we assume there are more strains than we actually need, start the MCMC chain with a fixed $k$. As the values of proportion drops, ``zero-out'' the ``noisy'' strain. As for the MCMC moves, we use a Metropolis-Hastings algorithm to sample proportions $\mathbf w$ given $\mathbf h$ (section~\ref{sec:updateP}); and use Gib sampler to update $\mathbf h$ of given $\mathbf w$, which are further divied into cases when building the reference panel (section~\ref{sec:method.ref}) and deconvolute mixed samples (section~\ref{sec:method.deconv}). At last, we take the best fit (section\ref{sec:method.dic}) of the MCMC sample as a point estimate to infer the haplotypes and proportion.
 
 \subsubsection{MCMC update for proportions}\label{sec:updateP}
 We use a sparse update on $\mathbf w$. We introduce a multivariate normal variable titre ${\mathbf x} = [x_1,\dots,x_k]$, where each $x$ is i.i.d. normally distributed from $N(0, 3)$, with the density function $d(x)$. We sample $x$s, then transform to $w = e^x$. We then normalise vector $\mathbf w$ by the sum, to obtain a new sample ${\mathbf w}$. Thus, the density of $\mathbf p$ is equivlent to the product of $d(x)$s, which leads us to
@@ -131,7 +119,7 @@ The prior ratio is equal to $\frac{\prod_i^k d(x'_k)}{\prod_i^k d(x'_k)}$; and t
 %Let $\frac{L(\mathbf{p'}|D)}{L(\mathbf{p}|D)}$ be the likelihood ratio, which is $\exp( l(\mathbf{w'}|D) - (\mathbf{w}|D))$.
 
 
-\subsection{Infer the reference strains}\label{sec:ref:build}
+\subsection{Infer the reference strains}\label{sec:method.ref}
 In practice, we assume clonal sample haplotypes capture the diversities of haplotype structures given all samples. We use them as the reference strains for start, and deconvolute the rest mixed samples from them. We start with a set of clonal sample candidate, and run the algorithm to confirm they are in fact clonal. We use Gib sampler to update $\mathbf h$ of given $\mathbf w$, randomly select one strain at the time, or a pair of strains to update in order to improve the mixing of the MCMC process.
 
 \subsubsection{Update a single strain at one time}
@@ -211,7 +199,7 @@ where $P(g_{s_1}=*,g_{s_2}=\# ) = P(g_{s_1}=*) \cdot P(g_{s_2}=\# )$, assume $s_
 
 
 
-\subsection{Deconvolute the mixed isolates}
+\subsection{Deconvolute the mixed isolates}\label{sec:method.deconv}
 
 We use \citet{Li2003}'s hidden Markov model frame work as a starting point. The following modifications are made:
 \begin{itemize}
@@ -409,9 +397,6 @@ P(g_{p_1} = 1-*, g_{p_2} = 1-\# \big{|} D) \cdot \mu \cdot \mu, & g_{s_1} \neq g
 \end{equation}
 \end{enumerate}
 
-
-
-
 \begin{itemize}
 \item Randomly update a single strain or two strains simultaneously.\\
 A crucial difference between our method and LS's model is that mixed samples can have more than two strains, with unknown proportions. We randomly choose the strains to update, then apply LS's algorithm to sample the path (see Fig.~\ref{fig:ls}) using Gibbs sampler with given proportion rather than 50/50 in the cases of diploid samples.
@@ -421,8 +406,10 @@ A crucial difference between our method and LS's model is that mixed samples can
 \end{itemize}
 
 
-\subsection{Model selection}
-The final iteration of the MCMC sample is treated as a point estimate to infer the haplotypes and proportion. %\todo{DIC calculation}
+\subsection{Model selection}\label{sec:method.dic}
+The final iteration of the MCMC sample is treated as a point estimate to infer 
+the haplotypes and proportion.
+
 Hence the deconvolution process is repeated with different random seeds; the best fit model is chosen according to the lowest deviance information criterion. The DIC is calculated from the samples generated by a Markov chain Monte Carlo simulation, and penalized by the average diviance.
     %DIC.WSAF.bar = -2 * sum(thetallk)
     %return (  mean(-2*tmpllk) + (mean(-2*tmpllk) - DIC.WSAF.bar) ) # D_bar + pD, where pD = D_bar - D_theta, and D_bar = mean(D_theta)
@@ -469,29 +456,42 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 \label{tab:jason}
 \end{table}
 
-We apply our program to 27 lab-mixed {\em in vitro} samples to validate our methods and program. As discribed in section~\ref{sec:updateP}, we start our method with the assumption of at most three strains present in the mixtures; and discard the strains less than 1\%. Our method successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). The differences between our proportion estimates and the truth is at most 2\%. Detailed validation steps are described in the supplement material.
+We apply our program to 27 lab-mixed {\em in vitro} samples to validate our methods and program. As discribed in section~\ref{sec:updateP}, we start our method with the assumption of at most three strains present in the mixtures; and discard the strains less than 1\%. Our method successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). The deviation between our proportion estimates and the truth is at most 2\%. Note that this data set only contains two clonal-ish samples, which are not ideal for constructing a reference panel due to the limited size. Alternatively, we have experimented with the following different reference panels:
+\begin{itemize}
+\item panel I: five Asian and five African clonal strains from the Pf3k\citep{Pf3k2016} data base: {\tt PD0498-C}, {\tt PD0500-C}, {\tt PD0660-C}, {\tt PH0047-Cx}, {\tt PH0064-C}, {\tt PT0002-CW}, {\tt PT0007-CW}, {\tt PT0008-CW}, {\tt PT0014-CW}, {\tt PT0018-CW}.
+\item panel II: panel I with the addition of HB3;
+\item panel III: panel II with the addition of 7g8;
+\item panel IV: panel III with the addition of dd2;
+\item panel V: 3d7, HB3, 7G8 and dd2 strains, inference detail of these strains are described in the supplement material.
+\item panel VI: panel I with the addition of six (three each) clonal strains from Asia and Africa: {\tt PH0193-C}, {\tt PH0283-C}, {\tt PH0305}, {\tt PT0060-C}, {\tt PT0146-C} and {\tt PT0158-C}.
+\end{itemize}
 
-Our model overfits the noisy lab-mixed sample with additional strains. Note that in Table~\ref{tab:jason}, we infer six of the HB3 and 7g8 mixtures as mixing of three, two of which haplotypes have subbtle difference with the same parasite line, but overall vastly different the last strain. The subbtle variation is caused by few hetrozigous sites with high coverage resulting high leverage in our model (see supplemental Figure~S4.3(a)). The origin of the noisy markers are possibily from sequncing or variant calling process, which are not recalabriated by our program.
-
-
-We experimented with using different reference panels for deconvolution. In all cases we estimated the number and proportion of strains accurately, but the accuracy of the haplotype is dependent on having an approriate reference panel (see Figure~\ref{fig:differentRefPanel}).
-
+In all cases we estimated the number and proportion of strains accurately, but the accuracy of the haplotype is dependent on having an approriate reference panel (see Figure~\ref{fig:differentRefPanel}).
 
 \begin{figure}[h]
 \centerline{
 \includegraphics[width=0.45\textwidth]{{differentPanelForSample.PG0396-C}.png}
 }
-\caption{Haplotypes comparison of sample {\tt PG0396-C} chromosome 14 deconvolution without any reference strain (top) versus with using different reference panels (from the second to the bottom): I. 5 Asian and 5 African clonal strains; II. panel I with the addition of HB3; III. panel II with the addition of 7g8; IV. panel III with the addition of dd2. Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segements from strains 7g8, HB3 and dd2 respectively.}\label{fig:differentRefPanel}
+\caption{Haplotypes comparison of sample {\tt PG0396-C} chromosome 14 deconvolution without any reference strain (top) versus with using different reference panels (from the second to the bottom). Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segements from strains 7g8, HB3 and dd2 respectively.}\label{fig:differentRefPanel}
 \end{figure}
 
+
 \section{Performance}
+
 \subsection{Accuracy}
+Our model overfits the noisy lab-mixed sample with additional strains. Note that in Table~\ref{tab:jason}, we infer six of the HB3 and 7g8 mixtures as mixing of three, two of which haplotypes have subbtle difference with the same parasite line, but overall vastly different the last strain. The subbtle variation is caused by few hetrozigous sites with high coverage resulting high leverage in our model (see supplemental Figure~S4.3(a)). The origin of the noisy markers are possibily from sequncing or variant calling process, which are not recalabriated by our program.
+
+the proportion affect the inference results as well, see Fig~\ref{fig:swithVsMisCopy}
+
+
+the affect of coverage ...
+
 
 \begin{figure}[h]%figure1
 \centerline{
 \includegraphics[width=0.45\textwidth]{{switchVsMisCopyErrlog}.png}
 }
-\caption{}\label{fig:swithVsMisCopy}
+\caption{We use panel V to deconvolute all 27 samples, }\label{fig:swithVsMisCopy}
 \end{figure}
 
 %\begin{table}
@@ -516,7 +516,7 @@ We experimented with using different reference panels for deconvolution. In all 
 %\end{figure}
 
 \subsection{Run-time}
-The complexity of our program is $\mathcal{O}(n^2m)$, where $n$ and $m$ are the number of reference strains and sites respectively. In practice, we divide Pf3k samples into several geographical region and perform deconvolution, with ten most diversed clonal strains as reference panel. The run time of deconvoluting a field sample range from 1 to 6 hours. For example, it takes $5\frac{1}{2}$ hours to process sample {\tt QG0182-C} with 372,884 sites.
+The complexity of our program is $\mathcal{O}(n^2m)$ (see Fig~\ref{fig:runtime}), where $n$ and $m$ are the number of reference strains and sites respectively. In practice, we divide Pf3k samples into several geographical region and perform deconvolution, with ten most diversed clonal strains as reference panel. The run time of deconvoluting a field sample range between 1 and 6 hours, depending on the number variants in a sample: For example, it takes $5\frac{1}{2}$ hours to process sample {\tt QG0182-C} over 372,884 sites. 
 
 %94m31.924s PD0500-C 98,211
 %328m52.036s  QG0182-C 372,884
@@ -524,6 +524,7 @@ The complexity of our program is $\mathcal{O}(n^2m)$, where $n$ and $m$ are the 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=.5\textwidth,height=0.4\textwidth]{runTime.png}
+\caption{As a demonstration, we deconvolute chromsome 14, chromesomes 13 and 14, chromsomes 12 to 14 of sample {\tt PG0412-C} with reference panels I, V and VI. The run-time is almost linear respect to the number of sites; and shows quadratic trend against the number of reference strains.}\label{fig:runtime}
 \end{figure}
 
 \end{methods}
@@ -641,6 +642,12 @@ O'Brien D,J., Iqbal Z, Wendler J, Amenga-Etego L (2016). \newblock Inferring Str
 Wendler, J. (2015).
 \newblock {\em Accessing complex genomic variation in} {P}lasmodium falciparum {\em natural infection}.
 \newblock Ph.\ D. thesis, University of Oxford.
+
+\bibitem[\protect\citeauthoryear{WHO}{WHO}{2016}]{WHO2016}
+WHO (2016). 
+\newblock {World Malaria Report 2015}.
+\newblock {\em World Health Organization\/}.
+
 
 %\bibitem{pfdeconv}
 %Zhu, S., PfDeconv (2016).
