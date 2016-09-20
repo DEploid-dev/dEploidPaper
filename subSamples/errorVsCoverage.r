@@ -35,9 +35,9 @@ Ref1Name = "HB3"
 Ref2 = panel[,6] # 7G8
 Ref2Name = "7G8"
 
-sample = "PG0402-C"
-suffix = "lab"
-#suffix = "asiaAfirca"
+sample = "PG0406-C"
+#suffix = "lab"
+suffix = "asiaAfirca"
 subSamples = c(20, 50, 80, 100)
 #subSamples = c(50)
 for ( subSample in subSamples ) {
