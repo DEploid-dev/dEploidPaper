@@ -6,7 +6,7 @@
 \graphicspath{{./figures/}}
 \definecolor{RubineRed}{RGB}{240, 0, 240}       % RubineRed  Approximate PANTONE RUBINE-RED
 
-\usepackage{todonotes}
+%\usepackage{todonotes}
 \usepackage{hyperref}
 
 
@@ -481,37 +481,36 @@ Note that this data set only contains two clonal-ish samples, which are not idea
 Our model overfits the noisy lab-mixed sample with additional strains. Note that in Table~\ref{tab:jason}, we infer six of the HB3 and 7g8 mixtures as mixing of three, two of which haplotypes have subbtle difference with the same parasite line, but overall vastly different from the last strain. The subbtle variation is caused by few hetrozigous sites with high coverage resulting high leverage in our model (see supplemental Figure~S4.3(a)). The origin of the noisy markers are possibily from sequncing or variant calling process, which are not recalabriated by our program.
 
 \subsubsection{Haplotypes}
-In order to assess the accuracy of the inferred haplotypes, we want to take into account of both swithch errors () and genotype miss copying (discordance between ). Since we have used , however this is difficult.
+Our accuracy assessment for inferred haplotypes take into account of both swithch errors and genotype discordance, which reflect to the recombination and miss copying events in the method section. Intuitively, one may suggest to use the Li and Stephens model to compute the vertabi path or posterior probabilities to assess the how different our inferred haplotypes differ from the truth. However, we find that such methods overestimate switch errors at short segments of sequence due to the reference panel quality. 
 
-overestimates switch errors
+Moreover, we want to assess the switch errors of one haplotype by also taking into account of switches of the other haplotypes. Note that in Figure~\ref{fig:differentRefPanel}, the top and bottom strains have similar proportions, which are difficult to phase without a perfect reference panel. One may flip parts of the two strains to resolve the errors. Unfortunately, our Li and Stephens implementation focuses on a single strain (two strains at the most), the vertabi path or posterior probabilities fail to align the switches of all strains. Therefore, we have taken a simpler approach by dividing the inferred haplotypes into segments with length of 50, then mapped onto reference strains of panel V according to the indices.
 
-unable to align the flips
-
-Alternatively,
-
-
-each inferred haplotype is then divided into segments with length of 50, then mapped onto panel V reference strains according to the indices.
-
-In order to test how sensitive our model with coverage, data is simulated by sampling read counts according to a $Bin(n,p)$ model, where $n$ is the number alternative and reference alleles at each site. Four different probabilities $p$: 0.2, 0.5, 0.8 and 1.0 are used for simulating the senariors of lower, median and high coverage data and control. We have found that
-
-, but the accuracy of the haplotype is dependent on having an approriate reference panel .
-
-
-the proportion affect the inference results as well, see Fig~\ref{fig:swithVsMisCopy}
-
-
-the affect of coverage ...
-
+Our assessment on haplotype inference can be concluded as the following:
+\begin{itemize}
+\item The proportion inference do not seem to be affected by the presence of reference panel nor the quality of a panel (Figure~\ref{fig:differentRefPanel}).
+\item The accuracy of the haplotype is dependent on having an approriate reference panel (Figure~\ref{fig:differentRefPanel}).
+\item The strain proportion affects the haplotype inference (see Fig~\ref{fig:swithVsMisCopy}). Our method infer strains of with proportions over 20\% accurately, but struggle with minor strains due to data insufficiency.
+\end{itemize}
 
 \begin{figure}[h]%figure1
 \centerline{
 \includegraphics[width=0.45\textwidth]{{switchVsMisCopyErrlog}.png}
 }
-\caption{We use panel V to deconvolute all 27 samples.  }\label{fig:swithVsMisCopy}
+\caption{We use reference panel V to deconvolute all 27 samples. Each markers}\label{fig:swithVsMisCopy}
 \end{figure}
 
-
-
+We extended our experiments further to test how sensitive the inference result is to the sequence coverage. We simulate data by sampling read counts according to $Binomial(n,p)$ models, where $n$ is the number alternative and reference alleles at each site. Three different probabilities $p$: 0.2, 0.5, 0.8 are used for creating the senariors of lower, median and high coverage data. Our findings can be summarized as follows:
+\begin{itemize}
+\item In the case when a perfect reference panel is provided:
+\begin{itemize}
+\item The sequence coverage have little affect on haplotype inference of balanced mixtures.
+%\item 
+\end{itemize}
+\item In the case when a poor quality reference panel is provided:
+\begin{itemize}
+\end{itemize}
+\end{itemize}
+Figure~S3.3
 
 
 \subsection{Run-time}
