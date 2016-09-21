@@ -34,7 +34,7 @@ par ( mfrow = c(length(cases),1))
 panelNames = c("No panel,",
                "Panel I,",
                "Panel II,",
-               "Panel II,",
+               "Panel III,",
                "Panel IV,")
 #errors = c()
 paneli=1
