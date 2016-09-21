@@ -35,9 +35,13 @@ Ref1Name = "HB3"
 Ref2 = panel[,6] # 7G8
 Ref2Name = "7G8"
 
-sample = "PG0406-C"
+plotALT = TRUE
+
+for ( sample in c("PG0402-C", "PG0406-C")){
+for ( suffix in c("asiaAfirca", "lab")){
+#sample = "PG0406-C"
 #suffix = "lab"
-suffix = "asiaAfirca"
+#suffix = "asiaAfirca"
 subSamples = c(20, 50, 80, 100)
 #subSamples = c(50)
 for ( subSample in subSamples ) {
@@ -47,6 +51,9 @@ for ( subSample in subSamples ) {
     coverage = fun.extract.vcf(vcfName)
 
     totalCov = coverage$refCount + coverage$altCount
+    if (plotALT) {
+        totalCov = coverage$altCount
+    }
     spacing = ceiling(max(totalCov)/25)
     mybins = seq(0, ceiling(max(totalCov)/spacing)*spacing, by = spacing)
     nBins = length(mybins)
@@ -66,10 +73,6 @@ for ( subSample in subSamples ) {
     #    tmpProp = read.table(paste(prefix,".prop",sep=""), header=F)
     #    prop = as.numeric(tmpProp[dim(tmpProp)[1],])
         hap.corrected = as.matrix(read.table(paste(outprefix,".hap",sep=""), header=T)[,c(-1,-2)])
-
-    #    colIndex = which(prop>0.01)
-    #    prop.corrected = prop[colIndex]
-    #    hap.corrected = hap[,colIndex,drop=FALSE]
 
         for ( chrom in 1:length(beginAt)){
             tmpHap = hap.corrected[beginAt[chrom]:endAt[chrom],,drop=FALSE]
@@ -117,18 +120,15 @@ for ( subSample in subSamples ) {
                 eventCountMat = rbind(eventCountMat, eventCount)
                 eventSumMat = rbind(eventSumMat, eventSum)
                 eventArray = c(eventArray, event)
-        #        lines(mybins,eventSum/(eventCount+0.00000001), col=color)
-            #    lines(mybins,eventSum/(sum(truth!=infered)), col=color)
-            #lines(mybins,eventSum, col=color)
-            #    print(eventSum)
-            #    print(eventCount)
-        #        color = color+1
-        #        print(sum(eventSum))
             }
         }
     }
 #    mytitle = paste(prefix, Ref1Name, round(tmpProp[1], digits=3), "/", Ref2Name, round(tmpProp[2],digits=3))
-    png(paste(prefix, ".", suffix, ".errorVsCoverage.png",sep=""), width=600, height=600)
+    imageFileName = paste(prefix, ".", suffix, ".errorVsTotalCoverage.png",sep="")
+    if (plotALT){
+        imageFileName = paste(prefix, ".", suffix, ".errorVsAlt.png",sep="")
+    }
+    png(imageFileName, width=600, height=600)
     #par(mfrow=c(1,2))
 
     layout(matrix(c(1,1,1,1,2,2), 3, 2, byrow = TRUE))
@@ -162,10 +162,32 @@ for ( subSample in subSamples ) {
 
     legend("topright", legend=c("HB3/7G8",eventsType), fill=c(rgb(0,0,0,0),colors), border=c("white", rep("black",4)), cex=1.5)
 
-    hist(totalCov, breaks=mybins, ylim = c(0, 3500), col = rgb(1,0,0,0.5), xlab = "Coverage / Alternative allele count", main="Histogram of coverage" )
+#    case = 1
+#    colors = c(rgb(1,0,0,0.3), rgb(1,1,0,.3), rgb(0,1,0,0.3), rgb(0,0,1,0.3))
+#    for ( event in eventsType ){
+#        tmpCount = eventCountMat[eventArray == event,]
+#        tmpMat = c()
+#        for ( i in 1:dim(tmpCount)[1]){
+#            tmpCountRow = tmpCount[i,]
+#            tmpMat = rbind(tmpMat, tmpCountRow+1)
+#        }
+#        colnames(tmpMat) = as.character(mybins)
+#        if (case==1){
+#            boxplot(as.data.frame(tmpMat), col=colors[case], log="y", main="Error rate when wrongly infer genotype */*")
+#        } else {
+#            boxplot(as.data.frame(tmpMat), col=colors[case], log="y", add=T, axes =F)
+#        }
+#        case = case+1
+#    }
+
+#    legend("topright", legend=c("HB3/7G8",eventsType), fill=c(rgb(0,0,0,0),colors), border=c("white", rep("black",4)), cex=1.5)
+
+    hist(totalCov, breaks=mybins, ylim = c(0, 3500), col = rgb(1,0,0,0.5), xlab = "Total coverage", main="Histogram of coverage" )
     #obj = mpileAlt[,3][mpileAlt[,3]>0]
-    hist(coverage$altCount, breaks=seq(0, ceiling(max(coverage$altCount)/spacing)*spacing, by = spacing), add = T, col = rgb(0,0,1,0.5))
-    legend("topright", c("Total coverage", "Alt count"), fill=c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), cex=1.5)
+#    hist(coverage$altCount, breaks=seq(0, ceiling(max(coverage$altCount)/spacing)*spacing, by = spacing), add = T, col = rgb(0,0,1,0.5))
+#    legend("topright", c("Total coverage", "Alt count"), fill=c(rgb(1,0,0,0.5), rgb(0,0,1,0.5)), cex=1.5)
 
     dev.off()
+}
+}
 }
