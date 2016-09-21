@@ -416,7 +416,7 @@ Hence the deconvolution process is repeated with different random seeds; the bes
 
 
 
-\section{Validation}
+\section{Validation and Performance}
 A set of {\it in vitro} mixtures of parasites were created by \citet{Wendler2015} to simulate mixed infection, which is an ideal validation data set in our use. In this data set, DNA was extracted from four laboratory parasite lines: 3D7, Dd2, HB3 and 7G8, and mixed with different ratios of mixed infection (see Table~\ref{tab:jason} in brackets), and submitted to the MalariaGEN pipeline \citep{MalariaGen2008} for Illumina sequencing.
 
 
@@ -456,9 +456,12 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 \label{tab:jason}
 \end{table}
 
+
+\subsection{Accuracy}
+\subsubsection{Proprotions and number of strains}
 We apply our program to 27 lab-mixed {\em in vitro} samples to validate our methods and program. As discribed in section~\ref{sec:updateP}, we start our method with the assumption of at most three strains present in the mixtures; and discard the strains less than 1\%. Our method successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). The deviation between our proportion estimates and the truth is at most 2\%.
 
-Note that this data set only contains two clonal-ish samples, which are not ideal for constructing a reference panel due to the limited size. Alternatively, we have experimented with the following different reference panels; in all cases we estimated the number and proportion of strains accurately: Figure~\ref{fig:differentRefPanel} y-axises show the proportions of strains Dd2/7G8/HB3 as approximately 25/50/25\%.
+Note that this data set only contains two clonal-ish samples, which are not ideal for constructing a reference panel due to the limited size. Alternatively, we have experimented with the following different reference panels; in all cases we estimated the number and proportion of strains accurately, for example Figure~\ref{fig:differentRefPanel} y-axises show the proportions of strains Dd2/7G8/HB3 as approximately $\frac{1}{4}$/$\frac{1}{2}$/$\frac{1}{4}$.
 \begin{itemize}
 \item panel I: five Asian and five African clonal strains from the Pf3k\citep{Pf3k2016} data base: {\tt PD0498-C}, {\tt PD0500-C}, {\tt PD0660-C}, {\tt PH0047-Cx}, {\tt PH0064-C}, {\tt PT0002-CW}, {\tt PT0007-CW}, {\tt PT0008-CW}, {\tt PT0014-CW}, {\tt PT0018-CW}.
 \item panel II: panel I with the addition of HB3;
@@ -475,13 +478,21 @@ Note that this data set only contains two clonal-ish samples, which are not idea
 \caption{Haplotypes comparison of sample {\tt PG0396-C} chromosome 14 deconvolution without any reference strain (top) versus with using reference panels I to IV (from the second to the bottom). Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segements from strains 7g8, HB3 and dd2 respectively.}\label{fig:differentRefPanel}
 \end{figure}
 
-\section{Performance}
-
-\subsection{Accuracy}
 Our model overfits the noisy lab-mixed sample with additional strains. Note that in Table~\ref{tab:jason}, we infer six of the HB3 and 7g8 mixtures as mixing of three, two of which haplotypes have subbtle difference with the same parasite line, but overall vastly different from the last strain. The subbtle variation is caused by few hetrozigous sites with high coverage resulting high leverage in our model (see supplemental Figure~S4.3(a)). The origin of the noisy markers are possibily from sequncing or variant calling process, which are not recalabriated by our program.
 
-To measure the accuracy of the inferred haplotypes, each inferred haplotype is then divided into segments with length of 50, then mapped onto panel V reference strains according to the indices.
+\subsubsection{Haplotypes}
+In order to assess the accuracy of the inferred haplotypes, we want to take into account of both swithch errors () and genotype miss copying (discordance between ). Since we have used , however this is difficult.
 
+overestimates switch errors
+
+unable to align the flips
+
+Alternatively,
+
+
+each inferred haplotype is then divided into segments with length of 50, then mapped onto panel V reference strains according to the indices.
+
+In order to test how sensitive our model with coverage, data is simulated by sampling read counts according to a $Bin(n,p)$ model, where $n$ is the number alternative and reference alleles at each site. Four different probabilities $p$: 0.2, 0.5, 0.8 and 1.0 are used for simulating the senariors of lower, median and high coverage data and control. We have found that
 
 , but the accuracy of the haplotype is dependent on having an approriate reference panel .
 
