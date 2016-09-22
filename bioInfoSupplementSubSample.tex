@@ -1,0 +1,131 @@
+\input{supplementReset.tex}
+
+\begin{center}
+\textbf{\large Supplemental Materials of using data with different coverages}
+\end{center}
+\section{Method validation on lab controlled strains} \label{sup:sec:validate}
+We experimented how sensitive the inference result is to the sequence coverage. Data was simulated by sampling read counts according to $Binom(n,p)$ models, where $n$ was the number alternative and reference alleles at each site. Three different probabilities $p$: 0.2, 0.5, 0.8 were used for creating the scenarios of lower, median and high coverage data. We summerise our findings as follows:
+
+\begin{itemize}
+\item Figure~\ref{fig:subsample}(a) suggests that for the haplotype inference, the minor strain in particular, heavily relies on the reference panel for low coverage data.
+\item Figure~\ref{fig:subsample}(b) suggests that sequence coverage have little, almost none affect on haplotype inference of balanced mixtures, when a perfect panel is provided. 
+\item Figure~\ref{fig:subsample}(c) and (d) show the reduced error rate in higher coverage data.
+\item All figures show that deconvoluting heterozygous sites is challenging.
+\item All figures show that even at homozygous sites, there is still error for the inference. 
+\end{itemize}
+
+
+\begin{figure}[htp]
+\centering
+\subfloat[][{\textmd PG402-C} low coverage data decovolution with panel V.]{
+\includegraphics[width=.5\textwidth]{{subSamples/PG0402-C.subSample20.lab.errorVsTotalCoverage}.png}
+}
+\subfloat[][{\textmd PG406-C} low coverage data decovolution with panel V.]{
+\includegraphics[width=.5\textwidth]{{subSamples/PG0406-C.subSample20.lab.errorVsTotalCoverage}.png}
+}\\
+\subfloat[][{\textmd PG406-C} median coverage data decovolution with panel I.]{
+\includegraphics[width=.5\textwidth]{{subSamples/PG0406-C.subSample50.asiaAfirca.errorVsTotalCoverage}.png}
+}
+\subfloat[][{\textmd PG406-C} high coverage data decovolution with panel I.]{
+\includegraphics[width=.5\textwidth]{{subSamples/PG0406-C.subSample80.asiaAfirca.errorVsTotalCoverage}.png}
+}\\
+\caption{Error rate of a particular genotype inference at different converages}\label{fig:subsample}
+\end{figure}
+
+
+%\begin{figure}[htp]
+%\centering
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0402-C.subSample20.asiaAfirca.errorVsTotalCoverage}.png}
+%}
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0402-C.subSample50.asiaAfirca.errorVsTotalCoverage}.png}
+%}\\
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0402-C.subSample80.asiaAfirca.errorVsTotalCoverage}.png}
+%}
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0402-C.subSample100.asiaAfirca.errorVsTotalCoverage}.png}
+%}\\
+%\caption{PG0402-C asiaAfrica}
+%\end{figure}
+
+%\begin{figure}[htp]
+%\centering
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0402-C.subSample20.lab.errorVsTotalCoverage}.png}
+%}
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0402-C.subSample50.lab.errorVsTotalCoverage}.png}
+%}\\
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0402-C.subSample80.lab.errorVsTotalCoverage}.png}
+%}
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0402-C.subSample100.lab.errorVsTotalCoverage}.png}
+%}\\
+%\caption{PG0402-C lab}
+%\end{figure}
+
+%\begin{figure}[htp]
+%\centering
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0406-C.subSample20.asiaAfirca.errorVsTotalCoverage}.png}
+%}
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0406-C.subSample50.asiaAfirca.errorVsTotalCoverage}.png}
+%}\\
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0406-C.subSample80.asiaAfirca.errorVsTotalCoverage}.png}
+%}
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0406-C.subSample100.asiaAfirca.errorVsTotalCoverage}.png}
+%}\\
+%\caption{PG0402-C asiaAfrica}
+%\end{figure}
+
+%\begin{figure}[htp]
+%\centering
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0406-C.subSample20.lab.errorVsTotalCoverage}.png}
+%}
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0406-C.subSample50.lab.errorVsTotalCoverage}.png}
+%}\\
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0406-C.subSample80.lab.errorVsTotalCoverage}.png}
+%}
+%\subfloat[][]{
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0406-C.subSample100.lab.errorVsTotalCoverage}.png}
+%}\\
+%\caption{PG0406-C asiaAfrica}
+%\end{figure}
+
+
+
+
+
+
+
+%\begin{thebibliography}{}
+
+
+%\bibitem[\protect\citeauthoryear{Miles, Iqbal, Vauterin, Pearson, Campino,
+  %Theron, Gould, Mead, Drury, O{\textquoteright}Brien, Ruano~Rubio, MacInnis,
+  %Mwangi, Samarakoon, Ranford-Cartwright, Ferdig, Hayton, Su, Wellems, Rayner,
+  %McVean, and Kwiatkowski}{Miles et~al.}{2015}]{Miles2015:sup}
+%Miles, A., Z.~Iqbal, P.~Vauterin, R.~Pearson, S.~Campino, M.~Theron, K.~Gould,
+  %D.~Mead, E.~Drury, J.~O{\textquoteright}Brien, V.~Ruano~Rubio, B.~MacInnis,
+  %J.~Mwangi, U.~Samarakoon, L.~Ranford-Cartwright, M.~Ferdig, K.~Hayton, X.~Su,
+  %T.~Wellems, J.~Rayner, G.~McVean, and D.~Kwiatkowski (2015).
+%\newblock Genome variation and meiotic recombination in plasmodium falciparum:
+  %insights from deep sequencing of genetic crosses.
+%\newblock {\em bioRxiv\/}.
+
+%\bibitem[\protect\citeauthoryear{Wendler}{Wendler}{2015}]{Wendler2015:sup}
+%Wendler, J. (2015).
+%\newblock {\em Accessing complex genomic variation in {P}lasmodium falciparum
+  %natural infection}.
+%\newblock Ph.\ D. thesis, University of Oxford.
+
+%\end{thebibliography}
