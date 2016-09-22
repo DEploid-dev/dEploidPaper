@@ -88,7 +88,12 @@ for ( strain in strains ){
     tmpIndex = which(mytable$strainName == strain)
     tmpMarker = as.numeric(unique(mytable$marker[tmpIndex]))
     tmpColor = unique(mytable$color[tmpIndex])
-    points( mean(mytable$prop[tmpIndex]), mean(mytable$missCopy[tmpIndex])/18571, pch = tmpMarker, col=tmpColor, cex=1.5)
+    print(strain)
+    if (as.character(strain) == "PG0402-C.2"){
+        text( mean(mytable$prop[tmpIndex]), mean(mytable$missCopy[tmpIndex])/18571, label = "PG0402-C.7G8", col=tmpColor, cex=1.5)
+    }else{
+        points( mean(mytable$prop[tmpIndex]), mean(mytable$missCopy[tmpIndex])/18571, pch = tmpMarker, col=tmpColor, cex=1.5)
+    }
 }
 legend("topright", legend = levels(mytable$marker), pch = c(1,2,3,4), cex=2)
 legend("top", legend = c("Mixture of 2", "Mixture of 3"), text.col = c(2,4), cex=2)
