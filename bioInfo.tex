@@ -51,7 +51,7 @@ The presence of multiple strains of {\it P. falciparum} makes fine scale analysi
 {\it Phasing} or deconvoluting the strains of a mixed infection is a harder problem than phasing diploid organisms because the levels of mixture within isolates (i.e. the abundance of each genetic type) vary greatly and are unknown.  Existing tools for phasing diploid organisms, such as Beagle \citep{Browning2007} and IMPUTE2 \citep{Howie2009}, are not designed to cope with this. \citet{Galinsky2015} and \citet{Jack2016} have attempted to address the mixed infection problem by solving the mixed proportion from allele frequencies, yet the haplotypes within a mixed isolate remain unclear.
 
 
-As part of the Pf3k project \citep{Pf3k2016}, an effort to map the genetic diversity of {\it P. falciparum} at global scale, we have developed the {\tt DEploid}, a software package for deconvoluting  mixed infections. The program provides estimates for the number of different genetic types present in the isolate, the proportion or abundance of each strain and their sequences (i.e. haplotypes). To our knowledge, DEploid is the first package able to deconvolute strain haplotypes and provides a unique opportunity for researchers to study inbreeding and infection history at fine scale.
+As part of the Pf3k project \citep{Pf3k2016}, an effort to map the genetic diversity of {\it P. falciparum} at global scale, we have developed the {\textmd DEploid}, a software package for deconvoluting  mixed infections. The program provides estimates for the number of different genetic types present in the isolate, the proportion or abundance of each strain and their sequences (i.e. haplotypes). To our knowledge, DEploid is the first package able to deconvolute strain haplotypes and provides a unique opportunity for researchers to study inbreeding and infection history at fine scale.
 
 
 \begin{methods}
@@ -389,94 +389,109 @@ A set of {\it in vitro} mixtures of parasites were created by \citet{Wendler2015
 \begin{table}[ht]\centering
 \begin{tabular}[c]{@{}l|llll@{}}\hline
 sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
-{\tt	PG0389-C}	&	88.5	(90)	&	11.5	(10)	&		0	&		0	\tabularnewline
-{\tt	PG0390-C}	&	79.8	(80)	&	20.2	(20)	&		0	&		0	\tabularnewline
-{\tt	PG0391-C}	&	66.1	(67)	&	33.9	(33)	&		0	&		0	\tabularnewline
-{\tt	PG0392-C}	&	31.2	(33)	&	68.8	(67	&		0	&		0	\tabularnewline
-{\tt	PG0393-C}	&	18.4	(20)	&	81.6	(80)	&		0	&		0	\tabularnewline
-{\tt	PG0394-C}	&	9.1	(10)	&	90.1	(90)	&		0	&		0	\tabularnewline
-{\tt	PG0395-C}	&		0	&	33.6	(33.3)	&	35	(33.3)	&	31.3	(33.3)	\tabularnewline
-{\tt	PG0396-C}	&		0	&	25.9	(25)	&	26.1	(25)	&	48	(50)	\tabularnewline
-{\tt	PG0397-C}	&		0	&	14.7	(14.3)	&	15.3	(14.3)	&	69.9	(71.4)	\tabularnewline
-{\tt	PG0398-C}	&		0	&		0	&	45.1+54.9	(100)	&		0	\tabularnewline
-{\tt	PG0399-C}	&		0	&		0	&	56.7+40.9	(99)	&	2.4	(1)	\tabularnewline
-{\tt	PG0400-C}	&		0	&		0	&	39.5+57.5	(95)	&	3	(5)	\tabularnewline
-{\tt	PG0401-C}	&		0	&		0	&	33.3+56.7	(90)	&	10	(10)	\tabularnewline
-{\tt	PG0402-C}	&		0	&		0	&	85.2	(85)	&	14.8	(15)	\tabularnewline
-{\tt	PG0403-C}	&		0	&		0	&	80.1	(80)	&	19.3	(20)	\tabularnewline
-{\tt	PG0404-C}	&		0	&		0	&	75.4	(75)	&	24.6	(25)	\tabularnewline
-{\tt	PG0405-C}	&		0	&		0	&	70.6	(70)	&	29.4	(30)	\tabularnewline
-{\tt	PG0406-C}	&		0	&		0	&	61	(60)	&	39	(40)	\tabularnewline
-{\tt	PG0407-C}	&		0	&		0	&	50.5	(50)	&	49.5	(50)	\tabularnewline
-{\tt	PG0408-C}	&		0	&		0	&	40.1	(40)	&	59.2	(60)	\tabularnewline
-{\tt	PG0409-C}	&		0	&		0	&	30.1	(30)	&	69.1	(70)	\tabularnewline
-{\tt	PG0410-C}	&		0	&		0	&	25.9	(25)	&	73,4	(75)	\tabularnewline
-{\tt	PG0411-C}	&		0	&		0	&	21.4	(20)	&	78.5	(80)	\tabularnewline
-{\tt	PG0412-C}	&		0	&		0	&	15.2	(15)	&	84.8	(85)	\tabularnewline
-{\tt	PG0413-C}	&		0	&		0	&	3.8	(5)	&	96.2	(95)	\tabularnewline
-{\tt	PG0414-C}	&		0	&		0	&	0	(1)	&	29.9+70.1	(99)	\tabularnewline
-{\tt	PG0415-C}	&		0	&		0	&		0	&	30.0+70.0	(100)	\tabularnewline
+{\textmd	PG0389-C}	&	88.5	(90)	&	11.5	(10)	&		0	&		0	\tabularnewline
+{\textmd	PG0390-C}	&	79.8	(80)	&	20.2	(20)	&		0	&		0	\tabularnewline
+{\textmd	PG0391-C}	&	66.1	(67)	&	33.9	(33)	&		0	&		0	\tabularnewline
+{\textmd	PG0392-C}	&	31.2	(33)	&	68.8	(67	&		0	&		0	\tabularnewline
+{\textmd	PG0393-C}	&	18.4	(20)	&	81.6	(80)	&		0	&		0	\tabularnewline
+{\textmd	PG0394-C}	&	9.1	(10)	&	90.1	(90)	&		0	&		0	\tabularnewline
+{\textmd	PG0395-C}	&		0	&	33.6	(33.3)	&	35	(33.3)	&	31.3	(33.3)	\tabularnewline
+{\textmd	PG0396-C}	&		0	&	25.9	(25)	&	26.1	(25)	&	48	(50)	\tabularnewline
+{\textmd	PG0397-C}	&		0	&	14.7	(14.3)	&	15.3	(14.3)	&	69.9	(71.4)	\tabularnewline
+{\textmd	PG0398-C}	&		0	&		0	&	45.1+54.9	(100)	&		0	\tabularnewline
+{\textmd	PG0399-C}	&		0	&		0	&	56.7+40.9	(99)	&	2.4	(1)	\tabularnewline
+{\textmd	PG0400-C}	&		0	&		0	&	39.5+57.5	(95)	&	3	(5)	\tabularnewline
+{\textmd	PG0401-C}	&		0	&		0	&	33.3+56.7	(90)	&	10	(10)	\tabularnewline
+{\textmd	PG0402-C}	&		0	&		0	&	85.2	(85)	&	14.8	(15)	\tabularnewline
+{\textmd	PG0403-C}	&		0	&		0	&	80.1	(80)	&	19.3	(20)	\tabularnewline
+{\textmd	PG0404-C}	&		0	&		0	&	75.4	(75)	&	24.6	(25)	\tabularnewline
+{\textmd	PG0405-C}	&		0	&		0	&	70.6	(70)	&	29.4	(30)	\tabularnewline
+{\textmd	PG0406-C}	&		0	&		0	&	61	(60)	&	39	(40)	\tabularnewline
+{\textmd	PG0407-C}	&		0	&		0	&	50.5	(50)	&	49.5	(50)	\tabularnewline
+{\textmd	PG0408-C}	&		0	&		0	&	40.1	(40)	&	59.2	(60)	\tabularnewline
+{\textmd	PG0409-C}	&		0	&		0	&	30.1	(30)	&	69.1	(70)	\tabularnewline
+{\textmd	PG0410-C}	&		0	&		0	&	25.9	(25)	&	73,4	(75)	\tabularnewline
+{\textmd	PG0411-C}	&		0	&		0	&	21.4	(20)	&	78.5	(80)	\tabularnewline
+{\textmd	PG0412-C}	&		0	&		0	&	15.2	(15)	&	84.8	(85)	\tabularnewline
+{\textmd	PG0413-C}	&		0	&		0	&	3.8	(5)	&	96.2	(95)	\tabularnewline
+{\textmd	PG0414-C}	&		0	&		0	&	0	(1)	&	29.9+70.1	(99)	\tabularnewline
+{\textmd	PG0415-C}	&		0	&		0	&		0	&	30.0+70.0	(100)	\tabularnewline
 \hline
 \end{tabular}
 \caption{Inferred percentages (true in brackets) of the mixed samples.}
 \label{tab:jason}
 \end{table}
 
+Note that this data set only contains two clonal-ish samples. Due to the limited size, they are not ideal for constructing a reference panel. Moreover, the {\em P. falciparum} genetic crosses project \citep{Miles2015} finds that due to sequencing error or applying different variant calling methods, genotype calls vary at the same position given the same strain of {\em P. falciparum}. Thus we apply inference methods to mutiple samples that contains the same parasite strains, and infer the genotypes of a reference strain.
+
+\paragraph{Infer haplotypes for Dd2 strain.}
+Since 3D7 is the reference strain, we can assume that strain Dd2 is the only source of `ALT' reads in samples from {\textmd PG0389-C} to {\textmd PG0394-C}. Assume markers are independent from each other, let $y$ be the read count for `ALT' allele and $x$ be the total read count weighted by the Dd2 mixing proportion (see Table~\ref{tab:jason} in brackets), we use regression model $y = \beta_0 + \beta_{1} x$ to infer the Dd2 genotype: 1 if $\beta_{1}$ is significant; 0 otherwise.
+
+\paragraph{Infer haplotypes for HB3 and 7G8.}
+Similarly, for sample from {\textmd PG0398-C} to {\textmd PG0415-C}, we let variables $x_1$, $x_2$ be the coverages weighted by the mixing proportions of HB3 and 7G8 respectively; use regression model $y = \beta_0 + \beta_{1} x_1 + \beta_{2} x_2$ to infer the genotypes of HB3 and 7G8: HB3 is 1 if $\beta_{2}$ is significant; 0 otherwise; similarly for 7G8.
 
 \subsection{Accuracy}
 \subsubsection{Proportions and number of strains}
 We apply our program to 27 lab-mixed {\em in vitro} samples to validate our methods and program. As described in section~\ref{sec:updateP}, we start our method with the assumption of at most three strains present in the mixtures; and discard the strains less than 1\%. Our method successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). The deviation between our proportion estimates and the truth is at most 2\%.
 
-Note that this data set only contains two clonal-ish samples, which are not ideal for constructing a reference panel due to the limited size. Alternatively, we have experimented deconvoluting the 27 lab-mixed samples with the following different reference panels:
+Our model over-fits the noisy lab-mixed sample with additional strains. Note that in Table~\ref{tab:jason}, we infer six of the HB3 and 7G8 mixtures as mixing of three, two of which haplotypes have subtle difference with the same parasite line, but overall vastly different from the last strain. The subtle variation is caused by few heterozygous sites with high coverage resulting high leverage in our model (supplemental material Figure~S2.3(a)). The source of the noisy markers are possibly from sequencing or variant calling process, which are not recalabriated by our program.
+
+We experimented deconvoluting the 27 lab-mixed samples with the following different reference panels:
 \begin{itemize}
-\item panel I: five Asian and five African clonal strains from the Pf3k\citep{Pf3k2016} data base: {\tt PD0498-C}, {\tt PD0500-C}, {\tt PD0660-C}, {\tt PH0047-Cx}, {\tt PH0064-C}, {\tt PT0002-CW}, {\tt PT0007-CW}, {\tt PT0008-CW}, {\tt PT0014-CW}, {\tt PT0018-CW}.
+\item panel I: five Asian and five African clonal strains from the Pf3k\citep{Pf3k2016} data base: {\textmd PD0498-C}, {\textmd PD0500-C}, {\textmd PD0660-C}, {\textmd PH0047-Cx}, {\textmd PH0064-C}, {\textmd PT0002-CW}, {\textmd PT0007-CW}, {\textmd PT0008-CW}, {\textmd PT0014-CW}, {\textmd PT0018-CW}.
 \item panel II: panel I with the addition of HB3;
 \item panel III: panel II with the addition of 7G8;
 \item panel IV: panel III with the addition of Dd2;
-\item panel V: 3d7, HB3, 7G8 and Dd2 strains, inference detail of these strains are described in the supplement material.
-\item panel VI: panel I with the addition of six (three each) clonal strains from Asia and Africa: {\tt PH0193-C}, {\tt PH0283-C}, {\tt PH0305}, {\tt PT0060-C}, {\tt PT0146-C} and {\tt PT0158-C}.
+\item panel V: 3D7, HB3, 7G8 and Dd2 strains.
+\item panel VI: panel I with the addition of six (three each) clonal strains from Asia and Africa: {\textmd PH0193-C}, {\textmd PH0283-C}, {\textmd PH0305}, {\textmd PT0060-C}, {\textmd PT0146-C} and {\textmd PT0158-C}.
 \end{itemize}
 In all cases we estimated the number and proportion of strains accurately, for example Figure~\ref{fig:differentRefPanel} y-axises show the proportions of strains Dd2/7G8/HB3 as approximately $\frac{1}{4}$/$\frac{1}{2}$/$\frac{1}{4}$.
-
-Our model over-fits the noisy lab-mixed sample with additional strains. Note that in Table~\ref{tab:jason}, we infer six of the HB3 and 7G8 mixtures as mixing of three, two of which haplotypes have subtle difference with the same parasite line, but overall vastly different from the last strain. The subtle variation is caused by few heterozygous sites with high coverage resulting high leverage in our model (supplemental material Figure~S2.3(a)). The source of the noisy markers are possibly from sequencing or variant calling process, which are not recalabriated by our program.
 
 \begin{figure}[ht]
 \centerline{
 \includegraphics[width=0.45\textwidth]{{differentPanelForSample.PG0396-C}.png}
 }
-\caption{Haplotypes comparison of sample {\tt PG0396-C} chromosome 14 deconvolution without any reference strain (top) versus with using reference panels I to IV (from the second to the bottom). Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segments from strains 7G8, HB3 and Dd2 respectively.}\label{fig:differentRefPanel}
+\caption{Haplotypes comparison of sample {\textmd PG0396-C} chromosome 14 deconvolution without any reference strain (top) versus with using reference panels I to IV (from the second to the bottom). Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segments from strains 7G8, HB3 and Dd2 respectively.}\label{fig:differentRefPanel}
 \end{figure}
 
 \subsubsection{Haplotypes}
 Our accuracy assessment for inferred haplotypes take into account of both switch errors and genotype discordance, which reflect to the recombination and miss copying events in the method section. Intuitively, one may suggest to use the Li and Stephens model to compute the vertabi path or posterior probabilities to assess the how different our inferred haplotypes differ from the truth. However, we find that such methods overestimate switch errors at short segments of sequence due to variable reference panel quality.
 
-Moreover, we want to assess the switch errors by taking into account of switches from the other haplotypes. Note that in Figure~\ref{fig:differentRefPanel}, the top and bottom strains have similar proportions, which are difficult to phase without a perfect reference panel. One may flip parts of the two strains to resolve the errors. Unfortunately, our Li and Stephens implementation focuses on a single strain (two strains at the most), the vertabi path or posterior probabilities fail to align the switches of all strains. Therefore, we have taken a heuristic approach by dividing the inferred haplotypes into segments with length of 50, then mapped onto reference strains of panel V according to the indices.
+Moreover, we want to assess the switch errors by taking into account of switches from the other haplotypes. Note that in Figure~\ref{fig:differentRefPanel}, the top and bottom strains have similar proportions, which are difficult to phase without a perfect reference panel. One may flip parts of the two strains to resolve the errors. Unfortunately, our Li and Stephens implementation focuses on a single strain (two strains at the most), the vertabi path or posterior probabilities fail to align the switches of all strains. Therefore, we have taken a heuristic approach by dividing the inferred haplotypes into segments with length of 50, then mapped onto reference strains of panel V according to the indices. The switch errors are obtained by counting the changes of a strain mapped to reference strains; the genotype errors are the discordance between the strain and the mapped reference segments.
 
 \begin{figure}[h]%figure1
 \centerline{
 \includegraphics[width=0.45\textwidth]{{switchVsMisCopyErrlog}.png}
 }
-\caption{We use reference panel V to deconvolute all 27 samples. Each marker represent a deconvoluted haplotype with 18570 sites.}\label{fig:swithVsMisCopy}
+\caption{Error rates vs. strain proportions. We use reference panel V to deconvolute all 27 samples. Each marker represent a deconvoluted haplotype with 18570 sites.}\label{fig:swithVsMisCopy}
 \end{figure}
+
+\vspace{1cm}
 
 Our assessment on haplotype inference can be concluded as the following:
 \begin{itemize}
 \item The proportion inference do not seem to be affected by the presence of reference panel nor the quality of a panel (Figure~\ref{fig:differentRefPanel}).
 \item The accuracy of the haplotype is dependent on having an appropriate reference panel (Figure~\ref{fig:differentRefPanel}).
-\item The strain proportion affects the haplotype inference (see Fig~\ref{fig:swithVsMisCopy}). Our method infer strains of with proportions over 20\% accurately, but struggle with minor strains due to insufficient data.
+\item The strain proportion affects the haplotype inference (see Fig~\ref{fig:swithVsMisCopy}). Our method infer strains of with proportions over 20\% accurately, but struggle with minor strains due to insufficient data, in particularly at sites when the minor strain should be alternative allele, and the dominate strain should be reference allele (see Figure~\ref{fig:swithVsMisCopy}).
 \end{itemize}
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.5\textwidth]{{subSamples/PG0402-C.subSample100.lab.errorVsTotalCoverage}.png}
+\caption{Error rate of a particular genotype inference at different converages. Sample {\textmd PG0402-C} deconvolution with panel V. Compare with the error rate of strain {\textmd PG0402-C.7G8} in Figure~\ref{fig:swithVsMisCopy}, we find most of errors in infering heterozygous sites, where alternative allele is coming from the minor strain.}\label{fig:subsample}
+\end{figure}
 
-We extended our experiments further to test how sensitive the inference result is to the sequence coverage. Data was simulated by sampling read counts according to $Binom(n,p)$ models, where $n$ was the number alternative and reference alleles at each site. Three different probabilities $p$: 0.2, 0.5, 0.8 were used for creating the scenarios of lower, median and high coverage data. In general, we observed that higher coverage data was more informative about the genotype, which accompanied with reduced error rates, with exceptions when using a perfect reference panel:
-\begin{itemize}
-\item The sequence coverage had little, almost none affect on haplotype inference of balanced mixtures.
-\item The haplotype inference heavily relied on the reference panel for low coverage data, which again addresses the importance of using appropriate reference panels.
-\end{itemize}
+We extended our experiments further to test how sensitive the inference result is to the sequence coverage. Data was simulated by sampling read counts according to $Binom(n,p)$ models, where $n$ was the number alternative and reference alleles at each site. Three different probabilities $p$: 0.2, 0.5, 0.8 were used for creating the scenarios of lower, median and high coverage data. In general, we observed that higher coverage data was more informative about the genotype, which accompanied with reduced error rates, with exceptions when using a perfect reference panel: The haplotype inference heavily relied on the reference panel for low coverage data, which again addresses the importance of using appropriate reference panels (see supplement materials).
+%\begin{itemize}
+%%\item The sequence coverage had little, almost none affect on haplotype inference of balanced mixtures.
+%\item 
+%\end{itemize}
 %Figure~S3.3
 
 
+
 \subsection{Run-time}
-The complexity of our program is $\mathcal{O}(n^2m)$ (see Fig~\ref{fig:runtime}), where $n$ and $m$ are the number of reference strains and sites respectively. In practice, we divide Pf3k samples into several geographical region and perform deconvolution, with ten vastly diversed local clonal strains as reference panel. The run time of deconvoluting a field sample range between 1 and 6 hours, depending on the number variants in a sample: For example, it takes $5\frac{1}{2}$ hours to process sample {\tt QG0182-C} over 372,884 sites.
+The complexity of our program is $\mathcal{O}(n^2m)$ (see Fig~\ref{fig:runtime}), where $n$ and $m$ are the number of reference strains and sites respectively. In practice, we divide Pf3k samples into several geographical region and perform deconvolution, with ten vastly diversed local clonal strains as reference panel. The run time of deconvoluting a field sample range between 1 and 6 hours, depending on the number variants in a sample: For example, it takes $5\frac{1}{2}$ hours to process sample {\textmd QG0182-C} over 372,884 sites.
 
 %94m31.924s PD0500-C 98,211
 %328m52.036s  QG0182-C 372,884
@@ -484,7 +499,7 @@ The complexity of our program is $\mathcal{O}(n^2m)$ (see Fig~\ref{fig:runtime})
 \begin{figure}[ht]
 \centering
 \includegraphics[width=.5\textwidth,height=0.4\textwidth]{runTime.png}
-\caption{As a demonstration, we deconvolute chromosome 14, chromosomes 13 and 14, chromosomes 12 to 14 of sample {\tt PG0412-C} with reference panels I, V and VI. The run-time is almost linear respect to the number of sites; and shows quadratic trend against the number of reference strains.}\label{fig:runtime}
+\caption{As a demonstration, we deconvolute chromosome 14, chromosomes 13 and 14, chromosomes 12 to 14 of sample {\textmd PG0412-C} with reference panels I, V and VI. The run-time is almost linear respect to the number of sites; and shows quadratic trend against the number of reference strains.}\label{fig:runtime}
 \end{figure}
 
 \end{methods}
@@ -569,6 +584,18 @@ MalariaGEN (2008).
 \newblock A global network for investigating the genomic epidemiology of
   malaria.
 \newblock {\em Nature\/}~{\em 456\/}(7223), 732 -- 737.
+
+\bibitem[\protect\citeauthoryear{Miles, Iqbal, Vauterin, Pearson, Campino,
+  Theron, Gould, Mead, Drury, O{\textquoteright}Brien, Ruano~Rubio, MacInnis,
+  Mwangi, Samarakoon, Ranford-Cartwright, Ferdig, Hayton, Su, Wellems, Rayner,
+  McVean, and Kwiatkowski}{Miles et~al.}{2015}]{Miles2015}
+Miles, A., Z.~Iqbal, P.~Vauterin, R.~Pearson, S.~Campino, M.~Theron, K.~Gould,
+  D.~Mead, E.~Drury, J.~O{\textquoteright}Brien, V.~Ruano~Rubio, B.~MacInnis,
+  J.~Mwangi, U.~Samarakoon, L.~Ranford-Cartwright, M.~Ferdig, K.~Hayton, X.~Su,
+  T.~Wellems, J.~Rayner, G.~McVean, and D.~Kwiatkowski (2015).
+\newblock Genome variation and meiotic recombination in plasmodium falciparum:
+  insights from deep sequencing of genetic crosses.
+\newblock {\em bioRxiv\/}.
 
 \bibitem[\protect\citeauthoryear{Pearson, Amato, Auburn, Miotto,
   Almagro-Garcia, Amaratunga, Suon, Mao, Noviyanti, Trimarsanto, Marfurt,

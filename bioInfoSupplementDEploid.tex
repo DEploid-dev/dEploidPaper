@@ -8,19 +8,21 @@
 
 Our program {\it DEploid } s freely available at \url{https://github.com/mcveanlab/DEploid} under the conditions of the GPLv3 license. A detailed document can be found at \url{http://deploid.readthedocs.io/en/latest/}.
 
+Here we show examples of deconvolution with reference panel V: 3D7, HB3, 7G8 and Dd2 strains. All figures are generated from plotting utilities with {\textmd DEploid}.
 \begin{itemize}
-\item (a)
+\item (a) Panel figures of interpreting {\textmd DEploid} output. Figures from the top to the bottom, the left to the right show:
 \begin{enumerate}
-\item alt vs ref
-\item wsaf hist
-\item wsaf vs plaf
-\item proportion
-\item wsaf obs vs est
-\item llk
+\item Alternative read count vs reference red count, which is used for exploring the data. 
+\item Histogram of the allele frequencies within sample.
+\item Allele frequencies at the population level vs allele frequencies at within sample. The PLAF is calculated from the total read counts. Red dots show observed WSAF, blue does show the expected WSAF inferred from our model.
+\item MCMC samples of the proportions.
+\item Expected WSAF vs observed WSAF.
+\item Log likelihood of the MCMC chain. 
 \end{enumerate}
-\item (b)
-\item (c) (d) and (e)
+\item (b) Expected WSAF (blue) and observed WSAF (red) at every site.
+\item (c) (d) and (e) Posterior probabilities (Li and Stephen's model) of deconvoluted strain with strains in panel V. 
 \end{itemize}
+Figure~\ref{fig:0415} (a) suggests that our model overfits this clonal sample as a mixture of two strains. Figure~\ref{fig:0415} (c) and (d) suggest the two strains are in fact the same strain with subtle differences. 
 %\subsection{Sample PG0396-C}
 
 \begin{figure}[ht]
@@ -45,7 +47,7 @@ Our program {\it DEploid } s freely available at \url{https://github.com/mcveanl
 \subfloat[][]{
 \includegraphics[width=.32\textwidth]{{dEploid/PG0396-C_seed5k3.single2}.png}
 }\\
-\caption{}
+\caption{Sample {\textmd PG0396-C} deconvolution with reference panel V.}
 \end{figure}
 
 
@@ -70,5 +72,5 @@ Our program {\it DEploid } s freely available at \url{https://github.com/mcveanl
 \subfloat[][]{
 \includegraphics[width=.32\textwidth]{{dEploid/PG0415-C_seed2k3.single2}.png}
 }\label{fig:pg0415.postprob_c}\\
-\caption{}
+\caption{Sample {\textmd PG0415-C} deconvolution with reference panel V.}\label{fig:0415}
 \end{figure}
