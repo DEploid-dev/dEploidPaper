@@ -10,14 +10,12 @@ The {\em P. falciparum} genetic crosses project \citep{Miles2015:sup} finds that
 
 
 \subsection{Use inference method to reconstruct the reference strains}
-\begin{enumerate}
-\item Mixtures of strains 3D7 and Dd2
-Since 3D7 is reference strain, we can assume that strain Dd2 is the only source of `ALT' reads in samples {\tt PG0389-C}, {\tt PG0390-C}, {\tt PG0391-C}, {\tt PG0392-C}, {\tt PG0393-C} and {\tt PG0394-C}. Assume markers are independent from each other, let $y$ be the read count for `ALT' allele and $x$ be the weighted coverage, of which the weight are the proportions that are used during the mixing (see Table~\ref{tab:jason}), we use the following regression model to infer the Dd2 variant calling, $$y = \beta_0 + \beta_{Dd2} x,$$
+\subsubsection{Infer haplotypes for Dd2 strain}
+Since 3D7 is reference strain, we can assume that strain Dd2 is the only source of `ALT' reads in samples {\tt PG0389-C}, {\tt PG0390-C}, {\tt PG0391-C}, {\tt PG0392-C}, {\tt PG0393-C} and {\tt PG0394-C}. Assume markers are independent from each other, let $y$ be the read count for `ALT' allele and $x$ be the weighted coverage, of which the weight are the proportions that are used during the mixing (see Table~2\todo{Reference from main paper, eyes on number changing}), we use the following regression model to infer the Dd2 variant calling, $$y = \beta_0 + \beta_{Dd2} x,$$
 from which significant coefficent $\beta_{Dd2}$ implies a Dd2 variant (Fig.~\ref{fig:dd2_gt1}).
 
-\item Mixtures of strains HB3 and 7G8.
+\subsubsection{Infer haplotypes for HB3 and 7G8}
 Similarly, for sample from {\tt PG0398-C} to {\tt PG0415-C},  we let variables $x_1$, $x_2$ be the weighted coverages, of which the weights are the mixing proportions for strains HB3 and 7G8 respectively. We use regression model $y = \beta_0 + \beta_{Hb3} x_1 + \beta_{7G8} x_2$ to investigate the relationships between the total allele count and weighted coverage of HB3 and 7G8. Hb3 variant is inferred as coefficients $\beta_{Hb3}$ is significant (Fig.~\ref{fig:hb3:7g8:both} and \ref{fig:hb3}), so is 7G8 (Fig.~\ref{fig:hb3:7g8:both} and \ref{fig:7g8}).
-\end{enumerate}
 
 
 
