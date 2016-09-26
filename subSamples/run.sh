@@ -12,12 +12,11 @@ common="-panel labStrains.eg.panel.txt -plaf labStrains.eg.PLAF.txt -k 2 -seed $
 
 sample="PG0402-C"
 #sample="PG0406-C"
-subSample=20
-#subSample=50
-#subSample=80
-#subSample=100
+expectedCov=30
+#expectedCov=80
+#expectedCov=150
 
-dEploid ${common} -vcf ${sample}.subSample${subSample}.vcf.gz -o ${root}${sample}.seed${seed}.subSample${subSample}.lab.out
+dEploid ${common} -vcf ${sample}.subSample.expectedCov${expectedCov}.vcf.gz -o ${root}${sample}.seed${seed}.subSample.expectedCov${expectedCov}.lab.out
 #dEploid ${common} -vcf ${sample}.subSample50.vcf.gz -o ${root}${sample}.seed${seed}.subSample50.lab.out
 #dEploid ${common} -vcf ${sample}.subSample80.vcf.gz -o ${root}${sample}.seed${seed}.subSample80.lab.out
 #dEploid ${common} -vcf ${sample}.subSample100.vcf.gz -o ${root}${sample}.seed${seed}.subSample100.lab.out
@@ -25,7 +24,7 @@ dEploid ${common} -vcf ${sample}.subSample${subSample}.vcf.gz -o ${root}${sample
 
 common="-panel asiaAfirca.eg.panel.txt -plaf labStrains.eg.PLAF.txt -k 2 -seed ${seed}"
 
-dEploid ${common} -vcf ${sample}.subSample${subSample}.vcf.gz -o ${root}${sample}.seed${seed}.subSample${subSample}.asiaAfirca.out
+dEploid ${common} -vcf ${sample}.subSample.expectedCov${expectedCov}.vcf.gz -o ${root}${sample}.seed${seed}.subSample.expectedCov${expectedCov}.asiaAfirca.out
 #dEploid ${common} -vcf ${sample}.subSample50.vcf.gz -o ${root}${sample}.seed${seed}.subSample50.asiaAfirca.out
 #dEploid ${common} -vcf ${sample}.subSample80.vcf.gz -o ${root}${sample}.seed${seed}.subSample80.asiaAfirca.out
 #dEploid ${common} -vcf ${sample}.subSample100.vcf.gz -o ${root}${sample}.seed${seed}.subSample100.asiaAfirca.out
