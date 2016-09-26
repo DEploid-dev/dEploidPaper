@@ -19,7 +19,7 @@ fun.writeSubVcf <- function( vcfName, newVcfName, coverage ){
 
 set.seed(1)
 
-sampleName = "PG0402-C"
+sampleName = "PG0406-C"
 originalVcf = paste("../validation/", sampleName, ".eg.vcf", sep="")
 
 coverage = fun.extract.vcf(originalVcf)
@@ -28,8 +28,9 @@ expectedTotalCov = c(150, 80, 30)
 for ( i in expectedTotalCov ){
     WSAF = coverage$altCount / (coverage$altCount+coverage$refCount+0.000001)
     tmpCoverage = coverage
-    tmpCoverage$refCount = rbinom(length(coverage$refCount), i, 1-WSAF)
-    tmpCoverage$altCount = rbinom(length(coverage$altCount), i, WSAF)
+    tmpTotalCoverage = rpois(length(coverage$altCount), i);
+    tmpCoverage$altCount = rbinom(length(coverage$altCount), tmpTotalCoverage, WSAF)
+    tmpCoverage$refCount = tmpTotalCoverage - tmpCoverage$altCount
     tmpNewVcfName = paste(sampleName, ".subSample.expectedCov", i, ".vcf", sep="")
     fun.writeSubVcf (originalVcf, tmpNewVcfName, tmpCoverage)
 }

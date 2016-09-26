@@ -42,10 +42,10 @@ for ( suffix in c("asiaAfirca", "lab")){
 #sample = "PG0406-C"
 #suffix = "lab"
 #suffix = "asiaAfirca"
-subSamples = c(20, 50, 80, 100)
+expectedCovs = c(30, 80, 150)
 #subSamples = c(50)
-for ( subSample in subSamples ) {
-    vcfPrefix = paste(sample, ".subSample", subSample, sep="")
+for ( expectedCov in expectedCovs ) {
+    vcfPrefix = paste(sample, ".subSample.expectedCov", expectedCov, sep="")
     prefix = vcfPrefix
     vcfName = paste(vcfPrefix,".vcf.gz", sep="")
     coverage = fun.extract.vcf(vcfName)
@@ -68,7 +68,7 @@ for ( subSample in subSamples ) {
     eventArray = c()
     #prefix = paste(vcfPrefix,".asia.out", sep="")
     for ( seed in 1:15 ){
-        outprefix = paste("repeats/", sample, ".seed", seed, ".subSample", subSample,".", suffix, ".out", sep="")
+        outprefix = paste("repeats/", sample, ".seed", seed, ".subSample.expectedCov", expectedCov,".", suffix, ".out", sep="")
 
     #    tmpProp = read.table(paste(prefix,".prop",sep=""), header=F)
     #    prop = as.numeric(tmpProp[dim(tmpProp)[1],])
