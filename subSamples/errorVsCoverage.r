@@ -35,14 +35,14 @@ Ref1Name = "HB3"
 Ref2 = panel[,6] # 7G8
 Ref2Name = "7G8"
 
-plotALT = TRUE
+plotALT = FALSE
 
 for ( sample in c("PG0402-C", "PG0406-C")){
 for ( suffix in c("asiaAfirca", "lab")){
 #sample = "PG0406-C"
 #suffix = "lab"
 #suffix = "asiaAfirca"
-expectedCovs = c(30, 80, 150)
+expectedCovs = c(80)
 #subSamples = c(50)
 for ( expectedCov in expectedCovs ) {
     vcfPrefix = paste(sample, ".subSample.expectedCov", expectedCov, sep="")
@@ -54,7 +54,7 @@ for ( expectedCov in expectedCovs ) {
     if (plotALT) {
         totalCov = coverage$altCount
     }
-    spacing = ceiling(max(totalCov)/25)
+    spacing = ceiling(max(totalCov)/16)
     mybins = seq(0, ceiling(max(totalCov)/spacing)*spacing, by = spacing)
     nBins = length(mybins)
 
@@ -67,7 +67,7 @@ for ( expectedCov in expectedCovs ) {
     eventSumMat = c()
     eventArray = c()
     #prefix = paste(vcfPrefix,".asia.out", sep="")
-    for ( seed in 1:15 ){
+    for ( seed in 1:15){
         outprefix = paste("repeats/", sample, ".seed", seed, ".subSample.expectedCov", expectedCov,".", suffix, ".out", sep="")
 
     #    tmpProp = read.table(paste(prefix,".prop",sep=""), header=F)
@@ -124,7 +124,7 @@ for ( expectedCov in expectedCovs ) {
         }
     }
 #    mytitle = paste(prefix, Ref1Name, round(tmpProp[1], digits=3), "/", Ref2Name, round(tmpProp[2],digits=3))
-    imageFileName = paste(prefix, ".", suffix, ".errorVsTotalCoverage.png",sep="")
+    imageFileName = paste(prefix, ".", suffix, ".errorVsTotalCoverageBox.png",sep="")
     if (plotALT){
         imageFileName = paste(prefix, ".", suffix, ".errorVsAlt.png",sep="")
     }
@@ -135,6 +135,7 @@ for ( expectedCov in expectedCovs ) {
 #    plot(c(min(mybins),max(mybins)),c(0, 1), type="n", ylab="# of sites was wrongly inferred", xlab="Total coverage")
     case = 1
     colors = c(rgb(1,0,0,0.3), rgb(1,1,0,.3), rgb(0,1,0,0.3), rgb(0,0,1,0.3))
+#    colors = c(rgb(1,0,0,1), rgb(1,1,0,1), rgb(0,1,0,1), rgb(0,0,1,1))
     for ( event in eventsType ){
 #        tmpCount = colSums(eventCountMat[eventArray == event,])
 #        tmpSum = colSums(eventSumMat[eventArray == event,])
@@ -151,12 +152,19 @@ for ( expectedCov in expectedCovs ) {
             tmpMat = rbind(tmpMat, tmpSumRow/(tmpCountRow+0.00000001))
         }
         colnames(tmpMat) = as.character(mybins)
-#        boxplot(as.data.frame(tmpMat), col=color, alpha=.5, add=T)
         if (case==1){
             boxplot(as.data.frame(tmpMat), col=colors[case],ylim=c(0,0.5), main="Error rate when wrongly infer genotype */*")
         } else {
             boxplot(as.data.frame(tmpMat), col=colors[case], add=T, axes =F)
         }
+
+#        plottingObj = colMeans(tmpMat)
+#        plottingObj[plottingObj==0] = NaN
+#        if (case==1){
+#            plot( mybins, plottingObj, col=colors[case],ylim=c(0,0.5), main="Error rate when wrongly infer genotype */*", type="l")
+#        } else {
+#            lines(mybins, plottingObj, col=colors[case])
+#        }
         case = case+1
     }
 

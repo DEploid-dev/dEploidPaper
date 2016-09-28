@@ -23,8 +23,8 @@
 \textcolor{red}{???Genome analysis}
 }
 
-\title[Deconvolute mixed genomes]{DEploid: Untangling multiplicity of infection in {\it Plasmodium falciparum}.}
-\author[Zhu \textit{et~al}.]{Sha Joe Zhu\,$^{\text{\sfb 1},*}$, Jacob Almagro Garcia\,$^{\text{\sfb 1}}$ and Gil McVean\,$^{\text{\sfb 1,2},*}$}
+\title[Deconvolute mixed genomes]{DEploid: Untangling complexity of infection in {\it Plasmodium falciparum}.}
+\author[Zhu \textit{et~al}.]{Sha Joe Zhu\,$^{\text{\sfb 1},*}$, Jacob Almagro-Garcia\,$^{\text{\sfb 1}}$ and Gil McVean\,$^{\text{\sfb 1,2},*}$}
 \address{$^{\text{\sf 1}}$ Wellcome Trust Centre for Human Genetics, University of Oxford, Oxford OX3 7BN, UK \\
 $^{\text{\sf 2}}$ \textcolor{red}{Big data institute, University of Oxford, Oxford OX3 7BN, UK }}
 
@@ -35,8 +35,8 @@ $^{\text{\sf 2}}$ \textcolor{red}{Big data institute, University of Oxford, Oxfo
 \editor{Associate Editor: \textcolor{red}{XXXXXXX}}
 
 \abstract{\textbf{Motivation:}
-Multiplicity of infection in the malarial parasite {\it Plasmodium falciparum} affects  key phenotypic  traits, including drug resistance and risk of severe disease. Advances in protocols and sequencing technology have made possible  to obtain  high-coverage genome-wide  sequence data from blood samples taken in the field. However, analysing and interpreting such data is challenging  because of the high rate of multiple  infections present in the field.\\
-\textbf{Results:} The software package {\it DEploid} learns haplotype structure from a reference panel of  clonal isolates, and deconvolutes sequences of mixed samples. It reports the number of strains, the mixing proportions and the haplotypes present in an isolate. allowing researchers to study malaria infection history with an unprecedented level of detail.\\
+Complexity of infection in the malarial parasite {\it Plasmodium falciparum} affects  key phenotypic  traits, including drug resistance and risk of severe disease. Advances in protocols and sequencing technology have made possible  to obtain  high-coverage genome-wide  sequence data from blood samples taken in the field. However, analysing and interpreting such data is challenging  because of the high rate of multiple  infections present in the field.\\
+\textbf{Results:} The software package {\it DEploid} deconvolutes sequences of mixed samples by learning haplotype structure from a reference panel of clonal isolates. It reports the number of strains, the mixing proportions and the haplotypes present in an isolate. Allowing researchers to study complexity of infection in malaria with an unprecedented level of detail.\\
 \textbf{Availability and implementation:} The open source implementation {\it DEploid} is freely available at \href{https://github.com/mcveanlab/dEploid}{https://github.com/mcveanlab/dEploid} under the conditions of the GPLv3 license.\\
 \textbf{Contact:} \href{joe.zhu@well.ox.ac.uk}{joe.zhu@well.ox.ac.uk} or \href{mcvean@well.ox.ac.uk}{mcvean@well.ox.ac.uk}\\
 \textbf{Supplementary information:} Supplementary data are available at \textit{Bioinformatics} online.}
@@ -44,14 +44,14 @@ Multiplicity of infection in the malarial parasite {\it Plasmodium falciparum} a
 \maketitle
 
 \section{Introduction}
-Malaria is still one of the top global health problems. Transmitted by mosquitoes of the genus Anopheles, the majority of malaria related deaths are caused by the  Plasmodium falciparum parasite \citep{WHO2016}. Patients are often infected with  more than one parasite strain, due to bites from multiple mosquitoes, mosquitoes carrying multiple genetic types or a combination of both. Multiplicity of infection  can lead to competitions among co-existing strains  and may increase  disease development \citep{deRoode2005}, higher transmission rates \citep{Arnot1998} and even the spread of drug resistance \citep{deRoode2004}.
+Malaria is still one of the top global health problems. Transmitted by mosquitoes of the genus {\it Anopheles}, the majority of malaria related deaths are caused by the {\it Plasmodium falciparum} parasite \citep{WHO2016}. Patients are often infected with  more than one parasite strain, due to bites from multiple mosquitoes, mosquitoes carrying multiple genetic types or a combination of both. Multiplicity of infection  can lead to competitions among co-existing strains  and may increase  disease development \citep{deRoode2005}, higher transmission rates \citep{Arnot1998} and even the spread of drug resistance \citep{deRoode2004}.
 
-The presence of multiple strains of {\it P. falciparum} makes fine scale analysis of genetic variation very challenging since genetic differences between the genetic types of this haploid organism will render as heterozygous loci. Mixed calls also confounds methods that exploit haplotype data to detect, among other phenomena, the occurrence of natural selection or recent demographic events. In light of these difficulties, researchers usually focus on clonal infections or resort to heuristics methods for resolving heterozygous genotypes. The former approach discards valuable information regarding genetic diversity and inbreeding whereas the latter tends to create chimeric haplotypes that are not suitable for analysis, unless mixed calls are very sparse.
+The presence of multiple strains of {\it P. falciparum} makes fine scale analysis of genetic variation very challenging since genetic differences between the genetic types of this haploid organism will render as heterozygous loci. Mixed calls also confound methods that exploit haplotype data to detect, among other phenomena, the occurrence of natural selection or recent demographic events. In light of these difficulties, researchers usually focus on clonal infections or resort to heuristics methods for resolving heterozygous genotypes. The former approach discards valuable information regarding genetic diversity and inbreeding whereas the latter tends to create chimeric haplotypes that are not suitable for analysis, unless mixed calls are very sparse.
 
-{\it Phasing} or deconvoluting the strains of a mixed infection is a harder problem than phasing diploid organisms because the levels of mixture within isolates (i.e. the abundance of each genetic type) vary greatly and are unknown.  Existing tools for phasing diploid organisms, such as Beagle \citep{Browning2007} and IMPUTE2 \citep{Howie2009}, are not designed to cope with this. \citet{Galinsky2015} and \citet{Jack2016} have attempted to address the mixed infection problem by solving the mixed proportion from allele frequencies, yet the haplotypes within a mixed isolate remain unclear.
+{\it Phasing} or deconvoluting the strains of a mixed infection is a harder problem than phasing diploid organisms because the levels of mixture within isolates (i.e. the abundance of each genetic type) vary greatly and are unknown.  Existing tools for phasing diploid organisms, such as Beagle \citep{Browning2007} and IMPUTE2 \citep{Howie2009}, are not designed to cope with this. \citet{Galinsky2015} and \citet{Jack2016} have attempted to address the mixed infection problem by inferring the mixed proportions from allele frequencies, but they do not provide haplotypes and have limited use.
 
 
-As part of the Pf3k project \citep{Pf3k2016}, an effort to map the genetic diversity of {\it P. falciparum} at global scale, we have developed the {\textmd DEploid}, a software package for deconvoluting  mixed infections. The program provides estimates for the number of different genetic types present in the isolate, the proportion or abundance of each strain and their sequences (i.e. haplotypes). To our knowledge, DEploid is the first package able to deconvolute strain haplotypes and provides a unique opportunity for researchers to study inbreeding and infection history at fine scale.
+As part of the Pf3k project \citep{Pf3k2016}, an effort to map the genetic diversity of {\it P. falciparum} at global scale, we have developed {\textmd DEploid}, a software package for deconvoluting  mixed infections. The program provides estimates for the number of different genetic types present in the isolate, the proportion or abundance of each strain and their sequences (i.e. haplotypes). To our knowledge, DEploid is the first package able to deconvolute strain haplotypes and provides a unique opportunity for researchers to study inbreeding and complexity of infection, leaving open the possiblity to investigate infection history at fine scale.
 
 
 \begin{methods}
@@ -62,9 +62,9 @@ Overall, we use Markov chain Monte Carlo (MCMC) methods to learn the number of p
 
 
 \subsection{Notations}
-Let's first introduce some of the notation (see Table~\ref{tab:notation}). Suppose that our data $D$ are the allele counts of sample $j$ at a given site $i$, denoted as $r_{j,i}$ and $a_{j,i}$ for reference and alternative alleles respectively. The allele frequencies within sample (WSAF) $p_{j,i}$ and at the population level (PLAF) $f_i$ can be calculated by $ \frac{a_{j,i}}{a_{j,i} + r_{j,i}}$ and $ \frac{\sum_j a_{j,i}}{\sum_j a_{j,i} + \sum_j r_{j,i}}$.
+Let's first introduce some notation (see Table~\ref{tab:notation}). Suppose that our data $D$ are the allele read counts of sample $j$ at a given site $i$, denoted as $r_{j,i}$ and $a_{j,i}$ for reference and alternative alleles respectively. The allele frequencies within sample (WSAF) $p_{j,i}$ and at population level (PLAF) $f_i$ can be calculated by $ \frac{a_{j,i}}{a_{j,i} + r_{j,i}}$ and $ \frac{\sum_j a_{j,i}}{\sum_j a_{j,i} + \sum_j r_{j,i}}$.
 
-Since all data in this section is subjected to the same sample, we drop the subscript $j$ from now on. Let $\mathbf w = [w_1,\dots, w_k]$ and $\mathbf{h}_{i} = [h_{1,i},\dots,h_{k,i}]$ denote the proportions and haplotypes of $k$ parasite strain at site $i$. We inherit \citet{Jack2016}'s expression for the expected WSAF $q_{i}$ as:
+Since all data in this section refers to the same sample, we drop the subscript $j$ from now on. Let $\mathbf w = [w_1,\dots, w_k]$ and $\mathbf{h}_{i} = [h_{1,i},\dots,h_{k,i}]$ denote the proportions and haplotypes of $k$ parasite strains at site $i$. We use \citet{Jack2016}'s expression for the expected WSAF $q_{i}$ as:
 \begin{equation}
 q_i= (\mathbf{w}\cdot\mathbf{h}_{i})  =  \sum_{k=1}^{K} w_k \cdot h_{k,i} .\label{eqn:qij_full_sum}
 \end{equation}.
@@ -77,8 +77,8 @@ $r$              & Read count for reference allele \\
 $a$              & Read count for alternative allele \\
 $f$              & Population level allele frequency (PLAF) \\
 $k$              & Number of strains within sample \\
-$\mathbf w$      & Proportion of strains \\
-$\mathbf{h}_{i}$ & haplotypes of $k$ parasite strain at site $i$ \\
+$\mathbf w$      & Proportions of strains \\
+$\mathbf{h}_{i}$ & haplotypes of $k$ parasite strains at site $i$ \\
 $p$              & Observed within sample allele frequency (WSAF) \\
 $q$              & Unadjusted expected WSAF  \\
 $\pi$            & Adjusted expected WSAF \\
@@ -102,10 +102,10 @@ of which expected WSAF $q_i$ is adjusted through Eqn.\eqref{eqn:adj_q}.
 
 
 \subsection{Technical details}
-Overall, our method generates MCMC samples for the proportions $\mathbf w$ and the haplotypes $\mathbf h$ for given number of strains. In particular, we assume there are more strains than we actually need, start the MCMC chain with a fixed $k$. As the values of proportion drops, ``zero-out'' the ``noisy'' strains. As for the MCMC updates, we use a Metropolis-Hastings algorithm to sample proportions $\mathbf w$ given $\mathbf h$ (section~\ref{sec:updateP}); and use Gib sampler to update $\mathbf h$ of given $\mathbf w$, which are further divided into cases when building the reference panel (section~\ref{sec:method.ref}) and deconvolute mixed samples (section~\ref{sec:method.deconv}). At last, we take the best fit (section\ref{sec:method.dic}) of the MCMC sample as a point estimate to infer the haplotypes and proportion.
+Overall, our method generates MCMC samples for the proportions $\mathbf w$ and the haplotypes $\mathbf h$ given a number of strains. In particular, we assume there are more strains than actually present, starting the MCMC chain with a fixed $k$. As the proportion values drop, we ``zero-out'' ``noisy'' strains. For example, suppose that $k=5$ and the proportions $\mathbf w= [0.848, 6.36e-05, 6.81e-05, 0.152, 3.31e-05]$, we drop the strains with proportions less than $0.01$, and keep the first and the forth strains. As for the MCMC updates, we use a Metropolis-Hastings algorithm to sample proportions ($\mathbf w$) given $\mathbf h$ (section~\ref{sec:updateP}); and use Gib sampler to update $\mathbf h$ for a given $\mathbf w$, which are further divided into cases when building the reference panel (section~\ref{sec:method.ref}) and deconvolute mixed samples (section~\ref{sec:method.deconv}). At last, we take the best fit (section\ref{sec:method.dic}) of the MCMC sample as a point estimate of haplotypes and proportions.
 
 \subsubsection{MCMC update for proportions}\label{sec:updateP}
-We use a sparse update on $\mathbf w$. We introduce a multivariate normal variable titre ${\mathbf x} = [x_1,\dots,x_k]$, where each $x$ is i.i.d. normally distributed from $N(0, 3)$, with the density function $d(x)$. We sample $x$s, then transform to $w = e^x$. We then normalise vector $\mathbf w$ by the sum, to obtain a new sample ${\mathbf w}$.
+We use a sparse update on $\mathbf w$. We introduce a multivariate normal variable titre ${\mathbf x} = [x_1,\dots,x_k]$, where each $x$ is i.i.d. normally distributed from $N(0, 3)$, with the density function $d(x)$. We sample $x$s, then transform to $w = e^x$. We then normalise vector $\mathbf w$, to obtain a new sample ${\mathbf w}$.
 %Thus, the density of $\mathbf p$ is equivlent to the product of $d(x)$s, which leads us to
 %The prior ratio is equal to $\frac{\prod_i^k d(x'_k)}{\prod_i^k d(x'_k)}$; and the Hastings ratio is 1. Note that the move from $x$ to $x'$, $\delta x$ is symmetrical.
 
@@ -114,12 +114,12 @@ We use a sparse update on $\mathbf w$. We introduce a multivariate normal variab
 %Let $\frac{L(\mathbf{p'}|D)}{L(\mathbf{p}|D)}$ be the likelihood ratio, which is $\exp( l(\mathbf{w'}|D) - (\mathbf{w}|D))$.
 
 
-\subsection{Infer the reference strains}\label{sec:method.ref}
+\subsection{Infer haplotypes without reference panel}\label{sec:method.ref}
 In practice, we assume clonal sample haplotypes capture the diversities of haplotype structures given all samples. We use them as the reference strains for start, and deconvolute the rest mixed samples from them. We start with a set of clonal sample candidate, and run the algorithm to confirm they are in fact clonal. We use Gib sampler to update $\mathbf h$ of given $\mathbf w$, randomly select one strain at the time, or a pair of strains to update in order to improve the mixing of the MCMC process.
 
-\subsubsection{Update a single strain at one time}
+\subsubsection{Update of a single strain}
 
-Choose haplotype strain $s$ uniformly at random from these $K$ strains, consider both cases of updating the state of strain $s$ at position $i$ to $0$ and $1$, we compute the WSAF and its associated likelihood as follows: Regardless the state of strain $s$ at position $i$, we firstly remove it from the current WSAF, i.e. subtract $ w_s \cdot h_s$ from Eqn.~(\ref{eqn:qij_full_sum}), which gives
+We choose haplotype strain $s$ uniformly at random from $K$ strains, considering both cases for updating the state of strain $s$ at position $i$ to $0$ and $1$, we compute the WSAF and its associated likelihood as follows: Regardless the state of strain $s$ at position $i$, we firstly remove it from the current WSAF, i.e. subtract $ w_s \cdot h_s$ from Eqn.~(\ref{eqn:qij_full_sum}), which gives
 \begin{equation}
 q_{i,-s} = \sum_{k\neq s} w_k \cdot h_k = \textrm{Eqn.~\eqref{eqn:qij_full_sum}} -  w_s \cdot h_s \label{eqn:qij_full_sum_minus_s}
 \end{equation}
@@ -134,7 +134,7 @@ Substitute equations~\eqref{eqn:qij0} and \eqref{eqn:qij1} into Eqn.~\eqref{eqn:
 
 %\subsubsection{Update haplotypes without LD}\label{sec:update_single_no_LD}
 %As one of our MCMC step to update the haplotypes, we sample the state (genotype) of strain $s$ at each postion according to the posterior probability at site $i$,
-Assume Independence between site $i$ and $i+1$, we use PLAF at position $i$ as prior, we then can compute the posterior probability as follows:
+Assuming independence between site $i$ and $i+1$, we use PLAF at position $i$ as prior, and compute the posterior probability as follows:
 \begin{equation}
 P(g_s | D) \propto L(g_s|D) \times P(g_s).\label{eqn:post:LDfree}
 \end{equation}
@@ -160,8 +160,8 @@ P(g_s | D) \propto L(g_s|D) \times P(g_s).\label{eqn:post:LDfree}
 %\end{equation}
 
 
-\subsubsection{Update two haplotypes at one time}
-In order to improve the MCMC mixing, we consider pairs of haplotypes and update both strain simultaneously. Suppose random sampling two strains to update, namely, $s_1$ and $s_2$. Similar to Eqn.~\eqref{eqn:qij_full_sum_minus_s}, we first remove their states from the WSAF:
+\subsubsection{Update two haplotypes at the same time.}
+In order to improve the MCMC mixing, we consider pairs of haplotypes and update both strain simultaneously. Suppose random sampling two strains to update, namely, $s_1$ and $s_2$. Similarly to Eqn.~\eqref{eqn:qij_full_sum_minus_s}, we first remove their states from the WSAF:
 \begin{equation}
 \begin{split}
 q_{i,-s_1, -s_2} & ~ = ~ \sum_{k\neq s_1,s_2} w_k \cdot h_k \\
@@ -169,7 +169,7 @@ q_{i,-s_1, -s_2} & ~ = ~ \sum_{k\neq s_1,s_2} w_k \cdot h_k \\
 \end{split}
 \end{equation}
 
-Consider all four possible combination of genotypes, we have
+Considering all four possible combination of genotypes, we have
 \begin{align}
 q_{i,g_{s_1}=0,g_{s_2}=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} \label{eqn:qij00}\\
 q_{i,g_{s_1}=0,g_{s_2}=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_1} \times 1 \label{eqn:qij10}\\
@@ -197,7 +197,7 @@ where $P(g_{s_1},g_{s_2}) = P(g_{s_1}) \cdot P(g_{s_2})$, assume independence be
 
 \subsection{Deconvolute the mixed isolates}\label{sec:method.deconv}
 
-We use \citet{Li2003}'s hidden Markov model frame work as a starting point. The following modifications are made:
+We use \citet{Li2003}'s hidden Markov model framework as a starting point. The following modifications are made:
 \begin{itemize}
 \item likelihood of data given the expected WSAF rather than the ``product of approximate conditionals'' (PAC).
 \item multiple strains with variable proportion rather than two sequences with equal probability.
@@ -206,7 +206,7 @@ We use \citet{Li2003}'s hidden Markov model frame work as a starting point. The 
 
 \subsubsection{Update single haplotype with LS}
 
-\paragraph{Recombination map model}
+\paragraph{Recombination map}
 We assume a uniform recombination map, genetic distances between loci $i$ and $i+1$ are computed by $G_i = D_i / morgan$ where $D_i$ denotes the physical distance between loci $i$ and $i+1$ in nucleotide, $morgan$ is the average morgan distance, which we use 1500000. Suppose the recombination rate $\psi_i$ is given by $\psi_i = N_e G_i$, with $N_e=10$ being the effective population size. Note that {\bf we scale the probabilities with the number of haplotypes in the reference panel}. Let $\Xi$ denote the set of the strains in the reference panel. For position $i > 1$, let $\rho_i'$ denote the probability of {\bf no} recombination from site $i-1$ to $i$, we have $\rho'_i = \exp(-\psi_i)$. Thus, the probability of recombining from any strain in the panel is $\displaystyle\frac{1-\rho_i'}{|\Xi|}$, where $|\Xi|$ is the size of the panel.
 
 
@@ -384,7 +384,7 @@ Since the final iteration of the MCMC is taken as a point estimate to infer the 
 
 
 \section{Validation and Performance}
-A set of {\it in vitro} mixtures of parasites were created by \citet{Wendler2015} to simulate mixed infection, which is an ideal validation data set in our use. In this data set, DNA was extracted from four laboratory parasite lines: 3D7, Dd2, HB3 and 7G8, and mixed with different ratios of mixed infection (see Table~\ref{tab:jason} in brackets), and submitted to the MalariaGEN pipeline \citep{MalariaGen2008} for Illumina sequencing.
+As a validation set we used a set of {\it in vitro} mixtures created by \citet{Wendler2015} to simulate mixed infection, which is an ideal validation data set in our use. In this data set, DNA was extracted from four laboratory parasite lines: 3D7, Dd2, HB3 and 7G8, and mixed with different proportions of mixed infection (see Table~\ref{tab:jason} in brackets), and submitted to the MalariaGEN pipeline \citep{MalariaGen2008} for Illumina sequencing and genotyping pipeline \citep{Menske2012}.
 
 
 \begin{table}[h]\centering
@@ -423,7 +423,7 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 \label{tab:jason}
 \end{table}
 
-Note that this data set only contains two clonal-ish samples. Due to the limited size, they are not ideal for constructing a reference panel. Moreover, the {\em P. falciparum} genetic crosses project \citep{Miles2015} finds that due to sequencing error or applying different variant calling methods, genotype calls vary at the same position given the same strain of {\em P. falciparum}. Thus we apply inference methods to mutiple samples that contains the same parasite strains, and infer the genotypes of a reference strain.
+Note that this data set only contains two clonal-ish samples. Due to its limited size, they are not ideal for constructing a reference panel. Moreover, the {\em P. falciparum} genetic crosses project \citep{Miles2015} finds that due to sequencing error or applying different variant calling methods, genotype calls vary at the same position given the same strain of {\em P. falciparum}. Thus we apply inference methods to mutiple samples that contains the same parasite strains, and infer the genotypes of a reference strain.
 
 \paragraph{Infer haplotypes for Dd2 strain.}
 Since 3D7 is the reference strain, we can assume that strain Dd2 is the only source of `ALT' reads in samples from {\textmd PG0389-C} to {\textmd PG0394-C}. Assume markers are independent from each other, let $y$ be the read count for `ALT' allele and $x$ be the total read count weighted by the Dd2 mixing proportion (see Table~\ref{tab:jason} in brackets), we use regression model $y = \beta_0 + \beta_{1} x$ to infer the Dd2 genotype: 1 if $\beta_{1}$ is significant; 0 otherwise.
@@ -433,11 +433,11 @@ Similarly, for sample from {\textmd PG0398-C} to {\textmd PG0415-C}, we let vari
 
 \subsection{Accuracy}
 \subsubsection{Proportions and number of strains}
-We apply our program to 27 lab-mixed {\em in vitro} samples to validate our methods and program. As described in section~\ref{sec:updateP}, we start our method with the assumption of at most three strains present in the mixtures; and discard the strains less than 1\%. Our method successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). The deviation between our proportion estimates and the truth is at most 2\%.
+To validate our method we applied our program {\textmd DEploid} to 27 lab-mixed {\em in vitro} samples. As described in section~\ref{sec:updateP}, we start by assuming at most three strains present in the mixtures; and discard strains with less than 1\% relative abundance. Our method successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). The deviation between our proportion estimates and the truth is at most 2\%.
 
-Our model over-fits the noisy lab-mixed sample with additional strains. Note that in Table~\ref{tab:jason}, we infer six of the HB3 and 7G8 mixtures as mixing of three, two of which haplotypes have subtle difference with the same parasite line, but overall vastly different from the last strain. The subtle variation is caused by few heterozygous sites with high coverage resulting high leverage in our model (supplemental material Figure~S2.3(a)). The source of the noisy markers are possibly from sequencing or variant calling process, which are not recalabriated by our program.
+Our model overfits the noisy lab-mixed sample with additional strains. Note that in Table~\ref{tab:jason}, we infer six of the HB3 and 7G8 mixtures as mixing of three, two of which haplotypes have subtle difference with the same parasite line, but overall vastly different from the last strain. The subtle variation is caused by few heterozygous sites with high coverage resulting high leverage in our model (supplemental material Figure~S2.3(a)). The source of the noisy markers are possibly from sequencing or variant calling process, which are not recalabriated by our program.
 
-We experimented deconvoluting the 27 lab-mixed samples with the following different reference panels:
+We experimented deconvoluting the 27 lab-mixed samples with the following reference panels:
 \begin{itemize}
 \item panel I: five Asian and five African clonal strains from the Pf3k\citep{Pf3k2016} data base: {\textmd PD0498-C}, {\textmd PD0500-C}, {\textmd PD0660-C}, {\textmd PH0047-Cx}, {\textmd PH0064-C}, {\textmd PT0002-CW}, {\textmd PT0007-CW}, {\textmd PT0008-CW}, {\textmd PT0014-CW}, {\textmd PT0018-CW}.
 \item panel II: panel I with the addition of HB3;
@@ -448,17 +448,17 @@ We experimented deconvoluting the 27 lab-mixed samples with the following differ
 \end{itemize}
 In all cases we estimated the number and proportion of strains accurately, for example Figure~\ref{fig:differentRefPanel} y-axises show the proportions of strains Dd2/7G8/HB3 as approximately $\frac{1}{4}$/$\frac{1}{2}$/$\frac{1}{4}$.
 
-\begin{figure}[h]
+\begin{figure*}[htb]
 \centerline{
-\includegraphics[width=0.45\textwidth]{{differentPanelForSample.PG0396-C}.png}
+\includegraphics[width=0.9\textwidth]{{differentPanelForSample.PG0396-C}.png}
 }
 \caption{Haplotypes comparison of sample {\textmd PG0396-C} chromosome 14 deconvolution without any reference strain (top) versus with using reference panels I to IV (from the second to the bottom). Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segments from strains 7G8, HB3 and Dd2 respectively.}\label{fig:differentRefPanel}
-\end{figure}
+\end{figure*}
 
 \subsubsection{Haplotypes}
 Our accuracy assessment for inferred haplotypes take into account of both switch errors and genotype discordance, which reflect to the recombination and miss copying events in the method section. Intuitively, one may suggest to use the Li and Stephens model to compute the vertabi path or posterior probabilities to assess the how different our inferred haplotypes differ from the truth. However, we find that such methods overestimate switch errors at short segments of sequence due to variable reference panel quality.
 
-\begin{figure}[h]%figure1
+\begin{figure}[htb]%figure1
 \centerline{
 \includegraphics[width=0.45\textwidth]{{switchVsMisCopyErrlog}.png}
 }
@@ -467,17 +467,17 @@ Our accuracy assessment for inferred haplotypes take into account of both switch
 
 Moreover, we want to assess the switch errors by taking into account of switches from the other haplotypes. Note that in Figure~\ref{fig:differentRefPanel}, the top and bottom strains have similar proportions, which are difficult to phase without a perfect reference panel. One may flip parts of the two strains to resolve the errors. Unfortunately, our Li and Stephens implementation focuses on a single strain (two strains at the most), the vertabi path or posterior probabilities fail to align the switches of all strains. Therefore, we have taken a heuristic approach by dividing the inferred haplotypes into segments with length of 50, then mapped onto reference strains of panel V according to the indices. The switch errors are obtained by counting the changes of a strain mapped to reference strains; the genotype errors are the discordance between the strain and the mapped reference segments.
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=.5\textwidth]{{subSamples/PG0402-C.subSample100.lab.errorVsTotalCoverage}.png}
-\caption{Error rate of a particular genotype inference at different converages. Sample {\textmd PG0402-C} deconvolution with panel V. Compare with the error rate of strain {\textmd PG0402-C.7G8} in Figure~\ref{fig:swithVsMisCopy}, we find most of errors in infering heterozygous sites, where alternative allele is coming from the minor strain.}\label{fig:subsample}
-\end{figure}
+%\begin{figure}[ht]
+%\centering
+%\includegraphics[width=.5\textwidth]{{subSamples/PG0402-C.subSample100.lab.errorVsTotalCoverage}.png}
+%\caption{Error rate of a particular genotype inference at different converages. Sample {\textmd PG0402-C} deconvolution with panel V. Compare with the error rate of strain {\textmd PG0402-C.7G8} in Figure~\ref{fig:swithVsMisCopy}, we find most of errors in infering heterozygous sites, where alternative allele is coming from the minor strain.}\label{fig:subsample}
+%\end{figure}
 
-Our assessment on haplotype inference can be concluded as the following:
+From our assessment of haplotype inference, we conclude:
 \begin{itemize}
-\item The proportion inference do not seem to be affected by the presence of reference panel nor the quality of a panel (Figure~\ref{fig:differentRefPanel}).
+\item The inference of relative proportions do not seem to be affected by the use of a reference panel or its quality (Figure~\ref{fig:differentRefPanel}).
 \item The accuracy of the haplotype is dependent on having an appropriate reference panel (Figure~\ref{fig:differentRefPanel}).
-\item The strain proportion affects the haplotype inference (see Fig~\ref{fig:swithVsMisCopy}). Our method infer strains of with proportions over 20\% accurately, but struggle with minor strains due to insufficient data, in particularly at sites when the minor strain should be alternative allele, and the dominate strain should be reference allele (see Figure~\ref{fig:swithVsMisCopy}).
+\item The strain proportion affects the haplotype inference (see Fig~\ref{fig:swithVsMisCopy}). Our method infer strains with proportions over 20\% accurately, but struggle with minor strains due to insufficient data, in particularly at sites when the minor strain should be alternative allele, and the dominate strain should be reference allele (see Figure~\ref{fig:swithVsMisCopy}).
 \end{itemize}
 
 
@@ -584,6 +584,28 @@ MalariaGEN (2008).
 \newblock A global network for investigating the genomic epidemiology of
   malaria.
 \newblock {\em Nature\/}~{\em 456\/}(7223), 732 -- 737.
+
+\bibitem[\protect\citeauthoryear{Manske, Miotto, Campino, Auburn,
+  Almagro-Garcia, Maslen, O'Brien, Djimde, Doumbo, Zongo, Ouedraogo, Michon,
+  Mueller, Siba, Nzila, Borrmann, Kiara, Marsh, Jiang, Su, Amaratunga,
+  Fairhurst, Socheat, Nosten, Imwong, White, Sanders, Anastasi, Alcock, Drury,
+  Oyola, Quail, Turner, Ruano-Rubio, Jyothi, Amenga-Etego, Hubbart, Jeffreys,
+  Rowlands, Sutherland, Roper, Mangano, Modiano, Tan, Ferdig, Amambua-Ngwa,
+  Conway, Takala-Harrison, Plowe, Rayner, Rockett, Clark, Newbold, Berriman,
+  MacInnis, and Kwiatkowski}{Manske et~al.}{2012}]{Menske2012}
+Manske, M., O.~Miotto, S.~Campino, S.~Auburn, J.~Almagro-Garcia, G.~Maslen,
+  J.~O'Brien, A.~Djimde, O.~Doumbo, I.~Zongo, J.~Ouedraogo, P.~Michon,
+  I.~Mueller, P.~Siba, A.~Nzila, S.~Borrmann, S.~Kiara, K.~Marsh, H.~Jiang,
+  X.~Su, C.~Amaratunga, R.~Fairhurst, D.~Socheat, F.~Nosten, M.~Imwong,
+  N.~White, M.~Sanders, E.~Anastasi, D.~Alcock, E.~Drury, S.~Oyola, M.~Quail,
+  D.~Turner, V.~Ruano-Rubio, D.~Jyothi, L.~Amenga-Etego, C.~Hubbart,
+  A.~Jeffreys, K.~Rowlands, C.~Sutherland, C.~Roper, V.~Mangano, D.~Modiano,
+  J.~Tan, M.~Ferdig, A.~Amambua-Ngwa, D.~Conway, S.~Takala-Harrison, C.~Plowe,
+  J.~Rayner, K.~Rockett, T.~Clark, C.~Newbold, M.~Berriman, B.~MacInnis, and
+  D.~Kwiatkowski (2012, 7).
+\newblock Analysis of plasmodium falciparum diversity in natural infections by
+  deep sequencing.
+\newblock {\em Nature\/}~{\em 487\/}(7407), 375--379.
 
 \bibitem[\protect\citeauthoryear{Miles, Iqbal, Vauterin, Pearson, Campino,
   Theron, Gould, Mead, Drury, O{\textquoteright}Brien, Ruano~Rubio, MacInnis,

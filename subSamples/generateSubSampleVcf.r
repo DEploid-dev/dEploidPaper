@@ -23,14 +23,24 @@ sampleName = "PG0406-C"
 originalVcf = paste("../validation/", sampleName, ".eg.vcf", sep="")
 
 coverage = fun.extract.vcf(originalVcf)
+#err<-0.01;
+
+err<-0.00;
 
 expectedTotalCov = c(150, 80, 30)
 for ( i in expectedTotalCov ){
+    tmpNewVcfName = paste(sampleName, ".subSample.expectedCov", i, ".vcf", sep="")
     WSAF = coverage$altCount / (coverage$altCount+coverage$refCount+0.000001)
     tmpCoverage = coverage
     tmpTotalCoverage = rpois(length(coverage$altCount), i);
-    tmpCoverage$altCount = rbinom(length(coverage$altCount), tmpTotalCoverage, WSAF)
+
+    tmpCoverage$altCount = rbinom(length(coverage$altCount), tmpTotalCoverage, WSAF*(1-err)+(1-WSAF)*err)
     tmpCoverage$refCount = tmpTotalCoverage - tmpCoverage$altCount
-    tmpNewVcfName = paste(sampleName, ".subSample.expectedCov", i, ".vcf", sep="")
+    png(paste(tmpNewVcfName,".png",sep=""))
+    par(mfrow=c(3,1))
+    hist(tmpTotalCoverage,main="total coverage")
+    hist(tmpCoverage$altCount, main="tmpCoverage$altCount")
+    hist(tmpCoverage$refCount, main="tmpCoverage$refCount")
+    dev.off()
     fun.writeSubVcf (originalVcf, tmpNewVcfName, tmpCoverage)
 }
