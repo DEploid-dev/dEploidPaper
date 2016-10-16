@@ -27,7 +27,7 @@
 \title[Deconvolute mixed genomes]{DEploid: Untangling complexity of infection in {\it Plasmodium falciparum}.}
 \author[Zhu \textit{et~al}.]{Sha Joe Zhu\,$^{\text{\sfb 1},*}$, Jacob Almagro-Garcia\,$^{\text{\sfb 1}}$ and Gil McVean\,$^{\text{\sfb 1,2},*}$}
 \address{$^{\text{\sf 1}}$ Wellcome Trust Centre for Human Genetics, University of Oxford, Oxford OX3 7BN, UK \\
-$^{\text{\sf 2}}$ \textcolor{red}{Big data institute, Li Ka Shing Centre for Health Information and Discovery, University of Oxford, Oxford OX3 7BN, UK }}
+$^{\text{\sf 2}}$ Big data institute, Li Ka Shing Centre for Health Information and Discovery, University of Oxford, Oxford OX3 7BN, UK }
 
 \corresp{$^\ast$To whom correspondence should be addressed.}
 
@@ -51,67 +51,115 @@ The presence of multiple strains of {\it P. falciparum} makes fine scale analysi
 
 {\it Phasing} or deconvoluting the strains of a mixed infection is a harder problem than phasing diploid organisms because the levels of mixture within isolates (i.e. the abundance of each genetic type) vary greatly and are unknown.  Existing tools for phasing diploid organisms, such as Beagle \citep{Browning2007} and IMPUTE2 \citep{Howie2009}, are not designed to cope with this. \citet{Galinsky2015} and \citet{Jack2016} have attempted to address the mixed infection problem by inferring the mixed proportions from allele frequencies within samples, but they do not provide haplotypes and have limited use.
 
-As part of the Pf3k project \citep{Pf3k2016}, an effort to map the genetic diversity of {\it P. falciparum} at global scale, we have developed {\textmd DEploid}, a software package for deconvoluting  mixed infections. The program provides estimates for the number of different genetic types present in the isolate, the proportion or abundance of each strain and their sequences (i.e. haplotypes). To our knowledge, DEploid is the first package able to deconvolute strain haplotypes and provides a unique opportunity for researchers to study inbreeding and complexity of infection, leaving open the possiblity to investigate infection history at fine scale.
+As part of the Pf3k project \citep{Pf3k2016}, an effort to map the genetic diversity of {\it P. falciparum} at global scale, we have developed {\textmd DEploid}, a software package for deconvoluting mixed infections. The program provides estimates for the number of different genetic types present in the isolate, the proportion or abundance of each strain and their sequences (i.e. haplotypes). To our knowledge, DEploid is the first package able to deconvolute strain haplotypes and provides a unique opportunity for researchers to study inbreeding and complexity of infection, leaving open the possiblity to investigate infection history at fine scale.
 
 
 \begin{methods}
 \end{methods}
 
-\section{Methods}
-Overall, we use Markov chain Monte Carlo (MCMC) methods to learn the number of parasite strains and the proportions of allele frequencies, and use sampling method to infer the haplotype of each strain. The goal is firstly construct a high quality reference panel from the clonal samples, and then deconvolute the mixed samples with the reference panel using \citet{Li2003}'s hidden Markov model.
 
+\section{Methods}
 
 \subsection{Notations}
-Let's first introduce some notation (see Table~\ref{tab:notation}). Suppose that our data $D$ are the allele read counts of sample $j$ at a given site $i$, denoted as $r_{j,i}$ and $a_{j,i}$ for reference and alternative alleles respectively. The allele frequencies within sample (WSAF) $p_{j,i}$ and at population level (PLAF) $f_i$ can be calculated by $ \frac{a_{j,i}}{a_{j,i} + r_{j,i}}$ and $ \frac{\sum_j a_{j,i}}{\sum_j a_{j,i} + \sum_j r_{j,i}}$.
+Let's first introduce some notation (see Table~\ref{tab:notation}). Suppose that our data $D$ are the allele read counts of sample $j$ at a given site $i$, denoted as $r_{j,i}$ and $a_{j,i}$ for reference (REF) and alternative (ALT) alleles respectively. The allele frequencies within sample (WSAF) $p_{j,i}$ and at population level (PLAF) $f_i$ can be calculated by $ \frac{a_{j,i}}{a_{j,i} + r_{j,i}}$ and $ \frac{\sum_j a_{j,i}}{\sum_j a_{j,i} + \sum_j r_{j,i}}$. Since all data in this section refers to the same sample, we drop the subscript $j$ from now on.
 
-Since all data in this section refers to the same sample, we drop the subscript $j$ from now on. Let $\mathbf w = [w_1,\dots, w_k]$ and $\mathbf{h}_{i} = [h_{1,i},\dots,h_{k,i}]$ denote the proportions and haplotypes of $k$ parasite strains at site $i$. We use \citet{Jack2016}'s expression for the expected WSAF $q_{i}$ as:
-\begin{equation}
-q_i= (\mathbf{w}\cdot\mathbf{h}_{i})  =  \sum_{k=1}^{K} w_k \cdot h_{k,i} .\label{eqn:qij_full_sum}
-\end{equation}.
-
-\begin{table}[h]\centering
+\begin{table}[htb]\centering
 \begin{tabular}{c|c}\hline
 $i$              & Marker index\\
 $j$              & Sample index \\
 $r$              & Read count for reference allele \\
 $a$              & Read count for alternative allele \\
 $f$              & Population level allele frequency (PLAF) \\
-$k$              & Number of strains within sample \\
+$n$              & Number of strains within sample \\
+$l$              & Sequence length \\
 $\mathbf w$      & Proportions of strains \\
-$\mathbf{h}_{i}$ & allelic states of $k$ parasite strains at site $i$ \\
+$\mathbf{h}_{i}$ & allelic states of $n$ parasite strains at site $i$ \\
+$h_{k,i}$        & allelic states of $k$ parasite strains $k$ at site $i$, $h_k$ in short \\
 $p$              & Observed within sample allele frequency (WSAF) \\
 $q$              & Unadjusted expected WSAF  \\
 $\pi$            & Adjusted expected WSAF \\
-$\Xi$            & Reference panel\\ \hline
+$\Xi$            & Reference panel\\
+$g_{p}$          & allelic states of reference strain $p$\\
+$e$              & Probability of read error\\ \hline
 \end{tabular}
 \caption{Notation summary}\label{tab:notation}
 \end{table}
 
-\subsubsection{Likelihood of data given the expected WSAF}
+\subsection{Model}
+We descibe the mixed infection problem by considering the number of strains $n$, relative abundance of each strain $\mathbf{w}$ and their allelic states $\mathbf{h}$. Similar to \citet{Jack2016}, we use a Bayesian approach and define the posterior probabilities of $n$, $\mathbf{w}$ and $\mathbf{h}$ for some reference panel $\Xi$ and probability of miss read $e$ given data as the following:
+$$P(n, \mathbf{w}, \mathbf{h}, \Xi, e |D) \propto P(D|n, \mathbf{w}, \mathbf{h}, \Xi, e) \times P(n, \mathbf{w}, \mathbf{h}, \Xi, e).
+                                                %& P(D|n, \mathbf{w}, \mathbf{h}, \Xi, e) \times P(\mathbf{h}|n, \mathbf{w}, \Xi, e) \times P(k, \mathbf{w}, \Xi, e).
+$$
+In particular, when the number of strains $n$ is fixed, the model is then simplified as:
+$$P(\mathbf{w}, \mathbf{h}, \Xi, e |D) \propto P(D|\mathbf{w}, \mathbf{h}, \Xi, e) \times P(\mathbf{w}, \mathbf{h}, \Xi, e).$$ We assume that the proportion of parasite strains $\mathbf{w}$, the chosen reference panel $\Xi$ and sequencing error rate are independent from each other, the following expression is then obtained:
+\begin{equation}
+\begin{split}
+P(\mathbf{w}, \mathbf{h}, \Xi, e|D) \propto & P(D|\mathbf{w}, \mathbf{h}, \Xi, e) \times \\
+                                            & P(\mathbf{h}|\mathbf{w}, \Xi, e) \times P(\mathbf{w}) \times P(\Xi) \times P(e).\label{eqn:post}
+\end{split}
+\end{equation}
 
-We adjust the allele frequency $q_i$ by taking into account of read errors $e$. This implies that the expected allele frequency of `REF' read as `ALT' is $(1 - q_i)e$, and the expected allele frequency of `ALT' read as `REF' is $q_ie$. Thus, we adjust the WSAF take into account of read error as follows:
+Let $\mathbf w = [w_1,\dots, w_n]$ and $\mathbf{h}_i = [h_{1,i},\dots,h_{n,i}]$ denote the proportions and alleic state of $n$ parasite strains at site $i$. We use \citet{Jack2016}'s expression for the expected WSAF $q_{i}$ as:
+\begin{equation}
+q_i= (\mathbf{w}\cdot\mathbf{h}_{i})  =  \sum_{k=1}^{n} w_k \cdot h_{k,i} .\label{eqn:qij_full_sum}
+\end{equation}
+Thus, the likelihood of $P (D|w, h,\Xi, e)$ in Eqn.~\ref{eqn:post} becomes $P(D|q_{i},\Xi, e)$. In the rest of the paper, we will use the expressions $P(D|\theta)$ and $L(\theta|D)$ interchangeably for convience.
+
+We adjust the allele frequency $q_i$ by taking into account of read errors $e$. This implies that the expected allele frequency of `REF' read as `ALT' is $(1 - q_i)e$, and the expected allele frequency of `ALT' read as `REF' is $q_ie$. Thus, the adjusted WSAF becomes:
 \begin{equation}
 \pi_i = q_i + (1 - q_i)e - q_ie = q_i + (1 - 2q_i)e.\label{eqn:adj_q}
 \end{equation}
 
-We take into account over-dispersion in read counts, modelling the count distribution as a Beta-binomial distribution. Specifically, the read counts of `ALT' are identically and independently distributed (i.i.d.) with probability $\pi_{i}$ (adjusted), i.e. $a_i \sim Binom(\pi_{i}, a_i + r_i)$, and $\pi_{i}\sim Beta(\alpha, \beta)$, where $\pi_{i} = \alpha/(\alpha+\beta)$. From experience, we set $\alpha = 100\cdot q_{i} $ and $\beta = 100\cdot (1-q_{i})$. Hence we can formalise the likelihood of the data using:
+\subsubsection{Likelihood of data given the WSAF}
+We model over-dispersion in read counts relative to Binomial using a Beta-binomial distribution. Specifically, the read counts of `ALT' are identically and independently distributed (i.i.d.) with probability $v_i$, i.e. $a_i \sim Binom(a_i + r_i, v_i)$, and $v_i \sim Beta(\alpha, \beta)$, where $v_i = \alpha/(\alpha+\beta)$. Let $\alpha = c\cdot \pi_{i} $ and $\beta = c\cdot (1-\pi_{i})$, we can formalise the likelihood of the data using: % $v_i$ is simply $E(\pi_i)$
 \begin{equation}
-L(q_{i} | D) = P(D|q_{i}) \propto \frac{\Gamma(a_i + 100\cdot \pi_{i}) \Gamma(r_i + 100\cdot (1-\pi_{i}))}{\Gamma(100\cdot \pi_{i})\Gamma(100\cdot (1-\pi_{i}))}, \label{eqn:llk}
+L(q_{i}, \Xi, e | D) \propto \frac{\Gamma(a_i + c\cdot \pi_{i}) \Gamma(r_i + c\cdot (1-\pi_{i}))}{\Gamma(c\cdot \pi_{i})\Gamma(c\cdot (1-\pi_{i}))}. \label{eqn:llk}
 \end{equation}
-of which expected WSAF $q_i$ is adjusted through Eqn.\eqref{eqn:adj_q}.
+%In practice, constant $c$ is set to 100.
+
+\subsubsection{Priors}
+\begin{itemize}
+\item We use a multinormal prior for the proportions $\mathbf{w}$, we introduce a multivariate normal variable titre ${\mathbf x} = [x_1,\dots,x_n]$, where each $x$ is i.i.d. normally distributed from $N(\eta, \sigma^2)$. We then compute $w_k$ as $\exp(x_k)$ (normailized by the sum of $\exp(x_k)$). Suppose the probability density of $x_k$ is $\phi(x|\eta, \sigma^2)$, the prior density on each $w_k$ then becomes $\phi(\log(w_k)|\eta, \sigma^2)\frac{d}{dw_k}\log(w_k)$. We consider the prior on $\mathbf{w}$ by considering the prior on $\mathbf{x}$.
+
+%m = 0, and $sigma^2 = 3$
+\item For the prior on $\mathbf{h} | \omega, \Xi$, we use \citet{Li2003}'s hidden Markov model framework as a starting point, with the following modifications made:
+\begin{itemize}
+\item[*] likelihood of data given the expected WSAF rather than the ``product of approximate conditionals'' (PAC).
+\item[*] multiple strains with variable proportion rather than two sequences with strict diploidity.
+\item[*] simplifying the mutation model with a fixed miss copying operation.
+\end{itemize}
+
+Let $\xi_k$ denote the path in the reference panel $\Xi$ that $h_k$ is copying from; and $\mu$ denote the probability of miss copying:
+$$\begin{cases}
+P(\xi_k = h_k) &= 1-\mu, \\
+P(\xi_k \neq h_k) &= \mu,\end{cases}$$
+We can therefore express the prior on each $h_k$ as
+\begin{align*}
+P (h_k|\mathbf{w}, \Xi, e) = & P (\xi_k = a|\mathbf{w}, \Xi, e) (1-\mu) +\\
+                             & P (\xi_k = 1-a|\mathbf{w}, \Xi, e) \mu,
+\end{align*}
+where $a \in \{0, 1\}$, and $1-a$ indicates the event that allelic state $h_k$ differs from $\xi_k$. We can therefore transform the prior on $\mathbf{h}_k$ into the form of a prior on $\mathbf{\xi}_k$, and the prior of the path is simply the transmission probabilities between two loci of a given recombniation model.
+
+\item Since we are not making inferences on the refernece panel nor error rate, the prior probabilities are fixed as 1s.
+\end{itemize}
 
 
-\subsection{Technical details}
-Overall, our method generates MCMC samples for the proportions $\mathbf w$ and the haplotypes $\mathbf h$ given a number of strains. In particular, we assume there are more strains than actually present, starting the MCMC chain with a fixed $k$. As the proportion values drop, we ``zero-out'' ``noisy'' strains. For example, suppose that $k=5$ and the proportions $\mathbf w= [0.848, 6.36e-05, 6.81e-05, 0.152, 3.31e-05]$, we drop the strains with proportions less than $0.01$, and keep the first and the forth strains. As for the MCMC updates, we use a Metropolis-Hastings algorithm to sample proportions ($\mathbf w$) given $\mathbf h$ (section~\ref{sec:updateP}); and use Gib sampler to update $\mathbf h$ for a given $\mathbf w$, which are further divided into cases when building the reference panel (section~\ref{sec:method.ref}) and deconvolute mixed samples (section~\ref{sec:method.deconv}). At last, we take the best fit (section\ref{sec:method.dic}) of the MCMC sample as a point estimate of haplotypes and proportions.
-
-\subsubsection{MCMC update for proportions}\label{sec:updateP}
-We use a sparse update on $\mathbf w$. We introduce a multivariate normal variable titre ${\mathbf x} = [x_1,\dots,x_k]$, where each $x$ is i.i.d. normally distributed from $N(0, 3)$, with the density function $d(x)$. We sample $x$s, then transform to $w = e^x$. We then normalise vector $\mathbf w$, to obtain a new sample ${\mathbf w}$.
+%A crucial difference between our method and \citet{Li2003}'s model is that mixed samples can have more than two strains, with unknown proportions. We randomly choose the strains to update, then apply LS's algorithm to sample the path using Gibbs sampler given the proportion $\mathbf p$ (see example in Fig.~\ref{fig:ls}), rather than 50/50 in the cases of diploid samples.
 
 
-\subsection{Infer haplotypes without reference panel}\label{sec:method.ref}
-In practice, we assume clonal sample haplotypes capture the diversities of haplotype structures given all samples. We use them as the reference strains for start, and deconvolute the rest mixed samples from them. We start with a set of clonal sample candidate, and run the algorithm to confirm they are in fact clonal. We use Gib sampler to update $\mathbf h$ of given $\mathbf w$, randomly select one strain at the time, or a pair of strains to update in order to improve the mixing of the MCMC process.
 
-\subsubsection{Update of a single strain}
+\subsection{Inference}
+
+Overall, our method generates Markov chain Monte Carlo (MCMC) samples for the proportions $\mathbf w$ and the haplotypes $\mathbf h$ given a fixed number of strains. As for the MCMC updates on the prior, we use a Metropolis-Hastings algorithm to sample proportions ($\mathbf w$) given $\mathbf h$; and use Gib sampler to update $\mathbf h$ for a given $\mathbf w$, which are further divided into cases of updating only one haplotype and updating a pair of haplotypes.
+
+
+
+\subsubsection{Metropolis-Hastings update for proportions}\label{sec:updateP}
+%We use a sparse update on $\mathbf w$. We introduce , with the density function $d(x)$. We sample $x$s, then transform to $w = e^x$. We then normalise vector $\mathbf w$, to obtain a new sample ${\mathbf w}$.
+
+We are updating
+
+\subsubsection{Gibbs update for single haplotype}
 
 We choose haplotype strain $s$ uniformly at random from $K$ strains, considering both cases for updating the state of strain $s$ at position $i$ to $0$ and $1$, we compute the WSAF and its associated likelihood as follows: Regardless the state of strain $s$ at position $i$, we firstly remove it from the current WSAF, i.e. subtract $ w_s \cdot h_s$ from Eqn.~(\ref{eqn:qij_full_sum}), which gives
 \begin{equation}
@@ -120,61 +168,15 @@ q_{i,-s} = \sum_{k\neq s} w_k \cdot h_k = \textrm{Eqn.~\eqref{eqn:qij_full_sum}}
 
 Therefore, updating strain $s$ of state $0$ and $1$, so the expected WSAF becomes
 \begin{align}
-q_{i,g_s=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s}} \label{eqn:qij0}\\
-q_{i,g_s=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s}} + w_s \times 1 \label{eqn:qij1}
+q_{i,h_s=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s}} \label{eqn:qij0}\\
+q_{i,h_s=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s}} + w_s \times 1 \label{eqn:qij1}
 \end{align}
-Substitute equations~\eqref{eqn:qij0} and \eqref{eqn:qij1} into Eqn.~\eqref{eqn:llk} to compute associated likelihood $L(q_{i,g_s} |D)$, which is expressed as $L(g_s |D)$ in short, for the rest of the paper.
-
-
-Assuming independence between site $i$ and $i+1$, we use PLAF at position $i$ as prior, and compute the posterior probability as follows:
+Substitute equations~\eqref{eqn:qij0} and \eqref{eqn:qij1} into Eqn.~\eqref{eqn:llk} to compute associated likelihood $L(q_{i,h_s}, \Xi, e |D)$, which is expressed as $L(h_s |D)$ in short, for the rest of the paper. Therefore, Eqn.~\ref{eqn:post} then becomes
 \begin{equation}
-P(g_s | D) \propto L(g_s|D) \times P(g_s).\label{eqn:post:LDfree}
+P(h_s |D) \propto  L(h_s |D) \times P(\mathbf{h}|\mathbf{w}, \Xi, e).
 \end{equation}
 
-\subsubsection{Update two haplotypes at the same time.}
-In order to improve the MCMC mixing, we consider pairs of haplotypes and update both strain simultaneously. Suppose random sampling two strains to update, namely, $s_1$ and $s_2$. Similarly to Eqn.~\eqref{eqn:qij_full_sum_minus_s}, we first remove their states from the WSAF:
-\begin{equation}
-\begin{split}
-q_{i,-s_1, -s_2} & ~ = ~ \sum_{k\neq s_1,s_2} w_k \cdot h_k \\
-                 & ~ = ~ \textrm{Eqn.~\eqref{eqn:qij_full_sum}} - w_{s_1} \cdot h_{s_1} - w_{s_2} \cdot h_{s_2} \label{eqn:qij_full_sum_minus_s1_s2}
-\end{split}
-\end{equation}
-
-Considering all four possible combination of genotypes, we have
-\begin{align}
-q_{i,g_{s_1}=0,g_{s_2}=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} \label{eqn:qij00}\\
-q_{i,g_{s_1}=0,g_{s_2}=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_1} \times 1 \label{eqn:qij10}\\
-q_{i,g_{s_1}=0,g_{s_2}=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_2} \times 1 \label{eqn:qij01}\\
-q_{i,g_{s_1}=0,g_{s_2}=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_1} \times 1 + w_{s_2} \times 1 \label{eqn:qij11}
-\end{align}
-Substitute expressions.~\eqref{eqn:qij00} to~\eqref{eqn:qij11}, into Eqn.~\eqref{eqn:llk}, we then obtain their associated likelihood $L(q_{i,g_{s_1},g_{s_2}} \big{|} D)$, which is denoted as $L(g_{s_1},g_{s_2} \big{|} D)$ in the rest of the paper.
-
-Thus, similar to Eqn.~\eqref{eqn:post:LDfree}, we obtain the following posterior probability, and sample the state (genotype) of strains $s_1$ and $s_2$ simultaneously at site $i$:
-\begin{equation}
-%\begin{split}
-P(g_{s_1},g_{s_2} | D) \propto L(g_{s_1},g_{s_2} |D) \times P(g_{s_1},g_{s_2} ),\label{eqn:post.two:LDfree}
-%\end{split}
-\end{equation}
-where $P(g_{s_1},g_{s_2}) = P(g_{s_1}) \cdot P(g_{s_2})$, assume independence between $s_1$ and $s_2$.
-
-
-
-\subsection{Deconvolute the mixed isolates}\label{sec:method.deconv}
-
-We use \citet{Li2003}'s hidden Markov model framework as a starting point. The following modifications are made:
-\begin{itemize}
-\item likelihood of data given the expected WSAF rather than the ``product of approximate conditionals'' (PAC).
-\item multiple strains with variable proportion rather than two sequences with strict deploidity.
-\item simplifying the mutation model with a fixed miss copying operation.
-\end{itemize}
-
-\subsubsection{Update single haplotype with LS}
-
-\paragraph{Recombination map}
-We assume a uniform recombination map, genetic distances between loci $i$ and $i+1$ are computed by $G_i = D_i / Morgan$ where $D_i$ denotes the physical distance between loci $i$ and $i+1$ in nucleotide, $Morgan$ is the average morgan distance, which we use 1500000. Suppose the recombination rate $\psi_i$ is given by $\psi_i = N_e G_i$, with $N_e=10$ being the effective population size. Note that {\bf we scale the probabilities with the number of haplotypes in the reference panel}. Let $\Xi$ denote the set of the strains in the reference panel. For position $i > 1$, let $\rho_i'$ denote the probability of {\bf no} recombination from site $i-1$ to $i$, we have $\rho'_i = \exp(-\psi_i)$. Thus, the probability of recombining from any strain in the panel is $\displaystyle\frac{1-\rho_i'}{|\Xi|}$, where $|\Xi|$ is the size of the panel.
-
-
-A crucial difference between our method and \citet{Li2003}'s model is that mixed samples can have more than two strains, with unknown proportions. We randomly choose the strains to update, then apply LS's algorithm to sample the path using Gibbs sampler given the proportion $\mathbf p$ (see example in Fig.~\ref{fig:ls}), rather than 50/50 in the cases of diploid samples.
+In addition to updating the haplotypes from the panel, we take into account of miss copying (see example shown in Fig.~\ref{fig:ls}), which allow the actual genotype differ from the path. Therefore, this method favours mutation rather than recombination for a single-site difference from a reference strain. Our model benefits from combining information from both the reference haplotypes as well as the data. For {\em de novo} mutations which are not found reference panel, our method will infer mutations based on read count from data.
 
 \begin{figure}[ht]
 \centering
@@ -183,21 +185,18 @@ A crucial difference between our method and \citet{Li2003}'s model is that mixed
 }\label{fig:ls}
 \end{figure}
 
-In addition to updating the haplotypes from the panel, we take into account of miss copying (see example shown in Fig.~\ref{fig:ls}), which allow the actual genotype differ from the path. Therefore, this method favours mutation rather than recombination for one-off events. Our model benefits from combining information from both the reference haplotypes as well as the data. For {\em de novo} mutations which are not found reference panel, our method will infer mutations based on read count from data.
+
 
 Specific steps are as following:
 \begin{enumerate}
-\item Consider the likelihood as the emission probabilities at site $i$. Let's use $g_p$ and $g_s$ to denote the genotype of the copied path and the updated strain respectively. We have:
+\item Consider the likelihood as the emission probabilities at site $i$. Let's use $g_p$ and $h_s$ to denote the allelic state of the copied path and the updated strain respectively. We have:
 \begin{equation*}
 \begin{split}
-L(g_p = * | D) ~ = ~ & L(g_s = * \big{|} D) \times P(g_p = g_s) + \\
-                     & L(g_s = 1 - * \big{|} D) \times P(g_p \neq g_s) \label{eqn:gp_given_D}
+L(g_p = a | D) ~ = ~ & L(h_s = a \big{|} D) \times P(g_p = h_s) + \\
+                     & L(h_s = 1 - a \big{|} D) \times P(g_p \neq h_s) \label{eqn:gp_given_D}
 \end{split}
 \end{equation*}
-where $*\in \{0,1\}$, and $1-*$ indicates the event that $g_s$ takes value that differs from $g_p$. Let $\mu$ denote the probability of miss copying, we have
-$$\begin{cases}
-P(g_p = g_s) &= 1-\mu, \\
-P(g_p \neq g_s) &= \mu .\end{cases}$$
+where $a\in \{0,1\}$, and $1-a$ indicates the event that $h_s$ takes value that differs from $g_p$.
 
 \item Compute the probability of path at each position using forward algorithm. Therefore, we have the posterior probability of path (reference strain) $p$ at position $i$ as:
 \begin{equation}
@@ -219,36 +218,60 @@ if it recombines, sample path backwards according $P_i(g_p \big{|} D)$.
 
 \item Ultimately, given the state of the path at each site, we now want to sample the genotype according to the posterior probabilities:
 \begin{equation}
-P(g_{s} = * \big{|} D) =
+P(h_{s} = * \big{|} D) =
 \begin{cases}
-P(g_{p} = * \big{|} D) \cdot (1-\mu), & g_s = g_p;\\
-P(g_{p} = 1 - * \big{|} D) \cdot \mu, & g_s \neq g_p.
+P(g_{p} = * \big{|} D) \cdot (1-\mu), & h_s = g_p;\\
+P(g_{p} = 1 - * \big{|} D) \cdot \mu, & h_s \neq g_p.
 \end{cases}
 \label{eqn:ps0}
 \end{equation}
 
 \end{enumerate}
 
+\subsubsection{Gibbs update for a pair of haplotypes}\label{sec:deconvolute}
+In order to improve the MCMC mixing, we consider pairs of haplotypes and update both strain simultaneously. Suppose random sampling two strains to update, namely, $s_1$ and $s_2$. Similarly to Eqn.~\eqref{eqn:qij_full_sum_minus_s}, we first remove their states from the WSAF:
+\begin{equation}
+\begin{split}
+q_{i,-s_1, -s_2} & ~ = ~ \sum_{k\neq s_1,s_2} w_k \cdot h_k \\
+                 & ~ = ~ \textrm{Eqn.~\eqref{eqn:qij_full_sum}} - w_{s_1} \cdot h_{s_1} - w_{s_2} \cdot h_{s_2} \label{eqn:qij_full_sum_minus_s1_s2}
+\end{split}
+\end{equation}
 
-\subsubsection{Update pair of haplotypes with LD}\label{sec:deconvolute}
+Considering all four possible combination of genotypes, we have
+\begin{align}
+q_{i,h_{s_1}=0,h_{s_2}=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} \label{eqn:qij00}\\
+q_{i,h_{s_1}=0,h_{s_2}=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_1} \times 1 \label{eqn:qij10}\\
+q_{i,h_{s_1}=0,h_{s_2}=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_2} \times 1 \label{eqn:qij01}\\
+q_{i,h_{s_1}=0,h_{s_2}=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_1} \times 1 + w_{s_2} \times 1 \label{eqn:qij11}
+\end{align}
+Substitute expressions.~\eqref{eqn:qij00} to~\eqref{eqn:qij11}, into Eqn.~\eqref{eqn:llk}, we then obtain their associated likelihood $L(q_{i,h_{s_1},h_{s_2}} \big{|} D)$, which is denoted as $L(h_{s_1},h_{s_2} \big{|} D)$ in the rest of the paper.
+
+Thus, similar to Eqn.~\eqref{eqn:post:LDfree}, we obtain the following posterior probability, and sample the state (genotype) of strains $s_1$ and $s_2$ simultaneously at site $i$:
+\begin{equation}
+%\begin{split}
+P(h_{s_1},h_{s_2} | D) \propto L(h_{s_1},h_{s_2} |D) \times P(h_{s_1},h_{s_2} ),\label{eqn:post.two:LDfree}
+%\end{split}
+\end{equation}
+
+
 Similarly to the previous section, we need to
 \begin{enumerate}
 \item Compute the emission probabilities
 
 \begin{equation*}
 \begin{split}
-L\left( \Scale[0.8]{ \begin{array}{l} g_{p_1} = *, \\g_{p_2} = \# \end{array}} \big{|} D\right) = & L\left(\Scale[0.8]{\begin{array}{l}g_{s_1} = *,\\ g_{s_2} = \# \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} = g_{s_1}, \\g_{p_2}= g_{s_2}\end{array}} \right)  + \\
-                                         & L\left(\Scale[0.8]{\begin{array}{l}g_{s_1} = *, \\g_{s_2} = 1-\# \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} = g_{s_1}, \\g_{p_2} \neq g_{s_2}\end{array}} \right)  + \\
-                                         & L\left(\Scale[0.8]{\begin{array}{l}g_{s_1} = 1-*, \\g_{s_2} = \# \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} \neq g_{s_1}, \\g_{p_2} = g_{s_2}\end{array}} \right)  + \\
-                                         & L\left(\Scale[0.8]{\begin{array}{l}g_{s_1} = 1-*, \\g_{s_2} = 1-\# \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} \neq g_{s_1}, \\g_{p_2} \neq g_{s_2}\end{array}} \right)
+L\left( \Scale[0.8]{ \begin{array}{l} g_{p_1} = *, \\g_{p_2} = \# \end{array}} \big{|} D\right) = & L\left(\Scale[0.8]{\begin{array}{l}h_{s_1} = *,\\ h_{s_2} = \# \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} = h_{s_1}, \\g_{p_2}= h_{s_2}\end{array}} \right)  + \\
+                                         & L\left(\Scale[0.8]{\begin{array}{l}h_{s_1} = *, \\h_{s_2} = 1-\# \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} = h_{s_1}, \\g_{p_2} \neq h_{s_2}\end{array}} \right)  + \\
+                                         & L\left(\Scale[0.8]{\begin{array}{l}h_{s_1} = 1-*, \\h_{s_2} = \# \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} \neq h_{s_1}, \\g_{p_2} = h_{s_2}\end{array}} \right)  + \\
+                                         & L\left(\Scale[0.8]{\begin{array}{l}h_{s_1} = 1-*, \\h_{s_2} = 1-\# \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} \neq h_{s_1}, \\g_{p_2} \neq h_{s_2}\end{array}} \right)
 \end{split}\label{eqn:gp_given_D:two}
 \end{equation*}
 where
 \begin{align*}
-P(g_{p_1} = g_{s_1}, g_{p_2} = g_{s_2})       & = (1-\mu)\cdot(1-\mu) , \\
-P(g_{p_1} \neq g_{s_1}, g_{p_2} = g_{s_2})    & = \mu\cdot(1-\mu),\\
-P(g_{p_1} = g_{s_1}, g_{p_2} \neq g_{s_2})    & = \mu\cdot(1-\mu),\\
-P(g_{p_1} \neq g_{s_1}, g_{p_2} \neq g_{s_2}) & = \mu \cdot \mu.
+P(g_{p_1} = h_{s_1}, g_{p_2} = h_{s_2})       & = (1-\mu)\cdot(1-\mu) , \\
+P(g_{p_1} \neq h_{s_1}, g_{p_2} = h_{s_2})    & = \mu\cdot(1-\mu),\\
+P(g_{p_1} = h_{s_1}, g_{p_2} \neq h_{s_2})    & = \mu\cdot(1-\mu),\\
+P(g_{p_1} \neq h_{s_1}, g_{p_2} \neq h_{s_2}) & = \mu \cdot \mu.
 \end{align*}
 
 
@@ -278,17 +301,49 @@ If both strains recombine, sample the path, according to $P_i(g_{p_1}, g_{p_2}|D
 \item
 Ultimately, we consider add miss copies similar to the previous section, and sample the strain state given the path state with probabilities:
 \begin{equation*}
-P\left(\Scale[0.8]{ \begin{array}{l} g_{s_1} = *, \\g_{s_2} = \# \end{array}}\big{|} D\right) =
+P\left(\Scale[0.8]{ \begin{array}{l} h_{s_1} = *, \\h_{s_2} = \# \end{array}}\big{|} D\right) =
 \begin{cases}
-P\left(\Scale[0.8]{ \begin{array}{l} g_{p_1} = *, \\g_{p_2} = \# \end{array}} \big{|} D\right) \cdot (1-\mu) \cdot (1-\mu), \\%& g_{s_1} = g_{p_1} \text{ and } g_{s_2} = g_{p_2} ;\\
-P\left(\Scale[0.8]{ \begin{array}{l}(g_{p_1} = *, \\g_{p_2} = 1-\# \end{array}}\big{|} D\right) \cdot (1 - \mu) \cdot \mu, \\%& g_{s_1} = g_{p_1} \text{ and } g_{s_2} \neq g_{p_2};\\
-P\left(\Scale[0.8]{ \begin{array}{l}(g_{p_1} = 1-*, \\g_{p_2} = \# \end{array}}\big{|} D\right) \cdot \mu \cdot (1 - \mu), \\%& g_{s_1} \neq g_{p_1} \text{ and } g_{s_2} = g_{p_2};\\
-P\left(\Scale[0.8]{ \begin{array}{l}(g_{p_1} = 1-*, \\g_{p_2} = 1-\# \end{array}}\big{|} D\right) \cdot \mu \cdot \mu, \\%& g_{s_1} \neq g_{p_1} \text{ and } g_{s_2} \neq g_{p_2}.
+P\left(\Scale[0.8]{ \begin{array}{l} g_{p_1} = *, \\g_{p_2} = \# \end{array}} \big{|} D\right) \cdot (1-\mu) \cdot (1-\mu), \\%& h_{s_1} = g_{p_1} \text{ and } h_{s_2} = g_{p_2} ;\\
+P\left(\Scale[0.8]{ \begin{array}{l}(g_{p_1} = *, \\g_{p_2} = 1-\# \end{array}}\big{|} D\right) \cdot (1 - \mu) \cdot \mu, \\%& h_{s_1} = g_{p_1} \text{ and } h_{s_2} \neq g_{p_2};\\
+P\left(\Scale[0.8]{ \begin{array}{l}(g_{p_1} = 1-*, \\g_{p_2} = \# \end{array}}\big{|} D\right) \cdot \mu \cdot (1 - \mu), \\%& h_{s_1} \neq g_{p_1} \text{ and } h_{s_2} = g_{p_2};\\
+P\left(\Scale[0.8]{ \begin{array}{l}(g_{p_1} = 1-*, \\g_{p_2} = 1-\# \end{array}}\big{|} D\right) \cdot \mu \cdot \mu, \\%& h_{s_1} \neq g_{p_1} \text{ and } h_{s_2} \neq g_{p_2}.
 \end{cases}
 %\label{eqn:ps0}
 \end{equation*}
 consider all cases of if the path the same as the strain.
 \end{enumerate}
+
+
+
+
+\subsection{Infer haplotypes without reference panel}\label{sec:method.ref}
+
+
+
+\subsection{Implementation detail}
+In practice, we assume clonal sample haplotypes capture the diversities of haplotype structures given all samples. We use them as the reference strains for start, and deconvolute the rest mixed samples from them. We start with a set of clonal sample candidate, and run the algorithm to confirm they are in fact clonal. We use Gib sampler to update $\mathbf h$ of given $\mathbf w$, randomly select one strain at the time, or a pair of strains to update in order to improve the mixing of the MCMC process.
+
+
+\paragraph{Recombination map}
+We assume a uniform recombination map, genetic distances between loci $i$ and $i+1$ are computed by $G_i = D_i / Morgan$ where $D_i$ denotes the physical distance between loci $i$ and $i+1$ in nucleotide, $Morgan$ is the average morgan distance, which we use 1500000. Suppose the recombination rate $\psi_i$ is given by $\psi_i = N_e G_i$, with $N_e=10$ being the effective population size. Note that {\bf we scale the probabilities with the number of haplotypes in the reference panel}. Let $\Xi$ denote the set of the strains in the reference panel. For position $i > 1$, let $\rho_i'$ denote the probability of {\bf no} recombination from site $i-1$ to $i$, we have $\rho'_i = \exp(-\psi_i)$. Thus, the probability of recombining from any strain in the panel is $\displaystyle\frac{1-\rho_i'}{|\Xi|}$, where $|\Xi|$ is the size of the panel.
+
+
+\subsubsection{Update of a single strain}
+
+
+Assuming independence between site $i$ and $i+1$, we use PLAF at position $i$ as prior, and compute the posterior probability as follows:
+\begin{equation}
+P(h_s | D) \propto L(h_s|D) \times P(h_s).\label{eqn:post:LDfree}
+\end{equation}
+
+\subsubsection{Update two haplotypes at the same time.}
+where $P(h_{s_1},h_{s_2}) = P(h_{s_1}) \cdot P(h_{s_2})$, assume independence between $s_1$ and $s_2$.
+
+
+
+
+\subsection{Technical details}
+In particular, we assume there are more strains than actually present, starting the MCMC chain with a fixed $k$. As the proportion values drop, we ``zero-out'' ``noisy'' strains. For example, suppose that $k=5$ and the proportions $\mathbf w= [0.848, 6.36e-05, 6.81e-05, 0.152, 3.31e-05]$, we drop the strains with proportions less than $0.01$, and keep the first and the forth strains. At last, we take the best fit (section\ref{sec:method.dic}) of the MCMC sample as a point estimate of haplotypes and proportions.
 
 
 
@@ -396,7 +451,7 @@ From our assessment of haplotype inference, we conclude:
 %We extended our experiments further to test how sensitive the inference result is to the sequence coverage. Data was simulated by sampling read counts according to $Binom(n,p)$ models, where $n$ was the number alternative and reference alleles at each site. Three different probabilities $p$: 0.2, 0.5, 0.8 were used for creating the scenarios of lower, median and high coverage data. In general, we observed that higher coverage data was more informative about the genotype, which accompanied with reduced error rates, with exceptions when using a perfect reference panel: The haplotype inference heavily relied on the reference panel for low coverage data, which again addresses the importance of using appropriate reference panels (see supplement materials).
 
 \subsection{Run-time}
-The complexity of our program is $\mathcal{O}(n^2m)$ (see Fig~\ref{fig:runtime}), where $n$ and $m$ are the number of reference strains and sites respectively. In practice, we divide Pf3k samples into several geographical regions and perform deconvolution, with ten most different local clonal strains as reference panel. The run time of deconvoluting a field sample range between 1 and 6 hours, depending on the number variants in a sample: For example, it takes $5\frac{1}{2}$ hours to process sample {\textmd QG0182-C} over 372,884 sites.
+The complexity of our program is $\mathcal{O}(lm^2)$ (see Fig~\ref{fig:runtime}), where $l$ and $m$ are the number of reference strains and sites respectively. In practice, we divide Pf3k samples into several geographical regions and perform deconvolution, with ten most different local clonal strains as reference panel. The run time of deconvoluting a field sample range between 1 and 6 hours, depending on the number variants in a sample: For example, it takes $5\frac{1}{2}$ hours to process sample {\textmd QG0182-C} over 372,884 sites.
 
 %94m31.924s PD0500-C 98,211
 %328m52.036s  QG0182-C 372,884
