@@ -15,3 +15,8 @@ bioInfoSupplement.pdf: bioInfoSupplement.tex ${supfigures} ${suptex} supplementR
 
 clean:
 	rm -f *.blg *snm *nav *.bbl *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out bioInfo.pdf bioInfoSupplement.pdf
+
+plain.pdf: bioInfo.tex
+#	sed -e "s/bioinfo/article/" -e "s/todonotes/fullpage, amsmath,natbib,todonotes" bioInfo.tex > plain.tex
+	pdflatex plain.tex
+	pdflatex plain.tex

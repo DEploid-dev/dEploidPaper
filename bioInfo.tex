@@ -87,23 +87,28 @@ $e$              & Probability of read error\\ \hline
 
 \subsection{Model}
 We descibe the mixed infection problem by considering the number of strains $n$, relative abundance of each strain $\mathbf{w}$ and their allelic states $\mathbf{h}$. Similar to \citet{Jack2016}, we use a Bayesian approach and define the posterior probabilities of $n$, $\mathbf{w}$ and $\mathbf{h}$ for some reference panel $\Xi$ and probability of miss read $e$ given data as the following:
-$$P(n, \mathbf{w}, \mathbf{h}, \Xi, e |D) \propto P(D|n, \mathbf{w}, \mathbf{h}, \Xi, e) \times P(n, \mathbf{w}, \mathbf{h}, \Xi, e).
+$$P(n, \mathbf{w}, \mathbf{h}, \Xi, e |D) \propto L(n, \mathbf{w}, \mathbf{h}, \Xi, e|D) \times P(n, \mathbf{w}, \mathbf{h}, \Xi, e).
                                                 %& P(D|n, \mathbf{w}, \mathbf{h}, \Xi, e) \times P(\mathbf{h}|n, \mathbf{w}, \Xi, e) \times P(k, \mathbf{w}, \Xi, e).
 $$
-In particular, when the number of strains $n$ is fixed, the model is then simplified as:
-$$P(\mathbf{w}, \mathbf{h}, \Xi, e |D) \propto P(D|\mathbf{w}, \mathbf{h}, \Xi, e) \times P(\mathbf{w}, \mathbf{h}, \Xi, e).$$ We assume that the proportion of parasite strains $\mathbf{w}$, the chosen reference panel $\Xi$ and sequencing error rate are independent from each other, the following expression is then obtained:
+
+We assume that the proportion of parasite strains $\mathbf{w}$ given $n$ strains, the chosen reference panel $\Xi$ and sequencing error rate are independent from each other, the following expression is then obtained:
 \begin{equation}
 \begin{split}
-P(\mathbf{w}, \mathbf{h}, \Xi, e|D) \propto & P(D|\mathbf{w}, \mathbf{h}, \Xi, e) \times \\
-                                            & P(\mathbf{h}|\mathbf{w}, \Xi, e) \times P(\mathbf{w}) \times P(\Xi) \times P(e).\label{eqn:post}
+P(n, \mathbf{w}, \mathbf{h}, \Xi, e|D) \propto & L(n, \mathbf{w}, \mathbf{h}, \Xi, e | D) \times P(\mathbf{h}|\mathbf{w}, \Xi, e) \times \\
+                                               & P(\mathbf{w}|n) \times P(n) \times P(\Xi) \times P(e).\label{eqn:post}
 \end{split}
+\end{equation}
+
+Since we are not making inferences on the refernece panel nor error rate, the prior probabilities are fixed as 1s. For convience, we fix the number of strains $n$ and simplify Eqn.~\eqref{eqn:post} as the following:
+\begin{equation}
+P(\mathbf{w}, \mathbf{h}, \Xi, e |D) \propto L(\mathbf{w}, \mathbf{h}, \Xi, e|D) \times P(\mathbf{h}|\mathbf{w}, \Xi, e) \times P(\mathbf{w}|n).
 \end{equation}
 
 Let $\mathbf w = [w_1,\dots, w_n]$ and $\mathbf{h}_i = [h_{1,i},\dots,h_{n,i}]$ denote the proportions and alleic state of $n$ parasite strains at site $i$. We use \citet{Jack2016}'s expression for the expected WSAF $q_{i}$ as:
 \begin{equation}
 q_i= (\mathbf{w}\cdot\mathbf{h}_{i})  =  \sum_{k=1}^{n} w_k \cdot h_{k,i} .\label{eqn:qij_full_sum}
 \end{equation}
-Thus, the likelihood of $P (D|w, h,\Xi, e)$ in Eqn.~\ref{eqn:post} becomes $P(D|q_{i},\Xi, e)$. In the rest of the paper, we will use the expressions $P(D|\theta)$ and $L(\theta|D)$ interchangeably for convience.
+Thus, the likelihood of $P (D|\mathbf{w}, \mathbf{h},\Xi, e)$ in Eqn.~\eqref{eqn:post} becomes $P(D|q_{i},\Xi, e)$. % In the rest of the paper, we will use the expressions $P(D|\theta)$ and $L(\theta|D)$ interchangeably for convience, where $\theta$ represents a vector of parameters, in this case $[\mathbf{w}, \mathbf{h},\Xi, e]$.
 
 We adjust the allele frequency $q_i$ by taking into account of read errors $e$. This implies that the expected allele frequency of `REF' read as `ALT' is $(1 - q_i)e$, and the expected allele frequency of `ALT' read as `REF' is $q_ie$. Thus, the adjusted WSAF becomes:
 \begin{equation}
@@ -111,7 +116,7 @@ We adjust the allele frequency $q_i$ by taking into account of read errors $e$. 
 \end{equation}
 
 \subsubsection{Likelihood of data given the WSAF}
-We model over-dispersion in read counts relative to Binomial using a Beta-binomial distribution. Specifically, the read counts of `ALT' are identically and independently distributed (i.i.d.) with probability $v_i$, i.e. $a_i \sim Binom(a_i + r_i, v_i)$, and $v_i \sim Beta(\alpha, \beta)$, where $v_i = \alpha/(\alpha+\beta)$. Let $\alpha = c\cdot \pi_{i} $ and $\beta = c\cdot (1-\pi_{i})$, we can formalise the likelihood of the data using: % $v_i$ is simply $E(\pi_i)$
+We model over-dispersion in read counts relative to Binomial using a Beta-binomial distribution. Specifically, the read counts of `ALT' are identically and independently distributed (i.i.d.) with probability $v_i$, i.e. $a_i \sim Binom(a_i + r_i, v_i)$, and $v_i \sim Beta(\alpha, \beta)$, where $v_i = \alpha/(\alpha+\beta)$. Let $\alpha = c\cdot \pi_{i} $, $\beta = c\cdot (1-\pi_{i})$ and $\pi_i$ is calculated by Eqn.~\eqref{eqn:adj_q}, we can formalise the likelihood of the data using: % $v_i$ is simply $E(\pi_i)$
 \begin{equation}
 L(q_{i}, \Xi, e | D) \propto \frac{\Gamma(a_i + c\cdot \pi_{i}) \Gamma(r_i + c\cdot (1-\pi_{i}))}{\Gamma(c\cdot \pi_{i})\Gamma(c\cdot (1-\pi_{i}))}. \label{eqn:llk}
 \end{equation}
@@ -119,9 +124,9 @@ L(q_{i}, \Xi, e | D) \propto \frac{\Gamma(a_i + c\cdot \pi_{i}) \Gamma(r_i + c\c
 
 \subsubsection{Priors}
 \begin{itemize}
-\item We use a multinormal prior for the proportions $\mathbf{w}$, we introduce a multivariate normal variable titre ${\mathbf x} = [x_1,\dots,x_n]$, where each $x$ is i.i.d. normally distributed from $N(\eta, \sigma^2)$. We then compute $w_k$ as $\exp(x_k)$ (normailized by the sum of $\exp(x_k)$). Suppose the probability density of $x_k$ is $\phi(x|\eta, \sigma^2)$, the prior density on each $w_k$ then becomes $\phi(\log(w_k)|\eta, \sigma^2)\frac{d}{dw_k}\log(w_k)$. We consider the prior on $\mathbf{w}$ by considering the prior on $\mathbf{x}$.
+\item We use a multinormal prior for the proportions $\mathbf{w}|n$, we introduce a multivariate normal variable titre ${\mathbf x}|n = [x_1,\dots,x_n]$, where each $x$ is i.i.d. normally distributed from $N(\eta, \sigma^2)$. We then compute $w_k$ as $\exp(x_k)$ (normailized by the sum of $\exp(x_k)$). We consider the prior on $\mathbf{w}|n$ as the prior on $\mathbf{x}|n$. Suppose the probability density of $x_k$ is $\phi(x|\eta, \sigma^2)$, the prior density on each $w_k$ then becomes $\phi(\log(w_k)|\eta, \sigma^2)\frac{d}{dw_k}\log(w_k)$.
 
-%m = 0, and $sigma^2 = 3$
+
 \item For the prior on $\mathbf{h} | \omega, \Xi$, we use \citet{Li2003}'s hidden Markov model framework as a starting point, with the following modifications made:
 \begin{itemize}
 \item[*] likelihood of data given the expected WSAF rather than the ``product of approximate conditionals'' (PAC).
@@ -134,13 +139,14 @@ $$\begin{cases}
 P(\xi_k = h_k) &= 1-\mu, \\
 P(\xi_k \neq h_k) &= \mu,\end{cases}$$
 We can therefore express the prior on each $h_k$ as
-\begin{align*}
+\begin{equation}
+\begin{split}
 P (h_k|\mathbf{w}, \Xi, e) = & P (\xi_k = a|\mathbf{w}, \Xi, e) (1-\mu) +\\
                              & P (\xi_k = 1-a|\mathbf{w}, \Xi, e) \mu,
-\end{align*}
-where $a \in \{0, 1\}$, and $1-a$ indicates the event that allelic state $h_k$ differs from $\xi_k$. We can therefore transform the prior on $\mathbf{h}_k$ into the form of a prior on $\mathbf{\xi}_k$, and the prior of the path is simply the transmission probabilities between two loci of a given recombniation model.
+\end{split}\label{eqn:prior_on_h}
+\end{equation}
+where $a \in \{0, 1\}$, and $1-a$ indicates the event that allelic state $h_k$ differs from $\xi_k$. We can therefore transform the prior on $\mathbf{h}_k$ into the form of a prior on $\mathbf{\xi}_k$, and the prior of the path is simply the transmission probabilities between two loci of a given recombniation model. For position $i > 1$, let $\rho_i'$ denote the probability of {\bf no} recombination from site $i-1$ to $i$, we have $\rho'_i = \exp(-\psi_i)$, where $\psi$ is the recombnation rate. Thus, the probability of recombining from any strain in the panel is $\displaystyle\frac{1-\rho_i'}{|\Xi|}$, where $|\Xi|$ is the size of the panel.
 
-\item Since we are not making inferences on the refernece panel nor error rate, the prior probabilities are fixed as 1s.
 \end{itemize}
 
 
@@ -153,7 +159,6 @@ where $a \in \{0, 1\}$, and $1-a$ indicates the event that allelic state $h_k$ d
 Overall, our method generates Markov chain Monte Carlo (MCMC) samples for the proportions $\mathbf w$ and the haplotypes $\mathbf h$ given a fixed number of strains. As for the MCMC updates on the prior, we use a Metropolis-Hastings algorithm to sample proportions ($\mathbf w$) given $\mathbf h$; and use Gib sampler to update $\mathbf h$ for a given $\mathbf w$, which are further divided into cases of updating only one haplotype and updating a pair of haplotypes.
 
 
-
 \subsubsection{Metropolis-Hastings update for proportions}\label{sec:updateP}
 %We use a sparse update on $\mathbf w$. We introduce , with the density function $d(x)$. We sample $x$s, then transform to $w = e^x$. We then normalise vector $\mathbf w$, to obtain a new sample ${\mathbf w}$.
 
@@ -161,7 +166,7 @@ We are updating
 
 \subsubsection{Gibbs update for single haplotype}
 
-We choose haplotype strain $s$ uniformly at random from $K$ strains, considering both cases for updating the state of strain $s$ at position $i$ to $0$ and $1$, we compute the WSAF and its associated likelihood as follows: Regardless the state of strain $s$ at position $i$, we firstly remove it from the current WSAF, i.e. subtract $ w_s \cdot h_s$ from Eqn.~(\ref{eqn:qij_full_sum}), which gives
+We choose haplotype strain $s$ uniformly at random from $K$ strains, considering both cases for updating the state of strain $s$ at position $i$ to $0$ and $1$, we compute the WSAF and its associated likelihood as follows: Regardless the state of strain $s$ at position $i$, we firstly remove it from the current WSAF, i.e. subtract $ w_s \cdot h_s$ from Eqn.~\eqref{eqn:qij_full_sum}, which gives
 \begin{equation}
 q_{i,-s} = \sum_{k\neq s} w_k \cdot h_k = \textrm{Eqn.~\eqref{eqn:qij_full_sum}} -  w_s \cdot h_s \label{eqn:qij_full_sum_minus_s}
 \end{equation}
@@ -171,43 +176,61 @@ Therefore, updating strain $s$ of state $0$ and $1$, so the expected WSAF become
 q_{i,h_s=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s}} \label{eqn:qij0}\\
 q_{i,h_s=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s}} + w_s \times 1 \label{eqn:qij1}
 \end{align}
-Substitute equations~\eqref{eqn:qij0} and \eqref{eqn:qij1} into Eqn.~\eqref{eqn:llk} to compute associated likelihood $L(q_{i,h_s}, \Xi, e |D)$, which is expressed as $L(h_s |D)$ in short, for the rest of the paper. Therefore, Eqn.~\ref{eqn:post} then becomes
+Substitute equations~\eqref{eqn:qij0} and \eqref{eqn:qij1} into Eqn.~\eqref{eqn:llk} to compute associated likelihood $L(q_{i,h_s}, \Xi, e |D)$, which is expressed as $L(h_s |D)$ in the rest of the paper. Therefore, Eqn.~\eqref{eqn:post} then becomes
 \begin{equation}
-P(h_s |D) \propto  L(h_s |D) \times P(\mathbf{h}|\mathbf{w}, \Xi, e).
+P(h_s |D) \propto  L(h_s |D) \times P(h_s|\mathbf{w}, \Xi, e).
 \end{equation}
 
-In addition to updating the haplotypes from the panel, we take into account of miss copying (see example shown in Fig.~\ref{fig:ls}), which allow the actual genotype differ from the path. Therefore, this method favours mutation rather than recombination for a single-site difference from a reference strain. Our model benefits from combining information from both the reference haplotypes as well as the data. For {\em de novo} mutations which are not found reference panel, our method will infer mutations based on read count from data.
+Instead of computing $P(h_s |D)$ directly, we consider the posterior probabilities of the path $p$ where $h_s$ is copying from:
+\begin{equation}
+P(g_p |D) \propto  L(g_p |D) \times P(g_p|\mathbf{w}, \Xi, e).\label{eqn:post_gp}
+\end{equation}
+Similar to the prior on $\mathbf{h}| \Xi, e$ (see Eqn.\eqref{eqn:prior_on_h}), we can compute the posterior probabilities of $h_k$ by $P(g_p |D)$ via:
+\begin{equation}
+P(h_{s} = a \big{|} D) =
+\begin{cases}
+P(g_{p} = a \big{|} D) \cdot (1-\mu), & h_s = g_p;\\
+P(g_{p} = 1 - a \big{|} D) \cdot \mu, & h_s \neq g_p.
+\end{cases}
+\label{eqn:ps0}
+\end{equation}
+where $a \in \{0, 1\}$, and $1-a$ indicates the event that allelic state $h_k$ differs from $g_p$. Note that $g_p$ is the same as $\xi_k$, but indexed differently: $g_p$ is indexed by the reference strain index $p$ from the panel.
 
-\begin{figure}[ht]
+In addition to updating the haplotypes from the panel, we take into account of miss copying (see example shown in Fig.~\ref{fig:ls}), which allow the actual genotype differ from the path. Therefore, this method favours mutation rather than recombination for a single-site difference from a reference strain. Our model benefits from combining information from both the reference haplotypes as well as the data. For {\em de novo} mutations which are not found reference panel, our method will infer mutations based on read count from data.
+\begin{figure}[tbh]
 \centering
 \includegraphics[width=0.5\textwidth]{coupled-painting.png}
 \caption{Illustration of \citet{Li2003}'s algorithm. Strain 1 haplotype is made up from reference haplotype segments of 1 and 2; and strain 2 haplotype is made up from reference haplotype segments of 3 and 4. With miss copying, we allow strain states differ from the path: At the third last position of strain 1, the path is copied from reference haplotype 2, with the state of ``0''.
 }\label{fig:ls}
 \end{figure}
-
-
-
 Specific steps are as following:
 \begin{enumerate}
-\item Consider the likelihood as the emission probabilities at site $i$. Let's use $g_p$ and $h_s$ to denote the allelic state of the copied path and the updated strain respectively. We have:
+\item Consider the likelihood as the emission probabilities at site $i$. Let's use $g_p$ and $h_s$ to denote the allelic state of the copied path and the updated strain respectively.
 \begin{equation*}
 \begin{split}
 L(g_p = a | D) ~ = ~ & L(h_s = a \big{|} D) \times P(g_p = h_s) + \\
-                     & L(h_s = 1 - a \big{|} D) \times P(g_p \neq h_s) \label{eqn:gp_given_D}
+                     & L(h_s = 1 - a \big{|} D) \times P(g_p \neq h_s) \label{eqn:llk_gp_given_D}
 \end{split}
 \end{equation*}
 where $a\in \{0,1\}$, and $1-a$ indicates the event that $h_s$ takes value that differs from $g_p$.
 
-\item Compute the probability of path at each position using forward algorithm. Therefore, we have the posterior probability of path (reference strain) $p$ at position $i$ as:
+\item For the prior on $g_p|\mathbf{w}, \Xi, e$, it is simply the \citet{Li2003} HMM transition probabilities from position $i-1$ to $i$: the probabilites $\rho_i'$ and $\frac{1-\rho_i'}{|\Xi|}$ reflect no recombination and recombination events respectively. Therefore, we have
 \begin{equation}
-\begin{split}
-P_i(g_p \big{|} D) ~ \propto ~ & L(g_p \big{|} D) ~ \times \\
-                               & \Scale[0.85]{\left( \rho_i' \cdot P_{i-1}(g_p \big{|} D)  +  \frac{1-\rho_i'}{|\Xi|} \cdot \displaystyle\sum_{x\in \Xi} P_{i-1} (g_x \big{|} D) \right)}.
-\end{split}\label{eqn:post_path}
+P(g_p|\mathbf{w}, \Xi, e) = \rho_i' \cdot P_{i-1}(g_p \big{|} D)  +  \frac{1-\rho_i'}{|\Xi|} \cdot \displaystyle\sum_{x\in \Xi} P_{i-1} (g_x \big{|} D).\label{eqn:prior_gp}
 \end{equation}
-In the HMM frame work, $L(g_p \big{|} D)$ is the emission probability of observing data $D$ given the hidden state of the path, $\rho_i'$ and $\frac{1-\rho_i'}{|\Xi|}$ are the transition probabilities from position $i-1$ to $i$, of which reflect the recombination event in our context.
+Combine equations \eqref{eqn:llk_gp_given_D} and \eqref{eqn:prior_gp}, the posterior probability of path (reference strain) $p$ at position $i$ is then obtained (Eqn.~\eqref{eqn:post_gp}).
+%are the transition probabilities from position $i-1$ to $i$, of which reflect the recombination event in our context.
 
-\item Sample the path backwards once the forward posterior probabilities are calculated. We start at the end position, first propose if a recombination events have had happened with the probabilities proportional to
+%\item Compute the probability of path at each position using forward algorithm. Therefore, we have  as:
+%\begin{equation}
+%\begin{split}
+%P_i(g_p \big{|} D) ~ \propto ~ & L(g_p \big{|} D) ~ \times \\
+                               %& .
+%\end{split}\label{eqn:post_path}
+%\end{equation}
+%Note that in the HMM frame work, $L(g_p \big{|} D)$ is the emission probability of observing data $D$ given the hidden state of the path,
+
+\item Given the posterior probabilities of path (reference strain) $p$ at position $i$, we sample the path backwards to generate a MCMC sample for the path that strain $s$ copied from. We start at the end position, first propose if a recombination events have had happened with the probabilities proportional to
 $$
 \begin{cases}
 \rho_i' \cdot P_i(g_p \big{|} D) & \text{no recombination},\\
@@ -216,17 +239,9 @@ $$
 $$
 if it recombines, sample path backwards according $P_i(g_p \big{|} D)$.
 
-\item Ultimately, given the state of the path at each site, we now want to sample the genotype according to the posterior probabilities:
-\begin{equation}
-P(h_{s} = * \big{|} D) =
-\begin{cases}
-P(g_{p} = * \big{|} D) \cdot (1-\mu), & h_s = g_p;\\
-P(g_{p} = 1 - * \big{|} D) \cdot \mu, & h_s \neq g_p.
-\end{cases}
-\label{eqn:ps0}
-\end{equation}
-
+\item Lastly, we generate a MCMC sample of the haplotype from the MCMC sample of the copied path using the probabilities expressed in Eqn.\eqref{eqn:ps0}.
 \end{enumerate}
+
 
 \subsubsection{Gibbs update for a pair of haplotypes}\label{sec:deconvolute}
 In order to improve the MCMC mixing, we consider pairs of haplotypes and update both strain simultaneously. Suppose random sampling two strains to update, namely, $s_1$ and $s_2$. Similarly to Eqn.~\eqref{eqn:qij_full_sum_minus_s}, we first remove their states from the WSAF:
@@ -244,51 +259,67 @@ q_{i,h_{s_1}=0,h_{s_2}=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}}
 q_{i,h_{s_1}=0,h_{s_2}=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_2} \times 1 \label{eqn:qij01}\\
 q_{i,h_{s_1}=0,h_{s_2}=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_1} \times 1 + w_{s_2} \times 1 \label{eqn:qij11}
 \end{align}
-Substitute expressions.~\eqref{eqn:qij00} to~\eqref{eqn:qij11}, into Eqn.~\eqref{eqn:llk}, we then obtain their associated likelihood $L(q_{i,h_{s_1},h_{s_2}} \big{|} D)$, which is denoted as $L(h_{s_1},h_{s_2} \big{|} D)$ in the rest of the paper.
+Substitute expressions.~\eqref{eqn:qij00} to~\eqref{eqn:qij11}, into Eqn.~\eqref{eqn:llk}, we then obtain their associated likelihood $L(q_{i,h_{s_1},h_{s_2}} , \Xi, e \big{|} D)$, which is denoted as $L(h_{s_1},h_{s_2} \big{|} D)$ in the rest of the paper.
 
 Thus, similar to Eqn.~\eqref{eqn:post:LDfree}, we obtain the following posterior probability, and sample the state (genotype) of strains $s_1$ and $s_2$ simultaneously at site $i$:
 \begin{equation}
 %\begin{split}
-P(h_{s_1},h_{s_2} | D) \propto L(h_{s_1},h_{s_2} |D) \times P(h_{s_1},h_{s_2} ),\label{eqn:post.two:LDfree}
+P(h_{s_1},h_{s_2} | D) \propto L(h_{s_1},h_{s_2} |D) \times P(h_{s_1},h_{s_2} | \mathbf{w}, \Xi, e).\label{eqn:post.two:LD}
 %\end{split}
 \end{equation}
 
+Similarly to the previous section, instead of working directly with posterior probability $P(h_{s_1},h_{s_2} | D)$, we consider the posterior probabilites of the path $p_1$ and $p_2$ where $s_1$ and $s_2$ are copying from respectively:
+\begin{equation}
+P(g_{p_1}, g_{p_2}|D ) \propto L(h_{p_1},h_{p_2} |D) \times P(g_{p_1}, g_{p_2}|\mathbf{w}, \Xi, e).\label{eqn:post.two.LD}
+\end{equation}
+Then we can compute the posterior probabilities of the pair $h_{s_1}$ and $h_{s_2}$ from
+\begin{equation}
+P\left(\Scale[0.8]{ \begin{array}{l} h_{s_1} = a, \\h_{s_2} = b \end{array}}\big{|} D\right) =
+\begin{cases}
+P\left(\Scale[0.8]{ \begin{array}{l} g_{p_1} = a, \\g_{p_2} = b \end{array}} \big{|} D\right) \cdot (1-\mu) \cdot (1-\mu), \\%& h_{s_1} = g_{p_1} \text{ and } h_{s_2} = g_{p_2} ;\\
+P\left(\Scale[0.8]{ \begin{array}{l}(g_{p_1} = a, \\g_{p_2} = 1-b \end{array}}\big{|} D\right) \cdot (1 - \mu) \cdot \mu, \\%& h_{s_1} = g_{p_1} \text{ and } h_{s_2} \neq g_{p_2};\\
+P\left(\Scale[0.8]{ \begin{array}{l}(g_{p_1} = 1-a, \\g_{p_2} = b \end{array}}\big{|} D\right) \cdot \mu \cdot (1 - \mu), \\%& h_{s_1} \neq g_{p_1} \text{ and } h_{s_2} = g_{p_2};\\
+P\left(\Scale[0.8]{ \begin{array}{l}(g_{p_1} = 1-a, \\g_{p_2} = 1-b \end{array}}\big{|} D\right) \cdot \mu \cdot \mu, \\%& h_{s_1} \neq g_{p_1} \text{ and } h_{s_2} \neq g_{p_2}.
+\end{cases}
+\label{eqn:ps0_pair}
+\end{equation}
+where $a,b \in \{0, 1\}$, and $1-a$ indicates the event that allelic state $h_{s_1}$ differs from $g_{p_1}$, and $1-b$ indicates the event that allelic state $h_{s_2}$ differs from $g_{p_2}$.
 
-Similarly to the previous section, we need to
+Specificly, we carry out the following steps:
 \begin{enumerate}
-\item Compute the emission probabilities
-
-\begin{equation*}
+\item Compute the likelihood of the allelic state pairs of the path given data:
+\begin{equation}
 \begin{split}
-L\left( \Scale[0.8]{ \begin{array}{l} g_{p_1} = *, \\g_{p_2} = \# \end{array}} \big{|} D\right) = & L\left(\Scale[0.8]{\begin{array}{l}h_{s_1} = *,\\ h_{s_2} = \# \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} = h_{s_1}, \\g_{p_2}= h_{s_2}\end{array}} \right)  + \\
-                                         & L\left(\Scale[0.8]{\begin{array}{l}h_{s_1} = *, \\h_{s_2} = 1-\# \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} = h_{s_1}, \\g_{p_2} \neq h_{s_2}\end{array}} \right)  + \\
-                                         & L\left(\Scale[0.8]{\begin{array}{l}h_{s_1} = 1-*, \\h_{s_2} = \# \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} \neq h_{s_1}, \\g_{p_2} = h_{s_2}\end{array}} \right)  + \\
-                                         & L\left(\Scale[0.8]{\begin{array}{l}h_{s_1} = 1-*, \\h_{s_2} = 1-\# \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} \neq h_{s_1}, \\g_{p_2} \neq h_{s_2}\end{array}} \right)
-\end{split}\label{eqn:gp_given_D:two}
-\end{equation*}
+L\left( \Scale[0.8]{ \begin{array}{l} g_{p_1} = a, \\g_{p_2} = b \end{array}} \big{|} D\right) = & L\left(\Scale[0.8]{\begin{array}{l}h_{s_1} = a,\\ h_{s_2} = b \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} = h_{s_1}, \\g_{p_2}= h_{s_2}\end{array}} \right)  + \\
+                                         & L\left(\Scale[0.8]{\begin{array}{l}h_{s_1} = a, \\h_{s_2} = 1-b \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} = h_{s_1}, \\g_{p_2} \neq h_{s_2}\end{array}} \right)  + \\
+                                         & L\left(\Scale[0.8]{\begin{array}{l}h_{s_1} = 1-a, \\h_{s_2} = b \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} \neq h_{s_1}, \\g_{p_2} = h_{s_2}\end{array}} \right)  + \\
+                                         & L\left(\Scale[0.8]{\begin{array}{l}h_{s_1} = 1-a, \\h_{s_2} = 1-b \end{array}} \big{|} D \right) \times P\left(\Scale[0.8]{\begin{array}{l}g_{p_1} \neq h_{s_1}, \\g_{p_2} \neq h_{s_2}\end{array}} \right)
+\end{split}\label{eqn:llk_given_D:two}
+\end{equation}
 where
 \begin{align*}
 P(g_{p_1} = h_{s_1}, g_{p_2} = h_{s_2})       & = (1-\mu)\cdot(1-\mu) , \\
 P(g_{p_1} \neq h_{s_1}, g_{p_2} = h_{s_2})    & = \mu\cdot(1-\mu),\\
 P(g_{p_1} = h_{s_1}, g_{p_2} \neq h_{s_2})    & = \mu\cdot(1-\mu),\\
-P(g_{p_1} \neq h_{s_1}, g_{p_2} \neq h_{s_2}) & = \mu \cdot \mu.
+P(g_{p_1} \neq h_{s_1}, g_{p_2} \neq h_{s_2}) & = \mu \cdot \mu,
 \end{align*}
-
+and $a,b \in \{0, 1\}$, and $1-a$ indicates the event that allelic state $h_{s_1}$ differs from $g_{p_1}$, and $1-b$ indicates the event that allelic state $h_{s_2}$ differs from $g_{p_2}$.
 
 \item
-Compute the probability of path at each position using forward algorithm. Similar to Equation~\eqref{eqn:post_path}, for all possible pair of the copying strain, we take into account of the possibility of one strain recombines and the other does not with the probability of $\rho_i' \cdot \frac{1-\rho_i'}{|\Xi|}$; both recombines, with the probability of $\rho_i' \cdot \rho_i'$; neither recombines, with the probability of $\frac{1-\rho_i'}{|\Xi|} \cdot\frac{1-\rho_i'}{|\Xi|}$, assuming that recombination events of two copying strains are independent from each other.
+For the prior of the allelic state pairs of the path, we consider all possible pair of the copying strain, we take into account of the possibility of one strain recombines and the other does not with the probability of $\rho_i' \cdot \frac{1-\rho_i'}{|\Xi|}$; both recombines, with the probability of $\rho_i' \cdot \rho_i'$; neither recombines, with the probability of $\frac{1-\rho_i'}{|\Xi|} \cdot\frac{1-\rho_i'}{|\Xi|}$, assuming that recombination events of two copying strains are independent from each other. Thus, we have the prior of the path as
 \begin{equation}
 \begin{split}
-P_{i}(g_{p_1},g_{p_2}\big{|}D) \propto & L(g_{p_1},g_{p_2} \big{|} D) \times \\
-                                       & \left[\sum_{x\in \Xi} P_{i-1}(g_{p_1},g_{x}\big{|}D) \cdot \rho_i' \cdot \frac{1-\rho_i'}{|\Xi|} + \right.\\
-                                       &  P_{i-1}(g_{p_1},g_{p_2}\big{|}D) \cdot \rho_i' \cdot \rho_i' + \\
-                                       & \sum_{y\in \Xi} P_{i-1}(g_{y},g_{p_2}\big{|}D) \cdot \rho_i' \cdot\frac{1-\rho_i'}{|\Xi|}+ \\
-                                       & \left.\sum_{x,y\in \Xi\cdot \Xi} P_{i-1}(g_{x},g_{y}\big{|}D)  \cdot\frac{1-\rho_i'}{|\Xi|} \cdot\frac{1-\rho_i'}{|\Xi|} \right] \label{eqn:prob.update.two}
+P(g_{p_1}, g_{p_2}|\mathbf{w}, \Xi, e) = &  P_{i-1}(g_{p_1},g_{p_2}\big{|}D) \cdot \rho_i' \cdot \rho_i' + \\
+                                         & \sum_{x\in \Xi} P_{i-1}(g_{p_1},g_{x}\big{|}D) \cdot \rho_i' \cdot \frac{1-\rho_i'}{|\Xi|} + \\
+                                         & \sum_{y\in \Xi} P_{i-1}(g_{y},g_{p_2}\big{|}D) \cdot \rho_i' \cdot\frac{1-\rho_i'}{|\Xi|}+ \\
+                                         & \sum_{x,y\in \Xi\cdot \Xi} P_{i-1}(g_{x},g_{y}\big{|}D)  \cdot\frac{1-\rho_i'}{|\Xi|} \cdot\frac{1-\rho_i'}{|\Xi|}. \label{eqn:prio.update.two}
 \end{split}
 \end{equation}
+Combine equations \eqref{eqn:llk_given_D:two} and \eqref{eqn:prio.update.two}, Eqn.~\eqref{eqn:post.two.LD} is then obtained.
 
 \item
-Sample the path up to position $i$, i.e. backwards, start from the end of the panel, and sampling backwards to the $i-1$ position, first sample if a recombination events had happened given the probabilities of
+Given the posterior probabilities of path pair $p_1,p_2$ at position $i$, we sample the path backwards to generate a MCMC sample for the path pair that strain $s_1$ and $s_2$ copied from. We start at the end position, first propose if a recombination events have had happened with the probabilities proportional to
+%Sample the path up to position $i$, i.e. backwards, start from the end of the panel, and sampling backwards to the $i-1$ position, first sample if a recombination events had happened given the probabilities of
 %\begin{numcases}
 $$\begin{cases}
 \displaystyle\sum_{x\in \Xi}P_{i-1}(g_{p_1},g_{x}\big{|}D) \cdot \frac{1-\rho_i'}{|\Xi|}\cdot \rho_i', & p_1 \text{ recombines} \label{eqn:prob.update.two.v}, \\
@@ -298,60 +329,46 @@ P_{i-1}(g_{p_1},g_{p_2}\big{|}D) \cdot \rho_i' \cdot \rho_i', & \text{no recombi
 \end{cases}$$
 If both strains recombine, sample the path, according to $P_i(g_{p_1}, g_{p_2}|D)$. If one of the strains recombine, sample the path according to the marginal probability of $P_i(g_{p}|D)$.
 
-\item
-Ultimately, we consider add miss copies similar to the previous section, and sample the strain state given the path state with probabilities:
-\begin{equation*}
-P\left(\Scale[0.8]{ \begin{array}{l} h_{s_1} = *, \\h_{s_2} = \# \end{array}}\big{|} D\right) =
-\begin{cases}
-P\left(\Scale[0.8]{ \begin{array}{l} g_{p_1} = *, \\g_{p_2} = \# \end{array}} \big{|} D\right) \cdot (1-\mu) \cdot (1-\mu), \\%& h_{s_1} = g_{p_1} \text{ and } h_{s_2} = g_{p_2} ;\\
-P\left(\Scale[0.8]{ \begin{array}{l}(g_{p_1} = *, \\g_{p_2} = 1-\# \end{array}}\big{|} D\right) \cdot (1 - \mu) \cdot \mu, \\%& h_{s_1} = g_{p_1} \text{ and } h_{s_2} \neq g_{p_2};\\
-P\left(\Scale[0.8]{ \begin{array}{l}(g_{p_1} = 1-*, \\g_{p_2} = \# \end{array}}\big{|} D\right) \cdot \mu \cdot (1 - \mu), \\%& h_{s_1} \neq g_{p_1} \text{ and } h_{s_2} = g_{p_2};\\
-P\left(\Scale[0.8]{ \begin{array}{l}(g_{p_1} = 1-*, \\g_{p_2} = 1-\# \end{array}}\big{|} D\right) \cdot \mu \cdot \mu, \\%& h_{s_1} \neq g_{p_1} \text{ and } h_{s_2} \neq g_{p_2}.
-\end{cases}
-%\label{eqn:ps0}
-\end{equation*}
-consider all cases of if the path the same as the strain.
+\item Lastly, we generate a MCMC sample of the haplotypes from the MCMC sample of the copied paths using the probabilities expressed in Eqn.\eqref{eqn:ps0_pair}.
+
 \end{enumerate}
 
 
+\subsection{Implementation details}
 
-
-\subsection{Infer haplotypes without reference panel}\label{sec:method.ref}
-
-
-
-\subsection{Implementation detail}
+\begin{itemize}
+\item Fixing number of strains.
+\item Likelihood
+\item Update of the prior $\mathbf{x|n}$, we let $\eta = 0$, and $sigma^2 = 3$.
+\item
 In practice, we assume clonal sample haplotypes capture the diversities of haplotype structures given all samples. We use them as the reference strains for start, and deconvolute the rest mixed samples from them. We start with a set of clonal sample candidate, and run the algorithm to confirm they are in fact clonal. We use Gib sampler to update $\mathbf h$ of given $\mathbf w$, randomly select one strain at the time, or a pair of strains to update in order to improve the mixing of the MCMC process.
 
-
-\paragraph{Recombination map}
-We assume a uniform recombination map, genetic distances between loci $i$ and $i+1$ are computed by $G_i = D_i / Morgan$ where $D_i$ denotes the physical distance between loci $i$ and $i+1$ in nucleotide, $Morgan$ is the average morgan distance, which we use 1500000. Suppose the recombination rate $\psi_i$ is given by $\psi_i = N_e G_i$, with $N_e=10$ being the effective population size. Note that {\bf we scale the probabilities with the number of haplotypes in the reference panel}. Let $\Xi$ denote the set of the strains in the reference panel. For position $i > 1$, let $\rho_i'$ denote the probability of {\bf no} recombination from site $i-1$ to $i$, we have $\rho'_i = \exp(-\psi_i)$. Thus, the probability of recombining from any strain in the panel is $\displaystyle\frac{1-\rho_i'}{|\Xi|}$, where $|\Xi|$ is the size of the panel.
-
-
-\subsubsection{Update of a single strain}
-
-
+\begin{itemize}
+\item \bf{Update with LD} We assume a uniform recombination map, genetic distances between loci $i$ and $i+1$ are computed by $G_i = D_i / Morgan$ where $D_i$ denotes the physical distance between loci $i$ and $i+1$ in nucleotide, $Morgan$ is the average morgan distance, which we use 1500000. Suppose the recombination rate $\psi_i$ is given by $\psi_i = N_e G_i$, with $N_e=10$ being the effective population size. Note that {\bf we scale the probabilities with the number of haplotypes in the reference panel}.
+\item \bf{Update without LD}
+\begin{itemize}
+\item Update of a single strain
 Assuming independence between site $i$ and $i+1$, we use PLAF at position $i$ as prior, and compute the posterior probability as follows:
 \begin{equation}
 P(h_s | D) \propto L(h_s|D) \times P(h_s).\label{eqn:post:LDfree}
 \end{equation}
 
-\subsubsection{Update two haplotypes at the same time.}
+\item Update two haplotypes at the same time.
 where $P(h_{s_1},h_{s_2}) = P(h_{s_1}) \cdot P(h_{s_2})$, assume independence between $s_1$ and $s_2$.
+\end{itemize}
+\end{itemize}
 
 
+\item Model selection
 
-
-\subsection{Technical details}
-In particular, we assume there are more strains than actually present, starting the MCMC chain with a fixed $k$. As the proportion values drop, we ``zero-out'' ``noisy'' strains. For example, suppose that $k=5$ and the proportions $\mathbf w= [0.848, 6.36e-05, 6.81e-05, 0.152, 3.31e-05]$, we drop the strains with proportions less than $0.01$, and keep the first and the forth strains. At last, we take the best fit (section\ref{sec:method.dic}) of the MCMC sample as a point estimate of haplotypes and proportions.
-
-
-
-\subsection{Model selection}\label{sec:method.dic}
 Since the final iteration of the MCMC is taken as a point estimate to infer the haplotypes and proportion, the deconvolution process is repeated with different random seeds. We then use the lowest deviance information criterion (DIC) to select the best fit model. The DIC is calculated from the generated MCMC simulation, and penalised by the average deviance. More specifically, We compute the deviance by $ D_{\mathbf{w}, \mathbf{h}} = -2 \log( L (\mathbf{w}, \mathbf{h}|D) )$ and $DIC = 2\bar{D} - D_{\mathbf{w}, \mathbf{h}}$, where $\bar{D}$ is the average deviance of the MCMC chain.
 %D_bar + pD, where pD = D_bar - D_theta, and D_bar = mean(D_theta)
     %DIC.WSAF.bar = -2 * sum(thetallk)
     %return (  mean(-2*tmpllk) + (mean(-2*tmpllk) - DIC.WSAF.bar) ) # D_bar + pD, where pD = D_bar - D_theta, and D_bar = mean(D_theta)
+
+
+
+\end{itemize}
 
 
 
@@ -434,7 +451,7 @@ Our accuracy assessment for inferred haplotypes take into account of both switch
 \centerline{
 \includegraphics[width=0.45\textwidth]{{switchVsMisCopyErrlog}.png}
 }
-\caption{Error rates vs. strain proportions. We use reference panel V to deconvolute all 27 samples. Each marker represent a deconvoluted haplotype with 18570 sites.}\label{fig:swithVsMisCopy}
+\caption{Error rates vs. strain proportions. We use reference panel V to deconvolute all 27 samples. Each marker represent a deconvoluted haplotype with 18,570 sites.}\label{fig:swithVsMisCopy}
 \end{figure}
 
 Moreover, we want to assess the switch errors by taking into account of switches from the other haplotypes. Note that in Figure~\ref{fig:differentRefPanel}, the top and bottom strains have similar proportions, which are difficult to phase without a perfect reference panel. One may flip parts of the two strains to resolve the errors. Unfortunately, our Li and Stephens implementation focuses on a single strain (two strains at the most), the viterbi path or posterior probabilities fail to align the switches of all strains. Therefore, we have taken a heuristic approach by dividing the inferred haplotypes into segments with length of 50, then mapped onto reference strains of panel V according to the indices. The switch errors are obtained by counting the changes of a strain mapped to reference strains; the genotype errors are the discordance between the strain and the mapped reference segments.
