@@ -32,6 +32,7 @@ plain.pdf: bioInfo.tex
 	 -e "/\\\editor{/d" \
 	 -e "/\\\begin{methods}/d" \
 	 -e "/\\\end{methods}/d" \
+	 -e "s/\\\maketitle/\\\maketitle\n\\\noindent1. Wellcome Trust Centre for Human Genetics, University of Oxford, Oxford OX3 7BN, UK \\\\\\\2. Big data institute, Li Ka Shing Centre for Health Information and Discovery, University of Oxford, Oxford OX3 7BN, UK\\\\\\\\*. To whom correspondence should be addressed.\n/" \
 	  bioInfo.tex > plain.tex
 	pdflatex plain.tex
 	pdflatex plain.tex
