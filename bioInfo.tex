@@ -19,10 +19,7 @@
 \begin{document}
 \firstpage{1}
 
-\subtitle{
-\textcolor{red}{???Genetics and population analysis}\\
-\textcolor{red}{???Genome analysis}
-}
+\subtitle{\textcolor{red}{???Genetics and population analysis}\\ \textcolor{red}{???Genome analysis}}
 
 \title[Deconvolute mixed genomes]{DEploid: Untangling complexity of infection in {\it Plasmodium falciparum}.}
 \author[Zhu \textit{et~al}.]{Sha Joe Zhu\,$^{\text{\sfb 1},*}$, Jacob Almagro-Garcia\,$^{\text{\sfb 1}}$ and Gil McVean\,$^{\text{\sfb 1,2},*}$}
@@ -165,7 +162,7 @@ Overall, our method generates Markov chain Monte Carlo (MCMC) samples for the pr
 %We use a sparse update on $\mathbf w$. We introduce , with the density function $d(x)$. We sample $x$s, then transform to $w = e^x$. We then normalise vector $\mathbf w$, to obtain a new sample ${\mathbf w}$.
 
 We use a sparse update on $\mathbf{w}|n$, by updating $\mathbf{x}|n$. More specificly, we propose new $x_i'$s from $x_i' = x_i + \delta x$, where $\delta x \sim N(0, \sigma^2/s)$, and $s$ is a scaling factor. The new proposed proportion is therefore $\frac{\exp(x_k')}{\sum_{k=1}^n \exp(x_k')}$. Since the proposal distribution is symmtrical, we have hasting ratio as 1. A new update is accepted with the probability of:
- $$\min\left(1, \frac{P(\mathbf{w}'|n)}{P(\mathbf{w}|n)} \frac{L(\mathbf{w}', \mathbf{h},\xi, e|D)}{L(\mathbf{w}, \mathbf{h},\xi, e|D)}\right).$$
+ $$\min\left(1, \frac{P(\mathbf{w}'|n)}{P(\mathbf{w}|n)} \frac{L(\mathbf{w}', \mathbf{h},\Xi, e|D)}{L(\mathbf{w}, \mathbf{h},\Xi, e|D)}\right).$$
 
 
 \subsubsection{Gibbs update for single haplotype}
