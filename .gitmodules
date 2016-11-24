@@ -1,0 +1,3 @@
+[submodule "DEploid-Supplementary-Materials"]
+	path = DEploid-Supplementary-Materials
+	url = git@github.com:shajoezhu/DEploid-Supplementary-Materials.git
