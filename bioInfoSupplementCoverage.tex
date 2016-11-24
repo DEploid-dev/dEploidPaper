@@ -1,0 +1,30 @@
+\input{supplementReset.tex}
+
+%\begin{center}
+%\textbf{\large Supplemental Materials of DEploid}
+%\end{center}
+
+\section{Testing for coverage requirement} \label{sup:sec:coverage}
+
+In order to investigate how sensitive our method is to the sequence coverage, we simulate alternative and reference alleles read count, and assess the deconvoluted haplotypes compare to the truth. The previous section has been shown that switch errors are common when two strain have similar proportions. We therefore consider to simulate data with uneven proportions.
+
+We simulate total coverage from Poisson models of given means: 10, 30, 40, and 50. Given the simulated total coverage, we then use binomial distribution to simulate alternative allele counts using expected WSAF calculated using Eqn.~(3), where the allele states are of HB3 and 7G8, and proportion is used 85\% and 15\% respectively, to mock sequence data of sample {\textmd PG0402-C} at different depth. Note that the expected WSAFs are adjusted using a constant error rate 0.01 (see Eqn.~(4)). Because the experiment is used as a proof of concept, we only simulated data for chromosome 14, in particular at sites the PLAFs are non-zero (2425 sites in total). We then use DEploid to deconvolute the data, with fixed number of strains of two.
+
+We compare the simulated genotypes against the true genotypes of HB3/7G8: {\tt 0/0}, {\tt 0/1}, {\tt 1/0} and {\tt 1/1}. For each true genotype, we divide the number of times it was wrongly inferred
+by the total number of the genotype to calculate the error rate. Fig.~\ref{fig:sup.coverage} (a) -- (c) show high error rates for rare events (low coverage frequencies), and more importantly, the error rate decays when the mean coverage increases. When the coverage is above 50, we find low error rate in all cases, which suggests that expected coverage of the minor strain needs to be at least seven.
+
+\begin{figure}[h]
+\subfloat[][Mean coverage at 10x.]{
+\includegraphics[width=.32\textwidth]{{supplementCoverage/PG0402-C.14.meanCov.10.errorVsTotalCoverage}.png}
+}
+\subfloat[][Mean coverage at 30x.]{
+\includegraphics[width=.32\textwidth]{{supplementCoverage/PG0402-C.14.meanCov.30.errorVsTotalCoverage}.png}
+}
+\subfloat[][Mean coverage at 40x.]{
+\includegraphics[width=.32\textwidth]{{supplementCoverage/PG0402-C.14.meanCov.40.errorVsTotalCoverage}.png}
+}
+\caption{Error rates of wrongly inferred genotypes at different read depth.}\label{fig:sup.coverage}
+\end{figure}
+
+
+

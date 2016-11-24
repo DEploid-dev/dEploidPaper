@@ -104,7 +104,7 @@ Let $\mathbf w = [w_1,\dots, w_n]$ and $\mathbf{h}_i = [h_{1,i},\dots,h_{n,i}]$ 
 \begin{equation}
 q_i= (\mathbf{w}\cdot\mathbf{h}_{i})  =  \sum_{k=1}^{n} w_k \cdot h_{k,i} .\label{eqn:qij_full_sum}
 \end{equation}
-Thus, the likelihood of $L(\mathbf{w}, \mathbf{h},\Xi, e|D)$ in Eqn.~\eqref{eqn:post} becomes $L(q_{i},\Xi, e|D)$. % In the rest of the paper, we will use the expressions $P(D|\theta)$ and $L(\theta|D)$ interchangeably for convience, where $\theta$ represents a vector of parameters, in this case $[\mathbf{w}, \mathbf{h},\Xi, e]$.
+Thus, the likelihood of $L(\mathbf{w}, \mathbf{h},\Xi, e|D)$ in Eqn.~\eqref{eqn:post} becomes $L(q_{i},\Xi, e|D)$.
 
 We adjust the allele frequency $q_i$ by taking into account the read error rate $e$. This implies that the expected allele frequency of `REF' read as `ALT' is $(1 - q_i)e$, and the expected allele frequency of `ALT' read as `REF' is $q_ie$. Thus, the adjusted WSAF becomes:
 \begin{equation}
@@ -115,13 +115,11 @@ We model over-dispersion in read counts relative to the Binomial using a Beta-bi
 \begin{equation}
 L(q_{i}, \Xi, e | D) \propto \frac{\Gamma(a_i + c\cdot \pi_{i}) \Gamma(r_i + c\cdot (1-\pi_{i}))}{\Gamma(c\cdot \pi_{i})\Gamma(c\cdot (1-\pi_{i}))}. \label{eqn:llk}
 \end{equation}
-%In practice, constant $c$ is set to 100.
 
 \subsubsection{Priors}\label{sec:prior}
 \begin{itemize}
 \item We use a multinormal prior for the proportions $\mathbf{w}|n$: A multivariate normal variable titre ${\mathbf x}|n = [x_1,\dots,x_n]$ is proposed, where $x_i$ is i.i.d. normally distributed from $N(\eta, \sigma^2)$. We then compute $w_k$ as
 $$w_k = \frac{\exp(x_k)}{\sum_{k=1}^n \exp(x_k)}.$$ Since $x_i$s are i.i.d. normally distributed. The prior $P(\mathbf{w}|n) = \displaystyle\prod_{k=1}^n \Phi(x_i)$, where $\Phi(x_i)$ is the distribution function of $x_i$.
-% $\exp(x_k)$ (normailized by the sum of $\exp(x_k)$). %We consider the prior on $\mathbf{w}|n$ as the prior on $\mathbf{x}|n$. Suppose the probability density of $x_k$ is $\phi(x|\eta, \sigma^2)$, the prior density on each $w_k$ then becomes $\phi(\log(w_k)|\eta, \sigma^2)\frac{d}{dw_k}\log(w_k)$.
 
 
 \item For the prior on $\mathbf{h} | \omega, \Xi$, we use \citet{Li2003}'s hidden Markov model framework as a starting point, with the following modifications made:
@@ -147,8 +145,6 @@ where $a \in \{0, 1\}$, and $1-a$ indicates the event that allelic state $h_k$ d
 \end{itemize}
 
 
-%A crucial difference between our method and \citet{Li2003}'s model is that mixed samples can have more than two strains, with unknown proportions. We randomly choose the strains to update, then apply LS's algorithm to sample the path using Gibbs sampler given the proportion $\mathbf p$ (see example in Fig.~\ref{fig:ls}), rather than 50/50 in the cases of diploid samples.
-
 
 
 \subsection{Inference}
@@ -157,7 +153,6 @@ Overall, our method generates Markov chain Monte Carlo (MCMC) samples for the pr
 
 
 \subsubsection{Metropolis-Hastings update for proportions}\label{sec:updateP}
-%We use a sparse update on $\mathbf w$. We introduce , with the density function $d(x)$. We sample $x$s, then transform to $w = e^x$. We then normalise vector $\mathbf w$, to obtain a new sample ${\mathbf w}$.
 
 We use a sparse update on $\mathbf{w}|n$, by updating $\mathbf{x}|n$. More specificly, we propose new $x_i'$s from $x_i' = x_i + \delta x$, where $\delta x \sim N(0, \sigma^2/s)$, and $s$ is a scaling factor. The new proposed proportion is therefore $\frac{\exp(x_k')}{\sum_{k=1}^n \exp(x_k')}$. Since the proposal distribution is symmetrical, we have hasting ratio of 1. A new update is accepted with probability:
  $$\min\left(1, \frac{P(\mathbf{w}'|n)}{P(\mathbf{w}|n)} \frac{L(\mathbf{w}', \mathbf{h},\Xi, e|D)}{L(\mathbf{w}, \mathbf{h},\Xi, e|D)}\right).$$
@@ -293,9 +288,9 @@ and $a,b \in \{0, 1\}$, and $1-a$ indicates the event that allelic state $h_{s_1
 \item
 For the prior of the allelic state pairs of the path, we consider all possible pair of the copying strain:
 \begin{itemize}
-\item we take into account of the possibility of one strain recombines and the other does not with the probability of $\rho_i' \cdot \frac{1-\rho_i'}{|\Xi|}$; 
-\item both recombines, with the probability of $\rho_i' \cdot \rho_i'$; 
-\item neither recombines, with the probability of $\frac{1-\rho_i'}{|\Xi|} \cdot\frac{1-\rho_i'}{|\Xi|}$, assuming that recombination events of two copying strains are independent from each other. 
+\item we take into account of the possibility of one strain recombines and the other does not with the probability of $\rho_i' \cdot \frac{1-\rho_i'}{|\Xi|}$;
+\item both recombines, with the probability of $\rho_i' \cdot \rho_i'$;
+\item neither recombines, with the probability of $\frac{1-\rho_i'}{|\Xi|} \cdot\frac{1-\rho_i'}{|\Xi|}$, assuming that recombination events of two copying strains are independent from each other.
 \end{itemize}
 The prior for the path takes the form
 \begin{equation}
@@ -309,8 +304,6 @@ P(g_{p_1}, g_{p_2}|\mathbf{w}, \Xi, e) = &  P_{i-1}(g_{p_1},g_{p_2}\big{|}D) \cd
 Combining equations \eqref{eqn:llk_given_D:two} and \eqref{eqn:prio.update.two}, we obtain Eqn.~\eqref{eqn:post.two.LD}.
 
 \item Given the posterior probabilities of path pair $p_1,p_2$ at position $i$, we sample the path backwards to generate a MCMC sample for the path pair that strain $s_1$ and $s_2$ copied from. We start at the end position, first propose if a recombination events have happened with probabilities proportional to
-%Sample the path up to position $i$, i.e. backwards, start from the end of the panel, and sampling backwards to the $i-1$ position, first sample if a recombination events had happened given the probabilities of
-%\begin{numcases}
 $$\begin{cases}
 \displaystyle\sum_{x\in \Xi}P_{i-1}(g_{p_1},g_{x}\big{|}D) \cdot \frac{1-\rho_i'}{|\Xi|}\cdot \rho_i', & p_1 \text{ recombines} \label{eqn:prob.update.two.v}, \\
 P_{i-1}(g_{p_1},g_{p_2}\big{|}D) \cdot \rho_i' \cdot \rho_i', & \text{no recombination},\\
@@ -438,8 +431,6 @@ From our assessment of haplotype inference, we conclude:
 
 
 
-%We extended our experiments further to test how sensitive the inference result is to the sequence coverage. Data was simulated by sampling read counts according to $Binom(n,p)$ models, where $n$ was the number alternative and reference alleles at each site. Three different probabilities $p$: 0.2, 0.5, 0.8 were used for creating the scenarios of lower, median and high coverage data. In general, we observed that higher coverage data was more informative about the genotype, which accompanied with reduced error rates, with exceptions when using a perfect reference panel: The haplotype inference heavily relied on the reference panel for low coverage data, which again addresses the importance of using appropriate reference panels (see supplement materials).
-
 \subsection{Run-time}
 The complexity of our program is $\mathcal{O}(lm^2)$ (see Fig~\ref{fig:runtime}), where $l$ and $m$ are the number of reference strains and sites respectively. In practice, we divide Pf3k samples into several geographical regions and perform deconvolution, with ten most different local clonal strains as reference panel. The run time of deconvoluting a field sample range between 1 and 6 hours, depending on the number variants in a sample: For example, it takes $5\frac{1}{2}$ hours to process sample {\textmd QG0182-C} over 372,884 sites.
 
@@ -476,14 +467,14 @@ Anita, D. (1998).
 
 \bibitem[\protect\citeauthoryear{Browning and Browning}{Browning and
   Browning}{2007}]{Browning2007}
-Browning, S.~R. and B.~L. Browning (2007).
+Browning, S.~R. and B.~L. Browning (2007)
 \newblock Rapid and accurate haplotype phasing and missing-data inference for
   whole-genome association studies by use of localised haplotype clustering.
 \newblock {\em The American Journal of Human Genetics\/}~{\em 81\/}(5), 1084--1097.
 
 \bibitem[\protect\citeauthoryear{de~Roode, Culleton, Bell, and Read}{de~Roode
   et~al.}{2004}]{deRoode2004}
-de~Roode, J., R.~Culleton, A.~Bell, and A.~Read (2004).
+de~Roode, J. {\em et al}. (2004)
 \newblock Competitive release of drug resistance following drug treatment of
   mixed {\it Plasmodium Chabaudi} infections.
 \newblock {\em Malaria Journal\/}~{\em 3\/}(33), 1--6.
@@ -491,21 +482,20 @@ de~Roode, J., R.~Culleton, A.~Bell, and A.~Read (2004).
 \bibitem[\protect\citeauthoryear{de~Roode, Pansini, Cheesman, Helinski,
   Huijben, Wargo, Bell, Chan, Walliker, and Read}{de~Roode
   et~al.}{2005}]{deRoode2005}
-de~Roode, J.~C., R.~Pansini, S.~J. Cheesman, M.~E.~H. Helinski, S.~Huijben,
-  A.~R. Wargo, A.~S. Bell, B.~H.~K. Chan, D.~Walliker, and A.~F. Read (2005).
+de~Roode, J.~C. {\em et al}. (2005)
 \newblock Virulence and competitive ability in genetically diverse malaria
   infections.
 \newblock {\em Proceedings of the National Academy of Sciences of the United
   States of America\/}~{\em 102\/}(21), 7624--7628.
 
 \bibitem[\protect\citeauthoryear{Galinsky}{Galinsky et~al.}{2015}]{Galinsky2015}
-Galinsky, K., Valim, C., Salmier, A., de Thoisy, B., Legrand, E., Faust, A., Baniecki, M. L., Ndiaye, D., Daniels, R. F., Hartl, D. L., Sabeti, P. C., Wirth, D. F., Volkman, S. K., Neafsey, Daniel E.(2015).
+Galinsky, K. {\em et al}. (2015)
 \newblock COIL: a methodology for evaluating malarial complexity of infection using likelihood from single nucleotide polymorphism data.
 \newblock {\em Malaria Journal\/}~{\em14\/}(4), 1--9.
 
 \bibitem[\protect\citeauthoryear{Harris and Nielsen}{Harris and Nielsen}{2013}]{Harris2013}
 Harris K., Nielsen R. (2013).
-\newblock{Inferring Demographic History from a Spectrum of Shared Haplotype Lengths}. 
+\newblock{Inferring Demographic History from a Spectrum of Shared Haplotype Lengths}.
 \newblock{\em PLoS Genet\/}~{\em9/}(6). doi: 10.1371/journal.pgen.1003521
 
 \bibitem[\protect\citeauthoryear{Hastings and D\'Alessandro}{Hastings and
@@ -517,25 +507,25 @@ Hastings, I. and U.~D'Alessandro (2000).
 
 \bibitem[\protect\citeauthoryear{Howie, Donnelly, and Marchini}{Howie
   et~al.}{2009}]{Howie2009}
-Howie, B.~N., P.~Donnelly, and J.~Marchini (2009).
+Howie, B.~N. {\em et al}. (2009)
 \newblock A flexible and accurate genotype imputation method for the next
   generation of genome-wide association studies.
 \newblock {\em PLoS Genet\/}~{\em 5\/}(6), 1--15.
 
 \bibitem[\protect\citeauthoryear{Lawson et~al.}{Lawson et~al.}{2012}]{Lawson2012}
-Lawson D.~J., Hellenthal G., Myers S., Falush D. (2012).
-\newblock{Inference of Population Structure using Dense Haplotype Data}. 
+Lawson D.~J. {\em et al}. (2012)
+\newblock{Inference of Population Structure using Dense Haplotype Data}.
 \newblock{\em PLoS Genet\/}~{\em 8\/}(1). doi: 10.1371/journal.pgen.1002453
 
 \bibitem[\protect\citeauthoryear{Li and Stephens}{Li and
   Stephens}{2003}]{Li2003}
-Li, N. and M.~Stephens (2003).
+Li, N. and M.~Stephens (2003)
 \newblock {Modeling linkage disequilibrium and identifying recombination
   hotspots using single-nucleotide polymorphism data}.
 \newblock {\em Genetics\/}~{\em 165\/}(4), 2213--2233.
 
 \bibitem[\protect\citeauthoryear{MalariaGEN}{MalariaGEN}{2008}]{MalariaGen2008}
-MalariaGEN (2008).
+MalariaGEN (2008)
 \newblock A global network for investigating the genomic epidemiology of
   malaria.
 \newblock {\em Nature\/}~{\em 456\/}(7223), 732 -- 737.
@@ -548,23 +538,14 @@ MalariaGEN (2008).
   Rowlands, Sutherland, Roper, Mangano, Modiano, Tan, Ferdig, Amambua-Ngwa,
   Conway, Takala-Harrison, Plowe, Rayner, Rockett, Clark, Newbold, Berriman,
   MacInnis, and Kwiatkowski}{Manske et~al.}{2012}]{Menske2012}
-Manske, M., O.~Miotto, S.~Campino, S.~Auburn, J.~Almagro-Garcia, G.~Maslen,
-  J.~O'Brien, A.~Djimde, O.~Doumbo, I.~Zongo, J.~Ouedraogo, P.~Michon,
-  I.~Mueller, P.~Siba, A.~Nzila, S.~Borrmann, S.~Kiara, K.~Marsh, H.~Jiang,
-  X.~Su, C.~Amaratunga, R.~Fairhurst, D.~Socheat, F.~Nosten, M.~Imwong,
-  N.~White, M.~Sanders, E.~Anastasi, D.~Alcock, E.~Drury, S.~Oyola, M.~Quail,
-  D.~Turner, V.~Ruano-Rubio, D.~Jyothi, L.~Amenga-Etego, C.~Hubbart,
-  A.~Jeffreys, K.~Rowlands, C.~Sutherland, C.~Roper, V.~Mangano, D.~Modiano,
-  J.~Tan, M.~Ferdig, A.~Amambua-Ngwa, D.~Conway, S.~Takala-Harrison, C.~Plowe,
-  J.~Rayner, K.~Rockett, T.~Clark, C.~Newbold, M.~Berriman, B.~MacInnis, and
-  D.~Kwiatkowski (2012, 7).
+Manske, M. {\em et al}. (2012)
 \newblock Analysis of plasmodium falciparum diversity in natural infections by
   deep sequencing.
 \newblock {\em Nature\/}~{\em 487\/}(7407), 375--379.
 
 \bibitem[\protect\citeauthoryear{Mathieson and McVean}{Mathieson and McVean}{2014}]{Mathieson2014}
-Mathieson I., McVean G. (2014).
-\newblock{Demography and the Age of Rare Variants}. 
+Mathieson I. and McVean G. (2014).
+\newblock{Demography and the Age of Rare Variants}.
 \newblock{\em PLoS Genet\/}~{\em 10}(8), doi: 10.1371/journal.pgen.1004528
 
 
@@ -572,10 +553,7 @@ Mathieson I., McVean G. (2014).
   Theron, Gould, Mead, Drury, O{\textquoteright}Brien, Ruano~Rubio, MacInnis,
   Mwangi, Samarakoon, Ranford-Cartwright, Ferdig, Hayton, Su, Wellems, Rayner,
   McVean, and Kwiatkowski}{Miles et~al.}{2016}]{Miles2016}
-Miles, A., Z.~Iqbal, P.~Vauterin, R.~Pearson, S.~Campino, M.~Theron, K.~Gould,
-  D.~Mead, E.~Drury, J.~O{\textquoteright}Brien, V.~Ruano~Rubio, B.~MacInnis,
-  J.~Mwangi, U.~Samarakoon, L.~Ranford-Cartwright, M.~Ferdig, K.~Hayton, X.~Su,
-  T.~Wellems, J.~Rayner, G.~McVean, and D.~Kwiatkowski (2015).
+Miles, A. {\em et al}. (2015)
 \newblock Indels, structural variation, and recombination drive genomic diversity in {\it Plasmodium falciparum}.
 \newblock {\em Genome Res\/}~{\em26\/}, 1288--1299.
 
@@ -586,37 +564,31 @@ Miles, A., Z.~Iqbal, P.~Vauterin, R.~Pearson, S.~Campino, M.~Theron, K.~Gould,
   Hart, Jeffery, Drury, Mead, Kekre, Campino, Manske, Cornelius, MacInnis,
   Rockett, Miles, Rayner, Fairhurst, Nosten, Price, and Kwiatkowski}{Pearson
   et~al.}{2016}]{Pearson2016}
-Pearson, R.~D., R.~Amato, S.~Auburn, O.~Miotto, J.~Almagro-Garcia,
-  C.~Amaratunga, S.~Suon, S.~Mao, R.~Noviyanti, H.~Trimarsanto, J.~Marfurt,
-  N.~M. Anstey, T.~William, M.~F. Boni, C.~Dolecek, H.~T. Tran, N.~J. White,
-  P.~Michon, P.~Siba, L.~Tavul, G.~Harrison, A.~Barry, I.~Mueller, M.~U.
-  Ferreira, N.~Karunaweera, M.~Randrianarivelojosia, Q.~Gao, C.~Hubbart,
-  L.~Hart, B.~Jeffery, E.~Drury, D.~Mead, M.~Kekre, S.~Campino, M.~Manske,
-  V.~J. Cornelius, B.~MacInnis, K.~A. Rockett, A.~Miles, J.~C. Rayner, R.~M.
-  Fairhurst, F.~Nosten, R.~N. Price, and D.~P. Kwiatkowski (2016, June).
+Pearson, R.~D. {\em et al}. (2016)
 \newblock {Genomic analysis of local variation and recent evolution in
   Plasmodium vivax}.
 \newblock {\em Nat Genet\/}~{\em 48}, 959--964.
 
 \bibitem[\protect\citeauthoryear{Pf3k}{Pf3k}{2016}]{Pf3k2016}
-The Pf3k Project: pilot data release 5 (2016).
+The Pf3k Project: pilot data release 5 (2016)
 \newblock {www.malariagen.net/data/pf3k-5} [accessed 1 June 2016]
 
 \bibitem[\protect\citeauthoryear{O'Brien}{O'Brien et~al.}{2015}]{Jack2016}
-O'Brien D,J., Iqbal Z, Wendler J, Amenga-Etego L (2016). \newblock Inferring Strain Mixture within Clinical {\em Plasmodium falciparum} Isolates from Genomic Sequence Data. \newblock {\em PLoS Comput Biol\/}~{\em 12\/}(6): e1004824. doi: 10.1371/journal.pcbi.1004824
+O'Brien D,J. {\em et al}. (2016)
+\newblock Inferring Strain Mixture within Clinical {\em Plasmodium falciparum} Isolates from Genomic Sequence Data. \newblock {\em PLoS Comput Biol\/}~{\em 12\/}(6): e1004824. doi: 10.1371/journal.pcbi.1004824
 
 \bibitem[\protect\citeauthoryear{Sabetil,Reich,Higgins, Levine,Richter}{Sabetil et~al.}{2002}]{Sabeti2002}
-Sabeti1. P.~C., D.~E.~Reich, J.~M.~Higgins, H.~Z.~P.~Levine, D.~J.~Richter, S.~F.~Schaffner, S.~B.~Gabriel, J.~V.~Platko, N.~J.~Patterson, G.~ J.~McDonald, H.~C.~Ackerman, S.~J.~Campbell, D.~Altshuler, R.~Cooper, D.~Kwiatkowski, R.~Ward, and E.~S.~Lander (2002)
+Sabeti1. P.~C. {\em et al}. (2002)
 \newblock {Detecting recent positive selection in the human genome from haplotype structure}.
 \newblock {\em Nature\/}~{\em 419\/}, 832--837. doi:10.1038/nature01140
 
 \bibitem[\protect\citeauthoryear{Wendler}{Wendler}{2015}]{Wendler2015}
-Wendler, J. (2015).
+Wendler, J. (2015)
 \newblock {\em Accessing complex genomic variation in} {P}lasmodium falciparum {\em natural infection}.
 \newblock Ph.\ D. thesis, University of Oxford.
 
 \bibitem[\protect\citeauthoryear{WHO}{WHO}{2016}]{WHO2016}
-WHO (2016).
+WHO (2016)
 \newblock {World Malaria Report 2015}.
 \newblock {\em World Health Organization\/}.
 
