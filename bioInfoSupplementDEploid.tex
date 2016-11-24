@@ -6,10 +6,10 @@
 
 \section{DEploid examples} \label{sup:sec:deploid}
 
-Our program {\it DEploid } is freely available at \url{https://github.com/mcveanlab/DEploid} under the conditions of the GPLv3 license. A detailed document can be found at \url{http://deploid.readthedocs.io/en/latest/}.  An R version is available at \url{https://github.com/mcveanlab/DEploid-r}.
+Our program {\it DEploid } is freely available, including C++ source code at \url{https://github.com/mcveanlab/DEploid} under the conditions of the GPLv3 license. A detailed document can be found at \url{http://deploid.readthedocs.io/en/latest/}. An R version is available at \url{https://github.com/mcveanlab/DEploid-r}.
 
 \subsection{Data exploration example}
-As a demonstration, we show examples of mixed {\em P. falciparum} genome deconvolution with reference panel V described in the main article. First, we use {\tt R} scripts to plot and explore the data of a mixed sample, for instance, sample {\textmd PG0395-C} is a mixture of strains HB3, 7G8 and Dd2 with equal proportions, and we have
+As a demonstration, we show some examples of mixed {\em P. falciparum} genome deconvolution using one of the reference panels described in the main article (reference panel V). All data used in this chapter is avaiable at \url{https://github.com/shajoezhu/DEploid-Supplementary-Materials}. First, we use an {\tt R} script to plot and explore the data of a mixed sample. For instance, sample {\textmd PG0395-C} is a mixture of strains HB3, 7G8 and Dd2 with equal proportions, we run the following command
 \linespread{1}
 \begin{lstlisting}
 R --slave "--args -vcf PG0395-C.wg.vcf.gz
@@ -18,7 +18,7 @@ R --slave "--args -vcf PG0395-C.wg.vcf.gz
     -o PG0395-C" < ~/DEploid/utilities/dataExplore.r
 \end{lstlisting}
 \linespread{1.5}
-where ``{\tt -vcf PG0395-C.wg.vcf.gz}'' defines the input VCF file. Assume all variant site are single nucleotide polymorphism, and every site states {\tt PASS} at the {\tt QUAL} column. The read counts of the reference and alternative alleles must be presented in the {\tt AD} field at all sites; ``{\tt -plaf labStrains\_PLAF.txt}'' contains the population allele frequencies calculated from total read counts (see main article secion 2.1 Notations). Note that we use option ``{\tt -exclude labStrainsExclude.txt}'' to skip deconvoluting sites of which the alternative allele counts are zeros.
+where ``{\tt -vcf PG0395-C.wg.vcf.gz}'' defines the input VCF file. Notice that, in this example, we assume all variant sites are single nucleotide polymorphism, and every site is tagged with {\tt PASS} at the {\tt QUAL} column. The read counts of the reference and alternative alleles must be presented in the {\tt AD} field at all sites; ``{\tt -plaf labStrains\_PLAF.txt}'' contains the population allele frequencies calculated from total read counts (see main article secion 2.1 Notations). Note that we use option ``{\tt -exclude labStrainsExclude.txt}'' to skip deconvoluting sites of which the alternative allele counts are zeros.
 
 \begin{figure}[ht]
 \centering
@@ -26,17 +26,17 @@ where ``{\tt -vcf PG0395-C.wg.vcf.gz}'' defines the input VCF file. Assume all v
 \caption{Data exploration of sample {\textmd PG0395-C}.}\label{fig:0395}
 \end{figure}
 
-From the left to the right, Fig.~\ref{fig:0395} shows that:
+From left to right, Fig.~\ref{fig:0395} shows:
 \begin{enumerate}
-\item Alternative read count vs reference read count. The number of clusters in the figure can provide some intuiation of the number of mixed strains, see Fig~\ref{fig:0396}~(a). However, the number of clusters does not always reflect the true number of mixed strains. In the example shown in Fig.~\ref{fig:0395}, the alternative vs reference count figure only show two clusters, but the true number of mixture is three.
+\item Alternative read counts vs reference read counts. The number of clusters or blobs in the figure can provide some intuition on the number of mixed strains, see Fig~\ref{fig:0396}~(a). However, this can be misleading, as the number of clusters does not always reflect the true number of mixed strains. In the example shown in Fig.~\ref{fig:0395}, the alternative vs reference counts figure only show two clusters, but the true number of mixture is three.
 
-\item Histogram of the allele frequencies within sample. Similar to the alternative vs reference count figure, the number of WSAF modes can be used as an indication of the number of strains and proportions within a field isolate (Fig~\ref{fig:0396}~(a)). Again, this is not always true, Fig.~\ref{fig:0395} shows that two modes of WSAF at approximately 0.33 and 0.66, but the true number of mixed strains is three, and the proportions are 1/3, 1/3 and 1/3.
+\item Histogram of the allele frequencies within sample. Similar to the alternative vs reference counts figure, the number of WSAF modes can be used as an indication of the number of strains and proportions within a field isolate (Fig~\ref{fig:0396}~(a)). Again, this is not always true, Fig.~\ref{fig:0395} shows that two modes of WSAF at approximately 0.33 and 0.66, but the true number of mixed strains is three, and the proportions are 1/3, 1/3 and 1/3.
 
-\item Allele frequencies at the population level (PLAF) vs allele frequencies at within sample (WSAF). The PLAF is calculated from total read counts (see main article secion 2.1 Notations), and WSAF is calculated by the allele count.
+\item Allele frequencies at the population level (PLAF) vs allele frequencies within sample (WSAF). The PLAF is calculated from total read counts (see main article secion 2.1 Notations), whereas the WSAF is calculated by using allele counts.
 \end{enumerate}
 
-\subsection{Deconvolute sample {\textmd PG0396-C}}
-The following example shows specific {\textmd DEploid} command to deconvolute the mixed sample {\textmd PG0396-C}:
+\subsection{Deconvoluting sample {\textmd PG0396-C}}
+The following example shows a specific {\textmd DEploid} command to deconvolute the mixed sample {\textmd PG0396-C}:
 \linespread{1}
 \begin{lstlisting}
 dEploid -vcf PG0396-C.wg.vcf.gz \
@@ -52,10 +52,9 @@ dEploid -vcf PG0396-C.wg.vcf.gz \
     -exportPostProb
 \end{lstlisting}
 \linespread{1.5}
-where flags ``{\tt -vcf}'', ``{\tt -plaf}'' and ``{\tt -exclude}'' are used in the same manner as in the previous example; ``{\tt -panel labStrainsPanelFinal.txt}'' specifies a text file including haplotypes of cell lines 3D7, HB3, 7G8 and Dd2; options ``{\tt -nSample}'', ``{\tt -rate}'' and ``{\tt -burn}'' specify the total number of MCMC samples for inference, sampling rate and burning rate of the MCMC chain respectively. For detailed documentation, please see \url{http://deploid.readthedocs.io/en/latest/input.html}.
+where flags ``{\tt -vcf}'', ``{\tt -plaf}'' and ``{\tt -exclude}'' are used in the same manner as in the previous example; ``{\tt -panel labStrainsPanelFinal.txt}'' specifies a text file including haplotypes of lab strains 3D7, HB3, 7G8 and Dd2; options ``{\tt -nSample}'', ``{\tt -rate}'' and ``{\tt -burn}'' specify the total number of MCMC samples to take, the sampling rate and the burning rate of the MCMC chain respectively. For detailed documentation, please see \url{http://deploid.readthedocs.io/en/latest/input.html}.
 
-\newpage
-We use {\tt R} scripts to plot and interpret DEploid output. The following command is used to generate Figures~\ref{fig:0396} (a) -- (e) to interpret the previous example.
+We use a utility {\tt R} script to plot and interpret the output produced by DEploid. The following command is used to generate Figures~\ref{fig:0396} (a) -- (e).
 \linespread{1}
 \begin{lstlisting}
 R --slave "--args -vcf PG0396-C.wg.vcf.gz
@@ -91,25 +90,24 @@ R --slave "--args -vcf PG0396-C.wg.vcf.gz
 \caption{Sample {\textmd PG0396-C} deconvolution with reference panel V.}\label{fig:0396}
 \end{figure}
 
-A brief caption of each figure in Fig.~\ref{fig:0396}:
+Here, we briefly describe each panel in Fig.~\ref{fig:0396}:
 \begin{itemize}
 
-\item (a) Panel figures of interpreting {\textmd DEploid} output. The top three figures recaps the data exploration process, with new additions in in the PLAF vs WASF plot: Red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF inferred from our model (see Eqn.~(3) in main article). The next three plots from the left to the right show:
+\item (a) Diagnostic panels from the {\textmd DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF inferred from our model (see Eqn.~(3) in main article). The next three plots from left to right show:
 \begin{enumerate}
-\item[4.] MCMC samples of the proportions. The three colored blocks suggest that there are three strains within sample {\textmd PG0396-C}, with proportions approximately 1/4, 1/2 and 1/4.
-\item[5.] Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model: A low correlation suggests poor fitting.
-\item[6.] Log likelihood of the MCMC chain. This figure indicates whether the MCMC has converged. The colored dots mark the likelihoods of the model when specific MCMC updates are used: updating the porportion, single haplotype and pair of haplotypes are marked in green red and blue respectively.
+\item[4.] MCMC samples for the strain proportions, with the fraction of each color indicating the proportion of a different strain at each MCMC sample. The three colored blocks suggest that there are three strains within sample {\textmd PG0396-C}, with proportions approximately 1/4, 1/2 and 1/4.
+\item[5.] Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. A low correlation suggests poor fitting.
+\item[6.] Log likelihood of the MCMC chain. This figure indicates whether the MCMC has converged. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain porportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively.
 
 \end{enumerate}
 \item (b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome.
-\item (c) (d) and (e) paint the deconvoluted haplotypes by the reference panel V. In each figure, we plot the posterior probabilities of a deconvoluted haplotype copying from strains in panel V:  .
-3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively.
+\item (c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the reference panel V. In each figure, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively.
 \end{itemize}
 
-In this example, the second inferred haplotype (Fig.~\ref{fig:0396}~(d)) represnet the 7G8 strain, which has mixed proportion of 1/2. The rest two strains have approximately equal proportions, which increase the difficulty to deconvolute. In practice, we find more switch errors when deconvoluting samples with similar proportions of strains, for example, Fig.~\ref{fig:0396}~(c) and (e) both show high probabilities of copying from strains HB3 and Dd2, and they are almost like complment of each other. This suggest that our program DEploid can characterize the main genome diversities within a mixed samples, yet there is still room to improve to overcome the switch errors.
+In this example, the second inferred haplotype (Fig.~\ref{fig:0396}~(d)) represents the 7G8 strain, which has relative proportion of 1/2. The remaining two strains have approximately equal proportions, which increase the difficulty to deconvolute them. In practice, we find more switching errors when deconvoluting samples containing strains at similar proportions, for example, Fig.~\ref{fig:0396}~(c) and (e) both show high probabilities of copying from strains HB3 and Dd2, and they are almost like complment of each other. This suggest that our program DEploid can characterize the main genome diversities within a mixed samples, yet there is still room to improve to overcome the switch errors.
 
-\subsection{Deconvolute sample {\textmd PG0415-C}}
-As metioned in the main article, we assume there are more strains then it needs to be, drop the strains with proportions less than 0.01 in practice. In the following example, we show deconvolution of a clonal sample ({\textmd PG0415-C}) and starting from three strains.
+\subsection{Deconvoluting sample {\textmd PG0415-C}}
+As metioned in the main article, we assume that there are more strains than necessary, and only keep strains with inferred relative proportions greater than 0.01 in practice. In the following example, we show the deconvolution of a clonal sample ({\textmd PG0415-C}) when starting from three strains.
 \linespread{1}
 \begin{lstlisting}
 dEploid -vcf PG0415-C.wg.vcf.gz \
@@ -144,4 +142,4 @@ dEploid -vcf PG0415-C.wg.vcf.gz \
 }\label{fig:pg0415.postprob_c}\\
 \caption{Sample {\textmd PG0415-C} deconvolution with reference panel V.}\label{fig:0415}
 \end{figure}
-Fig.~\ref{fig:0415}~(a) and (e) suggests that our program successfully dropped out one strain, reduced the number of strains to two. However, our model overfits this clonal sample as a mixture of two strains. This is caused by a number of problematic sites with both high number of alternative and reference allele counts, and result in high leverage to our model. When we paint the haplotypes to the reference panels, Fig.~\ref{fig:0415} (c) and (d) suggest that both haplotypes are in fact copying from the same strain 7G8 from the panel.
+Fig.~\ref{fig:0415}~(a) and (e) suggests that our program successfully dropped out one strain, reduced the number of strains to two. However, our model overfits this clonal sample as a mixture of two strains. This is caused by a number of problematic sites with both high number of alternative and reference allele counts, resulting in high leverage in our model. When we paint the haplotypes with the reference panels, Fig.~\ref{fig:0415} (c) and (d) suggest that both haplotypes are in fact copying from the same strain (7G8).
