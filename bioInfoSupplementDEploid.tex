@@ -68,10 +68,10 @@ R --slave "--args -vcf PG0396-C.wg.vcf.gz
 \begin{figure}[ht]
 \centering
 \subfloat[][]{
-\includegraphics[width=.5\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.interpretDEploidFigure.1}.png}
+\includegraphics[width=.47\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.interpretDEploidFigure.1}.png}
 }%\label{fig:pg0396.interpret1}
 \subfloat[][]{
-\includegraphics[width=.5\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.interpretDEploidFigure.2}.png}
+\includegraphics[width=.53\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.interpretDEploidFigure.2}.png}
 }\\
 %\caption{}
 %\end{figure}
@@ -101,10 +101,10 @@ Here, we briefly describe each panel in Fig.~\ref{fig:0396}:
 
 \end{enumerate}
 \item (b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome.
-\item (c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the reference panel V. In each figure, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively.
+\item (c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the reference panel V. In each figure, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively. Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.
 \end{itemize}
 
-In this example, the second inferred haplotype (Fig.~\ref{fig:0396}~(d)) represents the 7G8 strain, which has relative proportion of 1/2. The remaining two strains have approximately equal proportions, which increase the difficulty to deconvolute them. In practice, we find more switching errors when deconvoluting samples containing strains at similar proportions, for example, Fig.~\ref{fig:0396}~(c) and (e) both show high probabilities of copying from strains HB3 and Dd2, and they are almost like complment of each other. This suggest that our program DEploid can characterize the main genome diversities within a mixed samples, yet there is still room to improve to overcome the switch errors.
+In this example, the second inferred haplotype (Fig.~\ref{fig:0396}~(d)) represents the 7G8 strain, which has relative proportion of 1/2. The remaining two strains have approximately equal proportions, which increase the difficulty to deconvolute them. In practice, we find more switching errors when deconvoluting samples containing strains at similar proportions, for example, Fig.~\ref{fig:0396}~(c) and (e) both show high probabilities of copying from strains HB3 and Dd2. More specificly, Fig.~\ref{fig:0396}~(c) panel 1 shows almost every position of inferred haplotype chromosome 1 is copying from strain HB3; but chromosome 2 is copying from strain Dd2; chromosome 3 is partly copying from strains HB3 and Dd2, with presence of one switching error. These observations suggest that our program DEploid can characterize the main genome diversities within a mixed samples, yet there is still room to improve to overcome the switching errors.
 
 \subsection{Deconvoluting sample {\textmd PG0415-C}}
 As metioned in the main article, we assume that there are more strains than necessary, and only keep strains with inferred relative proportions greater than 0.01 in practice. In the following example, we show the deconvolution of a clonal sample ({\textmd PG0415-C}) when starting from three strains.
@@ -126,10 +126,10 @@ dEploid -vcf PG0415-C.wg.vcf.gz \
 \linespread{1.5}
 \begin{figure}[th]
 \subfloat[][]{
-\includegraphics[width=.5\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.1}.png}
+\includegraphics[width=.47\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.1}.png}
 }
 \subfloat[][]{
-\includegraphics[width=.5\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.2}.png}
+\includegraphics[width=.53\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.2}.png}
 }\\
 \subfloat[][]{
 \includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single0}.png}
