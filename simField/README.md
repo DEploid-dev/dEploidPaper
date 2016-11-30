@@ -57,7 +57,7 @@ write.table(data.frame(CHROM = asia1$CHROM, POS = asia1$POS, ALT = altCount2),
 ```
 
 ```
-seed=1
+seed=2
 suffix="noError"
 dEploidCommon="-seed ${seed} -nSample 250 -rate 8 -burn 0.67 -k 2 -exportPostProb"
 common1="-ref mixedFieldSamplePH0063-PH0193.${suffix}.25v75.ref -alt mixedFieldSamplePH0063-PH0193.${suffix}.25v75.alt -plaf asiaGroup1_PLAF.14.txt"
@@ -91,4 +91,52 @@ R --slave "--args ${common2} -dEprefix ${prefix2panel2} -o ${prefix2panel2}" < ~
 
 dEploid ${common2} ${dEploidCommon} -panel ${panel3} -o ${prefix2panel3}
 R --slave "--args ${common2} -dEprefix ${prefix2panel3} -o ${prefix2panel3}" < ~/DEploid/utilities/interpretDEploid.r
+```
+
+
+```
+rm(list=ls())
+
+ref = read.table("mixedFieldSamplePH0063-PH0193.noError.75v25.ref", header=T)$REF
+alt = read.table("mixedFieldSamplePH0063-PH0193.noError.75v25.alt", header=T)$ALT
+
+asia1 = read.table("asia1.14.panel.txt", header=T, check.names=F)
+PH0064 = asia1[["PH0064-C"]]
+PH0193 = asia1[["PH0193-C"]]
+
+haps = read.table("75v25panel1.noError.hap", header=T)
+PH0064.wrong.at = which(haps[,3] != PH0064)
+PH0193.wrong.at = which(haps[,4] != PH0193)
+
+plaf = read.table("asiaGroup1_PLAF.14.txt", header=T)$PLAF
+
+ref[PH0064.wrong.at]
+alt[PH0064.wrong.at]
+plaf[PH0064.wrong.at]
+PH0064[PH0064.wrong.at]
+
+ref[PH0193.wrong.at]
+alt[PH0193.wrong.at]
+plaf[PH0193.wrong.at]
+PH0193[PH0193.wrong.at]
+
+
+> ref[PH0064.wrong.at]
+[1] 2
+> alt[PH0064.wrong.at]
+[1] 0
+> plaf[PH0064.wrong.at]
+[1] 0.592652
+> PH0064[PH0064.wrong.at]
+[1] 0
+>
+> ref[PH0193.wrong.at]
+[1]  4  0 11
+> alt[PH0193.wrong.at]
+[1] 0 2 0
+> plaf[PH0193.wrong.at]
+[1] 0.0000000 0.1091019 0.3166564
+> PH0193[PH0193.wrong.at]
+[1] 0 0 1
+
 ```

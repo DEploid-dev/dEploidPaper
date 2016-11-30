@@ -123,6 +123,12 @@ dEploid -vcf PG0415-C.wg.vcf.gz \
     -exportPostProb
 \end{lstlisting}
 
+%R --slave "--args -vcf PG0415-C.wg.vcf.gz
+    %-plaf labStrains_PLAF.txt
+    %-exclude labStrainsExclude.txt
+    %-dEprefix PG0415-C_seed2k3
+    %-o PG0396-C_seed2k3" < ~/DEploid/utilities/interpretDEploid.r
+
 \linespread{1.5}
 \begin{figure}[th]
 \subfloat[][]{

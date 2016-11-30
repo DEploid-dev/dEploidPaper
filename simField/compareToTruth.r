@@ -156,9 +156,9 @@ RefNames=c(Ref1Name, Ref2Name)
 #          "PG0412-C.14.labPanel")
 
 suffix = ".noError"
-suffix = ".withError"
-sampleName = "25v75"
-#sampleName = "75v25"
+#suffix = ".withError"
+#sampleName = "25v75"
+sampleName = "75v25"
 #cases = paste(sampleName, "panel", c(1,2,3), sep="")
 #cases = paste(sampleName, "panel", c(1,2,3),".nodis", sep="")
 cases = paste(sampleName, "panel", c(1,2,3), suffix, sep="")
