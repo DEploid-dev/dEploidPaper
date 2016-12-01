@@ -9,7 +9,6 @@ suptex = $(shell grep "\.tex" bioInfoSupplement.tex | sed -e "s/^.*{//g" -e "s/\
 coverLetter.pdf: coverLetter.tex
 	pdflatex coverLetter.tex
 
-
 bioInfo.pdf: bioInfo.tex ${mainfigures}
 	pdflatex bioInfo.tex
 	pdflatex bioInfo.tex
@@ -41,3 +40,7 @@ plain.pdf: bioInfo.tex
 	  bioInfo.tex > plain.tex
 	pdflatex plain.tex
 	pdflatex plain.tex
+
+pf3kDEploidNotes.pdf: pf3kDEploidNotes.tex
+	pdflatex pf3kDEploidNotes.tex
+	pdflatex pf3kDEploidNotes.tex

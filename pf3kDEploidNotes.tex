@@ -1,0 +1,142 @@
+\documentclass{article}
+\usepackage{fullpage,amsmath,url,cases}
+\usepackage{natbib,longtable,graphicx,tikz}
+\usepackage{subfig}
+\usepackage{url}
+%\@ifundefined{showcaptionsetup}{}{%
+%\PassOptionsToPackage{caption=false}{subfig}}
+\graphicspath{{./figures/}}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\definecolor{RubineRed}{RGB}{240, 0, 240}       % RubineRed  Approximate PANTONE RUBINE-RED
+\usepackage{subfig}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+\lstset{language=bash}
+
+\usepackage{todonotes}
+
+%\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{decorations.pathreplacing}
+
+\usetikzlibrary{shapes,arrows}
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20,
+    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{action} = [rectangle, draw, fill=blue!20,
+    text width=10em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{input} = [draw, ellipse,fill=red!20,
+    minimum height=2em]
+\tikzstyle{output} = [draw, rounded corners, fill=green!20, text centered, text width=8em,
+    minimum height=2em]
+
+\usetikzlibrary{calc}
+
+\usepackage{setspace}
+\linespread{1.5}
+
+
+\usepackage{hyperref}
+\usetikzlibrary{shapes.geometric}
+
+
+%\usepackage{xcolor}
+%\usepackage{colortbl}
+%%\definecolor{mygrey}{rgb}{.9,.9,.9}
+%\definecolor{RubineRed}{RGB}{240, 0, 240}       % RubineRed  Approximate PANTONE RUBINE-RED
+
+\title{Pf3k DEploid Notes}
+\author{ }
+\date{}
+
+\begin{document}
+\maketitle
+
+\input{supplementReset.tex}
+
+\section{Apply DEploid to the Pf3k data}
+\subsection{Filtering}
+
+\linespread{1}
+\begin{lstlisting}
+bcftools view \
+    --include 'FILTER="PASS"' \
+    --min-alleles 2 \
+    --max-alleles 2 \
+    --types snps \
+    --output-file SNP_INDEL_Pf3D7_Pf3D7_01_v3_v3.high_quality_biallelic_snps.vcf.gz \
+    --output-type z \
+    SNP_INDEL_Pf3D7_Pf3D7_01_v3_v3.combined.filtered.vcf.gz
+\end{lstlisting}
+\linespread{1.5}
+
+\subsection{Dividing to seven groups}
+
+
+
+\section{Deconvolution performance with simulated field sample}
+
+
+In this section, we show examples of deconvoluting a simulated field mixed samples with relative proportions of 75/25\% of clonal samples {\textmd PH0064-C} and {\textmd PH0193-C}.
+
+Given the total coverage of sample {\textmd PH0064-C}, we then use a binomial distribution to simulate alternative allele counts using the expected WSAF calculated using \citet{Zhu2017} Eqn.~(3), where the allele states are of {\textmd PH0064-C} and {\textmd PH0193-C} and the relative proportion used are 85\% and 15\% respectively. Note that the expected WSAFs are adjusted using a constant error rate 0.01 (see Eqn.~(4)). In this experiment, we only simulated 2425 sites in total for chromosome 14 (same sites used in \citet{Zhu2017} experiments). We then use DEploid to deconvolute the data, with a fixed number of strains of two.
+
+We experimented deconvoluting this simulated data with the following reference panels:
+\begin{itemize}
+\item panel I: Ten Asian clonal strains from the Pf3k \citep{Pf3k2016} data base: {\textmd PD0498-C}, {\textmd PD0500-C}, {\textmd PD0660-C}, {\textmd PH0047-Cx}, {\textmd PH0064-C}, {\textmd PH0193-C}, {\textmd PH0283-C}, {\textmd PH0305-C}, {\textmd PH0848-C} and {\textmd PH1000-C};
+\item panel II: panel I minus strains {\textmd PH0064-C} and {\textmd PH0193-C};
+\item panel III: 3D7, HB3, 7G8 and Dd2 strains.
+\end{itemize}
+
+Our observations from Fig.~\ref{fig:differentRefPanel} can be summariesd as the following:
+\begin{itemize}
+\item Uneven proportion helps with deconvolution: There is zero switch errors in all cases.
+\item The deconvolution result improves when a more appropriate reference panel provided.
+\item In this partilar example, it seems that deconvolution works better when assuming free recombinations between sites than using panels II and III. However, this observation is less true when mixing proportions are more complex and even (\citet{Zhu2017} Figure 2).
+\item There is still error when panel I is used. The inaccurate inference are made at sites with very low coverage. Note that we use default 1\% miss copying probability in this experiment. With miss copying, we allow inferred strain states differ from copying from the panel. In this experiment, lowing the miss copying probability improves the inference result for panel I. However, this is not generally true, as it will result overfitting by the panel, when the panel is in fact imperfect.
+\end{itemize}
+
+\begin{figure}{ht}
+\centering
+\includegraphics[width=\textwidth]{{pf3kSimField/differentPanelForSample.75v25.withError}.png}
+\caption{Haplotypes comparison of simulated mixture of samples {\textmd PH0064-C} and {\textmd PH0193-C} chromosome 14 deconvolution without any reference strain (bottom) versus with using reference panels I to III (from the top to the second last). Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The cyan and yellow background label the haplotype segments from strains {\textmd PH0064-C} and {\textmd PH0193-C}. The switch errors are obtained by counting the changes of a strain segment mapped to reference strains; the genotype errors are the discordance between the strain and the mapped reference segments.}\label{fig:differentRefPanel}
+\end{figure}
+
+\begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{Pf3k}{Pf3k}{2016}]{Pf3k2016}
+The Pf3k Project: pilot data release 5 (2016)
+\newblock {www.malariagen.net/data/pf3k-5} [accessed 1 June 2016]
+
+
+\bibitem[\protect\citeauthoryear{Zhu, Garcia, McVean}{Zhu et~al.}{201*}]{Zhu2017}
+Zhu, J. S.\, J. A. Garcia\, G. McVean. (201*)
+\newblock {DEploid: Untangling complexity of infection in {\it Plasmodium falciparum}}.
+\newblock {\em JOURNAL\/}~{\em NUMBER\/}, PAGES.
+
+\end{thebibliography}
+
+\end{document}

@@ -348,14 +348,16 @@ Ref2Name = "PH0193-C"
 #          "PG0412-C.14.asiaPlus",
 #          "PG0412-C.14.labPanel")
 
-suffix = ".noError"
-#suffix = ".withError"
+#suffix = ".noError"
+suffix = ".withError"
 #sampleName = "25v75"
-sampleName = "75v25"
+#sampleName = "75v25"
+sampleName = "55v45"
 #cases = paste(sampleName, "panel", c(1,2,3), sep="")
 #cases = paste(sampleName, "panel", c(1,2,3),".nodis", sep="")
-cases = paste(sampleName, "panel", c(1,2,3), suffix, sep="")
-#cases = paste(sampleName, "panel", 1, suffix, sep="")
+cases = c(paste(sampleName, "panel", c(1,2,3), suffix, sep=""),
+          paste(sampleName, "noPanel", suffix, sep = ""))
+
 
 ref = read.table(paste("mixedFieldSamplePH0063-PH0193",suffix,".",sampleName,".ref", sep=""), header=T)$REF
 alt = read.table(paste("mixedFieldSamplePH0063-PH0193",suffix,".",sampleName,".alt", sep=""), header=T)$ALT

@@ -155,13 +155,16 @@ RefNames=c(Ref1Name, Ref2Name)
 #          "PG0412-C.14.asiaPlus",
 #          "PG0412-C.14.labPanel")
 
-suffix = ".noError"
+#suffix = ".noError"
 #suffix = ".withError"
+suffix = ".noErrormiss0001"
+#suffix = ".withErrormiss0001"
 #sampleName = "25v75"
 sampleName = "75v25"
-#cases = paste(sampleName, "panel", c(1,2,3), sep="")
-#cases = paste(sampleName, "panel", c(1,2,3),".nodis", sep="")
-cases = paste(sampleName, "panel", c(1,2,3), suffix, sep="")
+#sampleName = "55v45"
+#cases = paste(sampleName, "panel", 1, suffix, sep="")
+cases = c(paste(sampleName, "panel", c(1,2,3), suffix, sep=""),
+          paste(sampleName, "noPanel", suffix, sep = ""))
 
 png(paste("differentPanelForSample.", sampleName, suffix, ".png", sep=""), width = 1920, height = 1080)
 par ( mfrow = c(length(cases),1))
