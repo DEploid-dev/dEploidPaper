@@ -1,8 +1,9 @@
 \documentclass{article}
-\usepackage{fullpage,amsmath,url,cases}
+\usepackage{amsmath,url,cases}
 \usepackage{natbib,longtable,graphicx,tikz}
 \usepackage{subfig}
 \usepackage{url}
+\usepackage{fullpage}
 %\@ifundefined{showcaptionsetup}{}{%
 %\PassOptionsToPackage{caption=false}{subfig}}
 \graphicspath{{./figures/}}
@@ -75,11 +76,70 @@
 \begin{document}
 \maketitle
 
+To date, most analyses of {\it P. falciparum} genomic diversity from samples with single dominant genotype.  But in many regions, diversity within a sample is common (Fig~\ref{fig:main}(a)).
+
+
+We have developed a method, namely the DEploid, for deconvoluting mixed infections that uses the Pf3k resource, specifically the unmixed samples, to build a set of reference haplotypes that can generate a prior for haplotypes likely to be present. Overall, we use Markov chain Monte Carlo (MCMC) method to provide estimates for the number of different genetic types present in the isolate, the proportion or abundance of each strain and their sequences (i.e. haplotypes).
+
+We have validated the tool using artificially mixed samples (Fig~\ref{fig:main}(b)).
+
+In this section, we show examples of deconvoluting a simulated field mixed samples with relative proportions of 75/25\% of clonal samples {\textmd PH0064-C} and {\textmd PH0193-C}.
+
+Given the total coverage of sample {\textmd PH0064-C}, we then use a binomial distribution to simulate alternative allele counts using the expected WSAF calculated using \citet{Zhu2017} Eqn.~(3), where the allele states are of {\textmd PH0064-C} and {\textmd PH0193-C} and the relative proportion used are 75\% and 25\% respectively. Note that the expected WSAFs are adjusted using a constant error rate 0.01 (see Eqn.~(4)). In this experiment, we only simulated 2425 sites in total for chromosome 14 (same sites used in \citet{Zhu2017} experiments). We then use DEploid to deconvolute the data, with a fixed number of strains of two.
+
+Haplotypes comparison of simulated mixture of samples {\textmd PH0064-C} and {\textmd PH0193-C} chromosome 14 deconvolution without any reference strain (bottom) versus with using reference panels I to III (from the top to the second last). Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The cyan and yellow background label the haplotype segments from strains {\textmd PH0064-C} and {\textmd PH0193-C}. The switch errors are obtained by counting the changes of a strain segment mapped to reference strains; the genotype errors are the discordance between the strain and the mapped reference segments.
+
+We experimented deconvoluting this simulated data with the following reference panels:
+\begin{itemize}
+\item panel I: Ten Asian clonal strains from the Pf3k \citep{Pf3k2016} data base: {\textmd PD0498-C}, {\textmd PD0500-C}, {\textmd PD0660-C}, {\textmd PH0047-Cx}, {\textmd PH0064-C}, {\textmd PH0193-C}, {\textmd PH0283-C}, {\textmd PH0305-C}, {\textmd PH0848-C} and {\textmd PH1000-C};
+\item panel II: panel I minus strains {\textmd PH0064-C} and {\textmd PH0193-C};
+\item panel III: 3D7, HB3, 7G8 and Dd2 strains.
+\end{itemize}
+
+Our observations from Fig.~\ref{fig:differentRefPanel} can be summariesd as the following:
+\begin{itemize}
+\item Uneven proportion helps with deconvolution: There is zero switch errors in all cases.
+\item The deconvolution result improves when a more appropriate reference panel provided.
+\item In this partilar example, it seems that deconvolution works better when assuming free recombinations between sites than using panels II and III. However, this observation is less true when mixing proportions are more complex and even (\citet{Zhu2017} Figure 2).
+\item There is still error when using reference panel I. The inaccurate inference are made at sites with very low coverage, typically less than 10. Note that we use default 1\% miss copying probability in this experiment. With miss copying, we allow inferred strain states differ from copying from the panel. In this experiment, lowing the miss copying probability improves the inference result when using reference panel I. However, this is not generally true when using other reference panels, as lowing the miss copying probability will result the inference result bias towards the reference panel.
+\end{itemize}
+
+
+
+
+\begin{figure}[h]
+\centering
+\subfloat[][]{
+\includegraphics[width=\textwidth]{{pf3kSimField/PD0577-C/Untitled}.png}
+}\\
+
+\subfloat[][]{
+\includegraphics[width=\textwidth]{{pf3kSimField/differentPanelForSample.75v25.withError}.png}
+}
+\caption{to come}\label{fig:main}
+\end{figure}
+
+
+
+
+\textcolor{blue}{
+We then apply the method (DEploid) to all samples.  We find evidence for samples with up to 4 different strains present (likely more, but it gets uninterpretable).  The level of multiple infection and intra-sample diversity varies across populations (Fig. 3c \todo{One histogram in the main article, and histograms (for each country) in the supplement?}).\\
+In some cases we infer multiple highly related strains within a sample.  This might be inbreeding, within-host evolution or error (variants called as heterozygous due to poor mapping).  Some are likely error, but we also see cases where heterozygosity is structured along the genome in a manner that suggests inbreeding.\\
+We can infer inbreeding by looking at how different strains within a sample are related to each other.  We have applied this across all samples.  We find multiple cases of strains that are within 1-2 meioses of each other (Fig 4a) and big variations between populations in the level of inbreeding (Fig 4b).  These differences relate to the local epidemiology within each population and are a novel and potentially important source of information about local infection dynamics.
+}
+
+\newpage
+
+\begin{center}
+\LARGE
+Supplementary Materials
+\end{center}
+
 \input{supplementReset.tex}
 
 \section{Apply DEploid to the Pf3k data}
-\subsection{Filtering}
-
+\subsection{Data}
+Raw data can be find at \url{ftp://ngs.sanger.ac.uk/production/pf3k/release_5/5.1/}. The dataset contains both indels and SNPs for all Pf3k samples. Variant data are seperated by chromosomes. The program DEploid does not handle INDELs nor multi-allelic variants. We therefore filter the data with the following command, and create a "high quality bialleic SNP" data set for chromosomes 1 to 14. Assume every site is tagged with {\tt PASS} at the {\tt QUAL} column. We then use the following command to filter the data.
 \linespread{1}
 \begin{lstlisting}
 bcftools view \
@@ -95,37 +155,122 @@ bcftools view \
 
 \subsection{Dividing to seven groups}
 
+reasoning ...
+
+how the 7 groups are divided.
+
+\linespread{1}
+\begin{lstlisting}
+if [ ${CLUSTER} == "africaGroup4" ]; then
+    sampleSiteList=(Gambia Guinea Kintampo)
+elif [ ${CLUSTER} == "africaGroup3" ]; then
+    sampleSiteList=(Nigeria Senegal Mali)
+elif [ ${CLUSTER} == "africaGroup2" ]; then
+    sampleSiteList=(Kassena)
+elif [ ${CLUSTER} == "africaGroup1" ]; then
+    sampleSiteList=(Malawi Congo)
+elif [ ${CLUSTER} == "asiaGroup3" ]; then
+    sampleSiteList=(Ramu Myanmar Sot Ranong)
+elif [ ${CLUSTER} == "asiaGroup2" ]; then
+    sampleSiteList=(Vietnam Laos Ratanakiri Vihear)
+elif [ ${CLUSTER} == "asiaGroup1" ]; then
+    sampleSiteList=(Pursat Pailin Sisakhet)
+fi
+\end{lstlisting}
+\linespread{1.5}
+
+table of regarding to the 7 groups
+
+\#of Samples | \#of Sites | \#of clonal samples | \#of sites for decovolution
+
+Table of clonal samples used in the 7 population groups
+
+row sample index
+column population index
+
+
+\section{Deconvolution example with sample PD0577-C}
+
+The following example shows a specific {\textmd DEploid} command to deconvolute the mixed sample {\textmd PD0577-C}:
+\linespread{1}
+\begin{lstlisting}
+prefix="-o PD0577-C.eg"
+exclude="-exclude asiaGroup1Exclude.txt"
+panel="-panel asiaGroup1PanelMostDiverse10.csv"
+plaf="-plaf asiaGroup1_PLAF.txt"
+ref="-ref PD0577-C_ref.txt"
+alt="-alt PD0577-C_alt.txt"
+
+dEploid ${ref} ${alt} ${plaf} ${panel} ${prefix} ${exclude} \
+-seed 5 \
+-nSample 250 \
+-rate 8 \
+-burn 0.67 \
+-k 3 \
+-exportPostProb
+
+R --slave "--args ${ref} ${alt} ${plaf} ${exclude} ${prefix} -dEprefix PD0577-C.eg" < ~/DEploid/utilities/interpretDEploid.r
+\end{lstlisting}
+\linespread{1.5}
+where flags ``{\tt -vcf}'', ``{\tt -plaf}'' and ``{\tt -exclude}'' are used in the same manner as in the previous example; ``{\tt -panel labStrainsPanelFinal.txt}'' specifies a text file including haplotypes of lab strains 3D7, HB3, 7G8 and Dd2; options ``{\tt -nSample}'', ``{\tt -rate}'' and ``{\tt -burn}'' specify the total number of MCMC samples to take, the sampling rate and the burning rate of the MCMC chain respectively. For detailed documentation, please see \url{http://deploid.readthedocs.io/en/latest/input.html}.
+
+We use a utility {\tt R} script to plot and interpret the output produced by DEploid. The following command is used to generate Figures~\ref{fig:0396} (a) -- (e).
+
+\begin{figure}[ht]
+\centering
+\subfloat[][]{
+\includegraphics[width=.47\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.interpretDEploidFigure.1}.png}
+}%\label{fig:pg0396.interpret1}
+\subfloat[][]{
+\includegraphics[width=.53\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.interpretDEploidFigure.2}.png}
+}\\
+%\caption{}
+%\end{figure}
+
+%\begin{figure}[ht]
+%\ContinuedFloat
+\subfloat[][]{
+\includegraphics[width=.32\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.single0}.png}
+}
+\subfloat[][]{
+\includegraphics[width=.32\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.single1}.png}
+}
+\subfloat[][]{
+\includegraphics[width=.32\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.single2}.png}
+}\\
+\caption{Sample {\textmd PG0396-C} deconvolution with reference panel V.}\label{fig:0396}
+\end{figure}
+
+
+Here, we briefly describe each panel in Fig.~\ref{fig:0396}:
+\begin{itemize}
+
+\item (a) Diagnostic panels from the {\textmd DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF inferred from our model (see Eqn.~(3) in main article). The next three plots from left to right show:
+\begin{enumerate}
+\item[4.] MCMC samples for the strain proportions, with the fraction of each color indicating the proportion of a different strain at each MCMC sample. The three colored blocks suggest that there are three strains within sample {\textmd PG0396-C}, with proportions approximately 1/4, 1/2 and 1/4.
+\item[5.] Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. A low correlation suggests poor fitting.
+\item[6.] Log likelihood of the MCMC chain. This figure indicates whether the MCMC has converged. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain porportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively.
+
+\end{enumerate}
+\item (b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome.
+\item (c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the reference panel V. In each figure, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively. Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.
+\end{itemize}
+
+In this example, the second inferred haplotype (Fig.~\ref{fig:0396}~(d)) represents the 7G8 strain, which has relative proportion of 1/2. The remaining two strains have approximately equal proportions, which increase the difficulty to deconvolute them. In practice, we find more switching errors when deconvoluting samples containing strains at similar proportions, for example, Fig.~\ref{fig:0396}~(c) and (e) both show high probabilities of copying from strains HB3 and Dd2. More specificly, Fig.~\ref{fig:0396}~(c) panel 1 shows almost every position of inferred haplotype chromosome 1 is copying from strain HB3; but chromosome 2 is copying from strain Dd2; chromosome 3 is partly copying from strains HB3 and Dd2, with presence of one switching error. These observations suggest that our program DEploid can characterize the main genome diversities within a mixed samples, yet there is still room to improve to overcome the switching errors.
 
 
 \section{Deconvolution performance with simulated field sample}
 
 
-In this section, we show examples of deconvoluting a simulated field mixed samples with relative proportions of 75/25\% of clonal samples {\textmd PH0064-C} and {\textmd PH0193-C}.
 
-Given the total coverage of sample {\textmd PH0064-C}, we then use a binomial distribution to simulate alternative allele counts using the expected WSAF calculated using \citet{Zhu2017} Eqn.~(3), where the allele states are of {\textmd PH0064-C} and {\textmd PH0193-C} and the relative proportion used are 85\% and 15\% respectively. Note that the expected WSAFs are adjusted using a constant error rate 0.01 (see Eqn.~(4)). In this experiment, we only simulated 2425 sites in total for chromosome 14 (same sites used in \citet{Zhu2017} experiments). We then use DEploid to deconvolute the data, with a fixed number of strains of two.
+%\input{dEploidPaperStuff.tex}
 
-We experimented deconvoluting this simulated data with the following reference panels:
-\begin{itemize}
-\item panel I: Ten Asian clonal strains from the Pf3k \citep{Pf3k2016} data base: {\textmd PD0498-C}, {\textmd PD0500-C}, {\textmd PD0660-C}, {\textmd PH0047-Cx}, {\textmd PH0064-C}, {\textmd PH0193-C}, {\textmd PH0283-C}, {\textmd PH0305-C}, {\textmd PH0848-C} and {\textmd PH1000-C};
-\item panel II: panel I minus strains {\textmd PH0064-C} and {\textmd PH0193-C};
-\item panel III: 3D7, HB3, 7G8 and Dd2 strains.
-\end{itemize}
-
-Our observations from Fig.~\ref{fig:differentRefPanel} can be summariesd as the following:
-\begin{itemize}
-\item Uneven proportion helps with deconvolution: There is zero switch errors in all cases.
-\item The deconvolution result improves when a more appropriate reference panel provided.
-\item In this partilar example, it seems that deconvolution works better when assuming free recombinations between sites than using panels II and III. However, this observation is less true when mixing proportions are more complex and even (\citet{Zhu2017} Figure 2).
-\item There is still error when panel I is used. The inaccurate inference are made at sites with very low coverage. Note that we use default 1\% miss copying probability in this experiment. With miss copying, we allow inferred strain states differ from copying from the panel. In this experiment, lowing the miss copying probability improves the inference result for panel I. However, this is not generally true, as it will result overfitting by the panel, when the panel is in fact imperfect.
-\end{itemize}
-
-\begin{figure}{ht}
-\centering
-\includegraphics[width=\textwidth]{{pf3kSimField/differentPanelForSample.75v25.withError}.png}
-\caption{Haplotypes comparison of simulated mixture of samples {\textmd PH0064-C} and {\textmd PH0193-C} chromosome 14 deconvolution without any reference strain (bottom) versus with using reference panels I to III (from the top to the second last). Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The cyan and yellow background label the haplotype segments from strains {\textmd PH0064-C} and {\textmd PH0193-C}. The switch errors are obtained by counting the changes of a strain segment mapped to reference strains; the genotype errors are the discordance between the strain and the mapped reference segments.}\label{fig:differentRefPanel}
-\end{figure}
 
 \begin{thebibliography}{}
+\bibitem[\protect\citeauthoryear{O'Brien}{O'Brien et~al.}{2015}]{Jack2016}
+O'Brien D,J. {\em et al}. (2016)
+\newblock Inferring Strain Mixture within Clinical {\em Plasmodium falciparum} Isolates from Genomic Sequence Data. \newblock {\em PLoS Comput Biol\/}~{\em 12\/}(6): e1004824. doi: 10.1371/journal.pcbi.1004824
+
 
 \bibitem[\protect\citeauthoryear{Pf3k}{Pf3k}{2016}]{Pf3k2016}
 The Pf3k Project: pilot data release 5 (2016)
