@@ -139,7 +139,7 @@ Supplementary Materials
 
 \section{Apply DEploid to the Pf3k data}
 \subsection{Data}
-Raw data can be find at \url{ftp://ngs.sanger.ac.uk/production/pf3k/release_5/5.1/}. The dataset contains both indels and SNPs for all Pf3k samples. Variant data are seperated by chromosomes. The program DEploid does not handle INDELs nor multi-allelic variants. We therefore filter the data with the following command, and create a "high quality bialleic SNP" data set for chromosomes 1 to 14. Assume every site is tagged with {\tt PASS} at the {\tt QUAL} column. We then use the following command to filter the data.
+Raw data can be find at \url{ftp://ngs.sanger.ac.uk/production/pf3k/release_5/5.1/}. The dataset contains both indels and SNPs for all Pf3k samples. Variant data are seperated by chromosomes. Our current implementation of the deconvolution method \citep{Zhu2017} does not handle INDELs nor multi-allelic variants. We therefore filter the data with the following command, and create a "high quality bialleic SNP" data set for chromosomes 1 to 14, with the assumption that every site is tagged with {\tt PASS} at the {\tt QUAL} column.
 \linespread{1}
 \begin{lstlisting}
 bcftools view \
@@ -153,40 +153,98 @@ bcftools view \
 \end{lstlisting}
 \linespread{1.5}
 
+After filtering, we find 1,057,831 high quality biallic SNP in total. Note that this number differs to the sum of the coding and non-coding SNPs (641,856 + 417,751), due to further filtering out sites that reference genotype was unknown. %, such as Pf3D7\_05\_v3, 822827.
+
+The way we have approached these 1 million high quality SNps is to define a reference panel for each population based on the samples that have a clear dominant infection, and for which haplotype inference is hence trivial.  The panel is then used to deconvolute the mixed strains for that population.
+
 \subsection{Dividing to seven groups}
+
 
 reasoning ...
 
 how the 7 groups are divided.
 
-\linespread{1}
-\begin{lstlisting}
-if [ ${CLUSTER} == "africaGroup4" ]; then
-    sampleSiteList=(Gambia Guinea Kintampo)
-elif [ ${CLUSTER} == "africaGroup3" ]; then
-    sampleSiteList=(Nigeria Senegal Mali)
-elif [ ${CLUSTER} == "africaGroup2" ]; then
-    sampleSiteList=(Kassena)
-elif [ ${CLUSTER} == "africaGroup1" ]; then
-    sampleSiteList=(Malawi Congo)
-elif [ ${CLUSTER} == "asiaGroup3" ]; then
-    sampleSiteList=(Ramu Myanmar Sot Ranong)
-elif [ ${CLUSTER} == "asiaGroup2" ]; then
-    sampleSiteList=(Vietnam Laos Ratanakiri Vihear)
-elif [ ${CLUSTER} == "asiaGroup1" ]; then
-    sampleSiteList=(Pursat Pailin Sisakhet)
-fi
-\end{lstlisting}
-\linespread{1.5}
+%\begin{table}[ht]
+%\centering
+%\begin{tabular}{|c|c|c|c|c|c|c|c|}
+%\hline\hline
+%Africa1	&	Africa2	&	Africa3	&	Africa4	&	Asia1	&	Asia2	&	Asia3	\\
+%\hline
+%Malawi	&	Kassena	&	Nigeria	&	Gambia	&	Pursat	&	Vietnam	&	Ramu	\\
+%Congo 	&	       	&	Senegal	&	Guinea	&	Pailin	&	Laos	&	Myanmar	\\
+      	%&	       	&	Mali  	&	Kintampo	&	Sisakhet	&	Ratanakiri	&	Sot	\\
+      	%&	       	&	      	&	        	&		&	Vihear	&	Ranong	\\
+%\hline\hline
+%\end{tabular}
+%\caption{Countries or regions that are clustered in the same population cluster.}\label{tab:panelSamples}
+%\end{table}
 
-table of regarding to the 7 groups
+Let's define a distance metric between two samples $x$ and $y$, using their their WSAF one site as follows:
+$$d(x, y) = p_{x} * (1-p_{y}) + p_{x} * (1-p_{y}).$$
 
-\#of Samples | \#of Sites | \#of clonal samples | \#of sites for decovolution
+Sum the distance across genome, we find that samples from the same geographical region form clear clusterings:
+\begin{itemize}
+\item Africa
+\begin{enumerate}
+\item Malawi, Congo;
+\item Ghana (Kassena);
+\item Nigeria, Senegal, Mali;
+\item Gambia, Guinea, Ghana (Kintampo).
+\end{enumerate}
+\item Asia
+\begin{enumerate}
+\item Combodia (Pursat), Combodia (Pailin), Thailand (Sisakhet);
+\item Vietnam, Laos, Combodia (Ratanakiri), Combodia (Vihear);
+\item Bangladesh, Myanmar, Thailand (Sot), Thailand (Ranong);
+\end{enumerate}
+\end{itemize}
 
-Table of clonal samples used in the 7 population groups
 
-row sample index
-column population index
+
+
+
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline\hline
+        & \# of samples  & \# of clonal samples & \# of mixed samples & \# of sites\\
+        \hline
+Africa-1 & 482 & 180 & 302 & 372,883 \\
+Africa-2 & 549 & 197 & 346 & 537,747 \\
+Africa-3	& 238 & 147 & 91  & 229,026 \\
+Africa-4	& 233 & 99  & 128 & 270,001 \\
+Asia-1	  & 341 & 212 & 129 & 54,859  \\
+Asia-2	  & 433 & 260 & 173 & 101,340 \\
+Asia-3	  & 236 & 129 & 107 & 98,210  \\
+\hline
+\hline
+\end{tabular}
+\caption{Summary of population groups that we process with our deconvolution pipeline. Note that there were six samples: PF0283-C, PF0285-C, PF0286-C, PF0288-C, PF0289-C and from population group africaGroup2 and six samples: PF0600-C, PF0603-C, PF0604-C, PF0606-C, PF0615-C and PF0639-C from population group africaGroup4 not processed though our deconvolution pipeline due to low coverage.}\label{tab:panelSamples}
+\end{table}
+
+
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline\hline
+Africa-1	&	Africa-2	&	Africa-3	&	Africa-4	&	Asia-1	&	Asia-2	&	Asia-3	\\
+\hline
+PT0002-CW	&	PF0008-C	&	PM0004-C	&	PA0007-C	&	PD0498-C	&	PH0201-C	&	PD0459-Cx	\\
+PT0007-CW	&	PF0011-C	&	PM0005-C	&	PA0012-C	&	PD0500-C	&	PH0339-C	&	PR0114-C	\\
+PT0008-CW	&	PF0020-C	&	PM0017-C	&	PA0016-C	&	PD0660-C	&	PH0342-C	&	PR0117-C	\\
+PT0014-CW	&	PF0022-C	&	PM0020-C	&	PA0022-C	&	PH0047-Cx	&	PH0347-C	&	PR0118-C	\\
+PT0018-CW	&	PF0025-C	&	PM0021-C	&	PA0026-C	&	PH0064-C	&	PH0348-C	&	PR0145-C	\\
+PT0060-C	&	PF0028-C	&	PM0062-C	&	PA0034-C	&	PH0193-C	&	PH0367-C	&	PR0155-C	\\
+PT0146-C	&	PF0031-C	&	SenT086.09	&	PA0036-C	&	PH0283-C	&	PH0370-C	&	PR0157-C	\\
+PT0158-C	&	PF0035-C	&	SenT111.09	&	PA0042-C	&	PH0305-C	&	PH0633-C	&	PR0160-C	\\
+PT0183-C	&	PF0092-C	&	SenT135.09	&	PA0047-C	&	PH0848-C	&	PV0253-C	&	PR0163-C	\\
+PT0184-C	&	PF0099-C	&	SenT166.09	&	PA0180-C	&	PH1000-C	&		&	QC0172-C	\\
+\hline\hline
+\end{tabular}
+\caption{Clonal samples used as the reference strains}\label{tab:panelSamples}
+\end{table}
 
 
 \section{Deconvolution example with sample PD0577-C}
