@@ -86,11 +86,11 @@ inbreeding whereas the latter tends to create chimeric haplotypes that are
 not suitable for analysis, unless mixed calls are very sparse.
 
 
- Traditional ‘phasing’ programs are limited to diploid organisms \citet{impute, beagle}. because of the unknown number of strains, it is difficult for programs
+Traditional ‘phasing’ programs are limited to diploid organisms \citep{Browning2007, Howie2009}. because of the unknown number of strains, it is difficult for programs
 
 We have developed a method accompanies with C++ implementation, namely the DEploid, for deconvoluting mixed infections that uses the Pf3k resource, specifically the unmixed samples, to build a set of reference haplotypes that can generate a prior for haplotypes likely to be present. Overall, we use Markov chain Monte Carlo (MCMC) method to provide estimates for the number of different genetic types present in the isolate, the proportion or abundance of each strain and their sequences (i.e. haplotypes).
 
-We have validated the tool using artificially mixed samples (Fig~\ref{fig:main}(b)).
+We have validated the tool using artificially mixed samples \citep{Zhu2017} (Fig~\ref{fig:main}(b)).
 
 In this section, we show examples of deconvoluting a simulated field mixed samples with relative proportions of 75/25\% of clonal samples {\textmd PH0064-C} and {\textmd PH0193-C}.
 
@@ -218,8 +218,8 @@ $d(x, y) = p_{x} * (1-p_{y}) + p_{x} * (1-p_{y})$. Sum $d(x, y)$ across the geno
 \item Asia
 \begin{enumerate}
 \item Combodia (Pursat), Combodia (Pailin), Thailand (Sisakhet);
-\item Vietnam, Laos, Combodia (Ratanakiri), Combodia (Vihear);
-\item Bangladesh, Myanmar, Thailand (Sot), Thailand (Ranong);
+\item Vietnam, Laos, Combodia (Ratanakiri), Combodia (Preah Vihear);
+\item Bangladesh, Myanmar, Thailand (Mae Sot), Thailand (Ranong);
 \end{enumerate}
 \end{itemize}
 \linespread{1.5}
@@ -227,12 +227,14 @@ $d(x, y) = p_{x} * (1-p_{y}) + p_{x} * (1-p_{y})$. Sum $d(x, y)$ across the geno
 \begin{figure}[h]
 \centering
 \subfloat[][clonal]{
-\missingfigure[figwidth=.5\textwidth]{clonal PCA}
+\includegraphics[width=.5\textwidth]{pf3kSimField/PCA/clonalGroups.png}
+%\missingfigure[figwidth=.5\textwidth]{clonal PCA}
 }
 \subfloat[][mixed]{
-\missingfigure[figwidth=.5\textwidth]{Mixed PCA}
+%\missingfigure[figwidth=.5\textwidth]{Mixed PCA}
+\includegraphics[width=.5\textwidth]{pf3kSimField/PCA/mixedGroups.png}
 }
-\caption{PCA}\label{fig:pca}
+\caption{Principal component analysis on the clonal samples and deconvoluted haplotypes.}\label{fig:pca}
 \end{figure}
 
 
@@ -326,13 +328,13 @@ where flags ``{\tt -ref}'', ``{\tt -alt}'', ``{\tt -plaf}'' and ``{\tt -exclude}
 \includegraphics[width=.53\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.interpretDEploidFigure.2}.png}
 }\\
 
-\subfloat[][Posterior painting probabilities for the deconvoluted strain 1 when using the reference panel Asia-1.]{
+\subfloat[][Posterior painting probabilities for\\the deconvoluted strain 1 when using \\the reference panel Asia-1.]{
 \includegraphics[width=.32\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.single0}.png}
 }
-\subfloat[][Posterior painting probabilities for the deconvoluted strain 2 when using the reference panel Asia-1.]{
+\subfloat[][Posterior painting probabilities for\\the deconvoluted strain 2 when using \\the reference panel Asia-1.]{
 \includegraphics[width=.32\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.single1}.png}
 }
-\subfloat[][Posterior painting probabilities for the deconvoluted strain 3 when using the reference panel Asia-1.]{
+\subfloat[][Posterior painting probabilities for\\the deconvoluted strain 3 when using the\\reference panel Asia-1.]{
 \includegraphics[width=.32\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.single2}.png}
 }\\
 \caption{Sample {\textmd PD0577-C} deconvolution with the reference panel Asia-1.}\label{fig:PD0577}
@@ -365,6 +367,23 @@ Here, we briefly describe each panel in Fig.~\ref{fig:PD0577}:
 
 
 \begin{thebibliography}{}
+
+\bibitem[\protect\citeauthoryear{Browning and Browning}{Browning and
+  Browning}{2007}]{Browning2007}
+Browning, S.~R. and B.~L. Browning (2007)
+\newblock Rapid and accurate haplotype phasing and missing-data inference for
+  whole-genome association studies by use of localised haplotype clustering.
+\newblock {\em The American Journal of Human Genetics\/}~{\em 81\/}(5), 1084--1097.
+
+\bibitem[\protect\citeauthoryear{Howie, Donnelly, and Marchini}{Howie
+  et~al.}{2009}]{Howie2009}
+Howie, B.~N. {\em et al}. (2009)
+\newblock A flexible and accurate genotype imputation method for the next
+  generation of genome-wide association studies.
+\newblock {\em PLoS Genet\/}~{\em 5\/}(6), 1--15.
+
+
+
 \bibitem[\protect\citeauthoryear{O'Brien}{O'Brien et~al.}{2015}]{Jack2016}
 O'Brien D,J. {\em et al}. (2016)
 \newblock Inferring Strain Mixture within Clinical {\em Plasmodium falciparum} Isolates from Genomic Sequence Data. \newblock {\em PLoS Comput Biol\/}~{\em 12\/}(6): e1004824. doi: 10.1371/journal.pcbi.1004824

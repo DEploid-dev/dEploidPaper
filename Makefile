@@ -41,6 +41,7 @@ plain.pdf: bioInfo.tex
 	pdflatex plain.tex
 	pdflatex plain.tex
 
-pf3kDEploidNotes.pdf: pf3kDEploidNotes.tex
+pf3kFigures = $(shell grep "\.tex" pf3kDEploidNotes.tex | sed -e "s/^.*{//g" -e "s/\}//g" )
+pf3kDEploidNotes.pdf: pf3kDEploidNotes.tex ${pf3kFigures}
 	pdflatex pf3kDEploidNotes.tex
 	pdflatex pf3kDEploidNotes.tex
