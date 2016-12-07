@@ -1,5 +1,5 @@
 .PHONY: all clean
-all: clean bioInfo.pdf bioInfoSupplement.pdf
+all: clean bioInfo.pdf bioInfoSupplement.pdf pf3kDEploidNotes.pdf
 
 mainfigures = $(shell grep png bioInfo.tex | sed -e "s/^.*{/figures\//g" -e "s/\}//g" )
 supDEploidfigures = $(shell grep png bioInfoSupplementDEploid.tex | sed -e "s/^.*{//g" -e "s/\}//g" )
