@@ -76,36 +76,20 @@
 \begin{document}
 \maketitle
 
-To date, most analyses of {\it P. falciparum} genomic diversity from samples with single dominant genotype.  But in many regions, diversity within a sample is common (Fig~\ref{fig:main}(a)). The presence of multiple strains of P. falciparum makes fine scale
-analysis of genetic variation challenging, since genetic differences between
-the genetic types of this haploid organism will appear as heterozygous
-loci. researchers usually focus on clonal infections or resort
-to heuristics methods for resolving heterozygous genotypes. The former
-approach discards valuable information regarding genetic diversity and
-inbreeding whereas the latter tends to create chimeric haplotypes that are
-not suitable for analysis, unless mixed calls are very sparse.
+To date, most analyses of {\it P. falciparum} genomic diversity from samples with single dominant genotype.  But in many regions, diversity within a sample is common: genetic differences between this haploid organism will appear as heterozygous loci (Fig~\ref{fig:main}(a)). The presence of multiple strains of {\it P. falciparum} makes fine scale
+analysis of genetic variation challenging. Previous studies are limited to focus on clonal infections or resort to heuristics methods for resolving heterozygous genotypes. The former
+approach discards valuable information regarding genetic diversity and inbreeding whereas the latter tends to create chimeric haplotypes that are not suitable for analysis, unless mixed calls are very sparse.
 
+Traditional ‘phasing’ programs are limited to diploid organisms \citep{Browning2007, Howie2009}. In order to incorporate the unknown number of strains, and their relative abundance, we have developed a method, namely the DEploid (implemented in C++), for deconvoluting mixed infections that uses the Pf3k resource, specifically the unmixed samples, to build a set of reference haplotypes that can generate a prior for haplotypes likely to be present. Overall, we use Markov chain Monte Carlo (MCMC) method to provide estimates for the number of different genetic types present in the isolate, the proportion or abundance of each strain and their sequences (i.e. haplotypes).
 
-Traditional ‘phasing’ programs are limited to diploid organisms \citep{Browning2007, Howie2009}. because of the unknown number of strains, it is difficult for programs
-
-We have developed a method accompanies with C++ implementation, namely the DEploid, for deconvoluting mixed infections that uses the Pf3k resource, specifically the unmixed samples, to build a set of reference haplotypes that can generate a prior for haplotypes likely to be present. Overall, we use Markov chain Monte Carlo (MCMC) method to provide estimates for the number of different genetic types present in the isolate, the proportion or abundance of each strain and their sequences (i.e. haplotypes).
-
-We have validated the tool using artificially mixed samples \citep{Zhu2017} (Fig~\ref{fig:main}(b)).
-
-In this section, we show examples of deconvoluting a simulated field mixed samples with relative proportions of 75/25\% of clonal samples {\textmd PH0064-C} and {\textmd PH0193-C}.
-
-Given the total coverage of sample {\textmd PH0064-C}, we then use a binomial distribution to simulate alternative allele counts using the expected WSAF calculated using \citet{Zhu2017} Eqn.~(3), where the allele states are of {\textmd PH0064-C} and {\textmd PH0193-C} and the relative proportion used are 75\% and 25\% respectively. Note that the expected WSAFs are adjusted using a constant error rate 0.01 (see Eqn.~(4)). In this experiment, we only simulated 2425 sites in total for chromosome 14 (same sites used in \citet{Zhu2017} experiments). We then use DEploid to deconvolute the data, with a fixed number of strains of two.
-
-
-
-We experimented deconvoluting this simulated data with the following reference panels:
+We have validated DEploid using artificially mixed samples from the Pf3k dataset (see \citet{Zhu2017} Figures 2 and 3). Here we show evidence of DEploid is reliable for deconvoluting field isolate using simulated data of mixing clonal samples {\textmd PH0064-C} and {\textmd PH0193-C} with relative proportions of 75/25\% (Fig~\ref{fig:main}(b)). Given the total coverage of sample {\textmd PH0064-C}, we then use a binomial distribution to simulate alternative allele counts using the expected WSAF \footnote{Calculated using \citet{Zhu2017} Eqn.~(3), where the allele states are of {\textmd PH0064-C} and {\textmd PH0193-C} and the relative proportion used are 75\% and 25\% respectively. Note that the expected WSAFs are adjusted using a constant error rate 0.01 (see \citet{Zhu2017} Eqn.~(4))}. In this experiment, we only simulated 2425 sites in total for chromosome 14 (same sites used in \citet{Zhu2017} experiments). We then use DEploid to deconvolute the data, and experiment with the following reference panels:
 \begin{itemize}
-\item panel I: Ten Asian clonal strains from the Pf3k \citep{Pf3k2016} data base: {\textmd PD0498-C}, {\textmd PD0500-C}, {\textmd PD0660-C}, {\textmd PH0047-Cx}, {\textmd PH0064-C}, {\textmd PH0193-C}, {\textmd PH0283-C}, {\textmd PH0305-C}, {\textmd PH0848-C} and {\textmd PH1000-C};
+\item panel I: Ten Asian clonal strains from the Pf3k data base: {\textmd PD0498-C}, {\textmd PD0500-C}, {\textmd PD0660-C}, {\textmd PH0047-Cx}, {\textmd PH0064-C}, {\textmd PH0193-C}, {\textmd PH0283-C}, {\textmd PH0305-C}, {\textmd PH0848-C} and {\textmd PH1000-C};
 \item panel II: panel I minus strains {\textmd PH0064-C} and {\textmd PH0193-C};
-\item panel III: 3D7, HB3, 7G8 and Dd2 strains.
+\item panel III: lab clonal strains 3D7, HB3, 7G8 and Dd2.
 \end{itemize}
 
-Our observations from Fig.~\ref{fig:main}(b) can be summariesd as the following:
+Our observations from this example can be summariesd as the following:
 \begin{itemize}
 \item Uneven proportion helps with deconvolution.
 \item The deconvolution result improves when a more appropriate reference panel provided.
@@ -170,7 +154,7 @@ Supplementary Materials
 
 \section{Apply DEploid to the Pf3k data}
 \subsection{Data}
-Raw data can be find at \url{ftp://ngs.sanger.ac.uk/production/pf3k/release_5/5.1/}. The dataset contains both indels and SNPs for all Pf3k samples. Variant data are seperated by chromosomes. Our current implementation of the deconvolution method \citep{Zhu2017} does not handle INDELs nor multi-allelic variants. We therefore filter the data with the following command, and create a "high quality bialleic SNP" data set for chromosomes 1 to 14, with the assumption that every site is tagged with {\tt PASS} at the {\tt QUAL} column.
+Raw data can be find at \url{ftp://ngs.sanger.ac.uk/production/pf3k/release_5/5.1/}. The dataset contains both variations of the insertion or the deletion (indel) and single nucleotide polymorphism (SNP) for {P. falciparum} extracted from 2512 field isolates and 27 artificial lab-mixed samples. For this project, we focus on field isolates, and use the lab-mixed samples for method validation. Variant data are recorded in seperate files indexed by chromosome numbers. Our current implementation of the deconvolution method \citep{Zhu2017} does not handle indels nor multi-allelic variants. We filter the data with the following command, and subset to a "high quality bialleic SNP" data set for chromosomes 1 to 14, with the assumption that every site is tagged with {\tt PASS} at the {\tt QUAL} column.
 \linespread{1}
 \begin{lstlisting}
 bcftools view \
@@ -184,7 +168,9 @@ bcftools view \
 \end{lstlisting}
 \linespread{1.5}
 
-We then drop out sites at which reference strain 3D7 has not been genotyped. This filtering step reduces the number of high quality biallic SNP (both coding and non-coding included) to 1,057,831.
+The filtering step reduces the number of targeted SNPs (both coding and non-coding included) to 1,057,831. Note this number differs to Table~{richard's table}, as we also
+drop out sites at which reference strain 3D7 has not been genotyped.
+
 %After filtering, we find 1,057,831 high quality biallic SNP in total. Note that this number differs to the sum of the coding and non-coding SNPs (641,856 + 417,751), due to further filtering out sites that reference genotype was unknown. %, such as Pf3D7\_05\_v3, 822827.
 
 
@@ -204,7 +190,7 @@ We then drop out sites at which reference strain 3D7 has not been genotyped. Thi
 %\caption{Countries or regions that are clustered in the same population cluster.}\label{tab:panelSamples}
 %\end{table}
 
-Parasite genomes present different diversities and linkage disequilibrium structure across the global (see Fig~\ref{fig:pca}). In order to make accurate inference, we first seperate the Pf3k data into groups base on similarity before deconvolution. Let's define a distance metric between two samples $x$ and $y$, using their WSAF as:
+Parasite genomes present different diversities and linkage disequilibrium structure across the global (see Fig~\ref{fig:pca} (a) and (b)). In order to (1) make accurate inference, (2) improve working efficiency, we first seperate the Pf3k data into groups base on similarity before deconvolution. Let's define a distance metric between two samples $x$ and $y$, using their WSAF as:
 $d(x, y) = p_{x} * (1-p_{y}) + p_{x} * (1-p_{y})$. Sum $d(x, y)$ across the genome, we find that samples from the same geographical region form clear clusterings:
 \linespread{1}
 \begin{itemize}
@@ -238,7 +224,7 @@ $d(x, y) = p_{x} * (1-p_{y}) + p_{x} * (1-p_{y})$. Sum $d(x, y)$ across the geno
 \end{figure}
 
 
-For each population cluster, we find different number of non-monomphic sites (see Table~\ref{tab:sevenGroups}), which are processed with our deconvolution pipeline.
+For each population group, we find different number of non-monomphic sites (see Table~\ref{tab:sevenGroups}), which are processed though our deconvolution pipeline.
 
 \begin{table}[ht]
 \centering
@@ -256,10 +242,10 @@ Asia-3	  & 236 & 129 & 107 & 98,210  \\
 \hline
 \hline
 \end{tabular}
-\caption{Summary of population groups that we process with our deconvolution pipeline. Note that there were six samples: PF0283-C, PF0285-C, PF0286-C, PF0288-C, PF0289-C and from population group africaGroup2 and six samples: PF0600-C, PF0603-C, PF0604-C, PF0606-C, PF0615-C and PF0639-C from population group africaGroup4 not processed though our deconvolution pipeline due to low coverage.}\label{tab:sevenGroups}
+\caption{Summary of population groups. Note that there were six samples: PF0283-C, PF0285-C, PF0286-C, PF0288-C, PF0289-C, PF0717-C from population group Africa-2 and six samples: PF0600-C, PF0603-C, PF0604-C, PF0606-C, PF0615-C, PF0639-C from population group Africa-4 not processed though our deconvolution pipeline due to low coverage.}\label{tab:sevenGroups}
 \end{table}
 
-The way we approach the Pf3k data is to define a reference panel for each population based on the samples that have a clear dominant infection (see Table~\ref{tab:sevenGroups}), and for which haplotype inference is hence trivial. The panel (see Table~\ref{tab:panelSamples}) is then used to deconvolute the mixed strains for that population.
+The way we approach the Pf3k field isolate data is to define a reference panel for each population based on the samples that have a clear dominant infection (see Table~\ref{tab:sevenGroups} clonal samples), and for which haplotype inference is hence trivial. The panel (see Table~\ref{tab:panelSamples}) is then used to deconvolute the mixed strains for that population.
 
 \begin{table}[ht]
 \centering
@@ -302,7 +288,7 @@ dEploid -ref PD0577-C_ref.txt \
     -exportPostProb
 \end{lstlisting}
 \linespread{1.5}
-where ``{\tt -ref PD0577-C\_ref.txt}'' and ``{\tt -alt PD0577-C\_alt.txt}'' define the input text files that record the reference and alternative read counts respectively; ``{\tt -plaf asia-1\_PLAF.txt}'' contains the population allele frequencies calculated from total read counts. Note that we use option ``{\tt -exclude asia-1\_exclude.txt}'' to skip deconvoluting monomophic sites; ``{\tt -panel asia-1\_panel.txt}'' specifies a text file including haplotypes of samples listed in Table~\ref{tab:panelSamples}; options ``{\tt -nSample}'', ``{\tt -rate}'' and ``{\tt -burn}'' specify the total number of MCMC samples to take, the sampling rate and the burning rate of the MCMC chain respectively. For detailed documentation, please see \url{http://deploid.readthedocs.io/en/latest/input.html}.
+where ``{\tt -ref PD0577-C\_ref.txt}'' and ``{\tt -alt PD0577-C\_alt.txt}'' define the input text files \footnote{The Pf3k data was deconvoluted using DEploid version v0.1-beta. Recent versions can take VCF files as input as well.} that record the reference and alternative read counts respectively; ``{\tt -plaf asia-1\_PLAF.txt}'' contains the population allele frequencies calculated from total read counts. Note that we use option ``{\tt -exclude asia-1\_exclude.txt}'' to skip deconvoluting monomophic sites; ``{\tt -panel asia-1\_panel.txt}'' specifies a text file including haplotypes of samples listed in Table~\ref{tab:panelSamples}; options ``{\tt -nSample}'', ``{\tt -rate}'' and ``{\tt -burn}'' specify the total number of MCMC samples to take, the sampling rate and the burning rate of the MCMC chain respectively. For detailed documentation, please see \url{http://deploid.readthedocs.io/en/latest/input.html}.
 
 We use a utility {\tt R} script to plot and interpret the output produced by DEploid. The following command is used to generate Figures~\ref{fig:PD0577} (a) -- (e).
 \linespread{1}
@@ -350,7 +336,7 @@ Here, we briefly describe each panel in Fig.~\ref{fig:PD0577}:
 
 \item Histogram of the allele frequencies within sample. Similar to the alternative vs reference counts figure, the number of WSAF modes can be used as an indication of the number of strains and proportions within a field isolate.
 
-\item Allele frequencies at the population level (PLAF) vs allele frequencies within sample (WSAF). The PLAF is calculated from total read counts (see main article secion 2.1 Notations), whereas the WSAF is calculated by using allele counts. Red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF inferred from our model
+\item Allele frequencies at the population level (PLAF) vs allele frequencies within sample (WSAF). The PLAF is calculated from total read counts across many samples, whereas the WSAF is calculated by using allele counts specific to one sample. Red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF inferred from our model
 
 \item MCMC samples for the strain proportions, with the fraction of each color indicating the proportion of a different strain at each MCMC sample. The three colored blocks suggest that there are three strains within sample {\textmd PD0577-C}, with proportions approximately 1/4, 1/4 and 1/2.
 
@@ -364,7 +350,7 @@ Here, we briefly describe each panel in Fig.~\ref{fig:PD0577}:
 \item (c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the reference panel Asia-1 (see Table~\ref{tab:panelSamples}). Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.
 \end{itemize}
 
-
+\newpage
 
 \begin{thebibliography}{}
 
