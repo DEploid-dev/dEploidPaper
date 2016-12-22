@@ -15,5 +15,6 @@ write.table(unique(a), file = "uniqueNames", row.names = F, col.names = F, quote
 ```bash
 cp ~/pf3k_mixed_infection/fieldSamples/clusters/a*_samples .
 cat *_samples | sort > samples.sorted
+sort uniqueNames > uniqueNames.sorted
 comm -3 samples.sorted uniqueNames.sorted > samples_didnot_DEploid
 ```

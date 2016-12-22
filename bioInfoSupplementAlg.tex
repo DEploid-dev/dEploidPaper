@@ -1,0 +1,37 @@
+\input{supplementReset.tex}
+
+%\begin{center}
+%\textbf{\large Supplemental Materials of DEploid}
+%\end{center}
+
+\section{Technical details} \label{sup:sec:alg}
+We use $\psi_i$ to denote the recombination rate, and $\rho_i'$ to denote the probability of \textbf{no} recombination between site $i$ and $i+1$, we have $\rho_i' = \exp(-\psi_i)$.
+
+\subsection{Gibbs update for single haplotype}
+Suppose we are updating strain $s$, and $h_s$ is copying from reference strain $\xi_s$. The prior probability $P(h_s|\Xi)$ in Eqn.(2) then becomes
+$$P_i(h_s = a|\Xi) = P_i(\xi_s = a) \times (1-\mu) + P_i(\xi_s = 1-a) \times \mu,$$
+at where we use forward algorithm to compute the probability of the panel $P_i(\xi)$. In particular, at the initial state, we let $P_1(\xi_s) = P_1(h_s|D)$, and for $i>1$, we have
+\begin{equation}
+P_i(\xi_s) = \rho_{i-1}' \cdot P_{i-1}(\xi_s)  +  \frac{1-\rho_{i-1}'}{|\Xi|} \cdot \displaystyle\sum_{x\in \Xi} P_{i-1} (\xi_x ).\label{eqn:prior_gp}
+\end{equation}
+
+\subsection{Gibbs update for a pair of haplotypes}
+Similar to the previous section, suppose we are updating strains $s_1$ and $s_2$ copying from reference strains $\xi_{s_1}$ and $\xi_{s_1}$ respectively. The prior probability  becomes
+\begin{equation}
+\begin{split}
+P_i \left( h_{s_1} = a, h_{s_2} = b | \Xi \right) = & P_i\left( \xi_{s_1} = a, \xi_{s_2} = b \right) \cdot (1-\mu)\cdot(1-\mu)  + \\
+                                                    & P_i\left( \xi_{s_1} = a, \xi_{s_2} = 1-b \right) \cdot  \mu\cdot(1-\mu)  + \\
+                                                    & P_i\left( \xi_{s_1} = 1-a, \xi_{s_2} = b \right) \cdot  \mu\cdot(1-\mu)  + \\
+                                                    & P_i\left( \xi_{s_1} = 1-a, \xi_{s_2} = 1-b \right) \cdot \mu \cdot \mu,
+\end{split}\label{eqn:llk_given_D:two}
+\end{equation}
+at where we use forward algorithm to compute the probability of the panel $P_i(\xi_{s_1}, \xi_{s_2})$. In particular, at the initial state, we let $P_1(\xi_{s_1}, \xi_{s_2}) = P_1(h_{s_1}, h_{s_2}|D)$, and for $i>1$, we have
+\begin{equation}
+\begin{split}
+P_{i}(\xi_{s_1}, \xi_{s_2}) ~ = ~ &  \rho_{i-1}' \cdot \rho_{i-1}' \cdot P_{i-1}(\xi_{s_1},\xi_{s_2})  + \\
+                                  &  \rho_{i-1}' \cdot \frac{1-\rho_{i-1}'}{|\Xi|} \cdot \sum_{x\in \Xi} P_{i-1}(\xi_{s_1},\xi_{x}) + \\
+                                  &  \rho_{i-1}' \cdot \frac{1-\rho_{i-1}'}{|\Xi|} \cdot \sum_{y\in \Xi} P_{i-1}(\xi_{y},\xi_{s_2}) + \\
+                                  &  \frac{1-\rho_{i-1}'}{|\Xi|} \cdot \frac{1-\rho_{i-1}'}{|\Xi|} \cdot \sum_{x,y\in \Xi\cdot \Xi} P_{i-1}(\xi_{x},\xi_{y}\big{|}D)  . \label{eqn:prio.update.two}
+\end{split}
+\end{equation}
+
