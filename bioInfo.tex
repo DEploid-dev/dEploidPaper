@@ -234,7 +234,7 @@ As in the single-haplotype update, the hidden Markov model formulation enables u
 
 \item {\bf Update without linkage disequilbrium}. For initialising the chain, or if the markers present are very widely spaced, linkage disequilibrium can be ignored, which is equivalent to setting the genetic distance between adjacent loci to be infinitely high.  Under these circumstances, the haplotype updates become much simpler and depend only on the population-level allele frequency (PLAF), for example as estimated from the reference panel or provided independently.
 
-\item {\bf Reporting} We aim to provide users with a single point estimate of the haplotypes and their proportions, although the full chain is also available for analysis.  To achieve this we report values at the last iteration - i.e. we report a single sample from the posterior.  However, to measure robustness, we also typically repeat deconvolution with multiple random starting points and select the chain with the lowest average deviance (after removing the burn-in) to report. The deviance measures the difference in log likelihood between the fitted and saturated models, the latter being inferred by setting the WSAF to that observed.   These parameters can be modified by users to achieve a preferred balance between computational speed and confidence.  By default, we set the MCMC sampling rate as 5, with the first 50\% of samples removed as burn in and 800 samples used for estimation. 
+\item {\bf Reporting} We aim to provide users with a single point estimate of the haplotypes and their proportions, although the full chain is also available for analysis.  To achieve this we report values at the last iteration - i.e. we report a single sample from the posterior.  However, to measure robustness, we also typically repeat deconvolution with multiple random starting points and select the chain with the lowest average deviance (after removing the burn-in) to report. The deviance measures the difference in log likelihood between the fitted and saturated models, the latter being inferred by setting the WSAF to that observed.   These parameters can be modified by users to achieve a preferred balance between computational speed and confidence.  By default, we set the MCMC sampling rate as 5, with the first 50\% of samples removed as burn in and 800 samples used for estimation.
 
 \item {\bf Reference panel construction}. To infer clonal samples for the reference panel we use the Pf3k \citep{Pf3k2016} project data, running the algorithm without LD on all samples and identifying those with a dominant haplotype (proportion > 0.99) as clonal.  These clonal samples are grouped by region of sampling to form location-specific reference panels.  In addition, we have included a number of reference strains, described in more detail below.
 
@@ -393,8 +393,7 @@ Anita, D. (1998).
 \newblock Unstable malaria in Sudan: the influence of the dry season: clone
   multiplicity of {\it Plasmodium falciparum} infections in individuals exposed to
   variable levels of disease transmission.
-\newblock {\em Transactions of The Royal Society of Tropical Medicine and
-  Hygiene\/}~{\em 92\/}(6), 580--585.
+\newblock {\em Trans. R. Soc. Trop. Med. Hyg.\/}~{\em 92\/}(6), 580--585.
 
 \bibitem[\protect\citeauthoryear{Bell, de Roode, Sim Read, and Koella}{Bell et~al.}{2006}]{Bell2006}
 Bell A.~S. {\em et al.} (2006)
@@ -406,62 +405,57 @@ Bell A.~S. {\em et al.} (2006)
 Browning, S.~R. and B.~L. Browning (2007)
 \newblock Rapid and accurate haplotype phasing and missing-data inference for
   whole-genome association studies by use of localised haplotype clustering.
-\newblock {\em The American Journal of Human Genetics\/}~{\em 81\/}(5), 1084--1097.
+\newblock {\em Am. J. Hum. Genet.\/}~{\em 81\/}(5), 1084--1097.
 
 \bibitem[\protect\citeauthoryear{Davis, Flint, Myers and Mott}{Davis}{2016}]{Davis2016}
 Davies, R.~W. {\em et al}. (2016)
-Rapid genotype imputation from sequence without reference panels
-\newblock{\em Nature Genetics\/}~{\em 48\/}, 965--969. doi:10.1038/ng.3594.
+Rapid genotype imputation from sequence without reference panels.
+\newblock{\em Nat. Genet.\/}~{\em 48\/}, 965--969. doi:10.1038/ng.3594.
 
 \bibitem[\protect\citeauthoryear{Delaneau, Marchini, and Zagury}{Delaneau et~al.}{2012}]{Delaneau2012}
 Delaneau, O. {\em et al}. (2012)
 \newblock A linear complexity phasing method for thousands of genomes.
-\newblock {\em Nat Methods\/}~{\em 9\/}(2), 179--181.
+\newblock {\em Nat. Methods\/}~{\em 9\/}(2), 179--181.
 
 \bibitem[\protect\citeauthoryear{de~Roode, Culleton, Bell, and Read}{de~Roode
   et~al.}{2004}]{deRoode2004}
 de~Roode, J. {\em et al}. (2004)
-\newblock Competitive release of drug resistance following drug treatment of
-  mixed {\it Plasmodium chabaudi} infections.
-\newblock {\em Malaria Journal\/}~{\em 3\/}(33), 1--6.
+\newblock Competitive release of drug resistance following drug treatment of mixed {\it Plasmodium chabaudi} infections.
+\newblock {\em Malar. J.\/}~{\em 3\/}(33), 1--6.
 
 \bibitem[\protect\citeauthoryear{de~Roode, Pansini, Cheesman, Helinski,
   Huijben, Wargo, Bell, Chan, Walliker, and Read}{de~Roode
   et~al.}{2005}]{deRoode2005}
 de~Roode, J. {\em et al}. (2005)
-\newblock Virulence and competitive ability in genetically diverse malaria
-  infections.
-\newblock {\em Proceedings of the National Academy of Sciences of the United
-  States of America\/}~{\em 102\/}(21), 7624--7628.
+\newblock Virulence and competitive ability in genetically diverse malaria infections.
+\newblock {\em Proc. Natl. Acad. Sci. USA\/}~{\em 102\/}(21), 7624--7628.
 
 \bibitem[\protect\citeauthoryear{Galinsky}{Galinsky et~al.}{2015}]{Galinsky2015}
 Galinsky, K. {\em et al}. (2015)
 \newblock COIL: a methodology for evaluating malarial complexity of infection using likelihood from single nucleotide polymorphism data.
-\newblock {\em Malaria Journal\/}~{\em14\/}(4), 1--9.
+\newblock {\em Malar. J.\/}~{\em14\/}(4), 1--9.
 
 \bibitem[\protect\citeauthoryear{Harris and Nielsen}{Harris and Nielsen}{2013}]{Harris2013}
 Harris K. and Nielsen R. (2013).
 \newblock{Inferring Demographic History from a Spectrum of Shared Haplotype Lengths}.
-\newblock{\em PLoS Genet\/}~{\em9/}(6). doi: 10.1371/journal.pgen.1003521
+\newblock{\em PLoS Genet.\/}~{\em9/}(6). doi: 10.1371/journal.pgen.1003521
 
 \bibitem[\protect\citeauthoryear{Hastings and D\'Alessandro}{Hastings and
   D\'Alessandro}{2000}]{Hastings2000}
 Hastings, I. and U.~D'Alessandro (2000).
-\newblock Modelling a predictable disaster: the rise and spread of
-  drug-resistant malaria.
-\newblock {\em Parasitology Today\/}~{\em 16\/}(8), 340--347.
+\newblock Modelling a predictable disaster: the rise and spread of drug-resistant malaria.
+\newblock {\em Parasitol. Today\/}~{\em 16\/}(8), 340--347.
 
 \bibitem[\protect\citeauthoryear{Howie, Donnelly, and Marchini}{Howie
   et~al.}{2009}]{Howie2009}
 Howie, B.~N. {\em et al}. (2009)
-\newblock A flexible and accurate genotype imputation method for the next
-  generation of genome-wide association studies.
-\newblock {\em PLoS Genet\/}~{\em 5\/}(6), 1--15.
+\newblock A flexible and accurate genotype imputation method for the next generation of genome-wide association studies.
+\newblock {\em PLoS Genet.\/}~{\em 5\/}(6), 1--15.
 
 \bibitem[\protect\citeauthoryear{Lawson et~al.}{Lawson et~al.}{2012}]{Lawson2012}
 Lawson D.~J. {\em et al}. (2012)
 \newblock{Inference of Population Structure using Dense Haplotype Data}.
-\newblock{\em PLoS Genet\/}~{\em 8\/}(1). doi: 10.1371/journal.pgen.1002453
+\newblock{\em PLoS Genet.\/}~{\em 8\/}(1). doi: 10.1371/journal.pgen.1002453
 
 \bibitem[\protect\citeauthoryear{Li and Stephens}{Li and
   Stephens}{2003}]{Li2003}
@@ -497,7 +491,7 @@ Manske, M. {\em et al}. (2012)
 \bibitem[\protect\citeauthoryear{Mathieson and McVean}{Mathieson and McVean}{2014}]{Mathieson2014}
 Mathieson I. and McVean G. (2014).
 \newblock{Demography and the Age of Rare Variants}.
-\newblock{\em PLoS Genet\/}~{\em 10}(8), doi: 10.1371/journal.pgen.1004528
+\newblock{\em PLoS Genet.\/}~{\em 10}(8), doi: 10.1371/journal.pgen.1004528
 
 
 \bibitem[\protect\citeauthoryear{Miles, Iqbal, Vauterin, Pearson, Campino,
@@ -506,7 +500,7 @@ Mathieson I. and McVean G. (2014).
   McVean, and Kwiatkowski}{Miles et~al.}{2016}]{Miles2016}
 Miles, A. {\em et al}. (2015)
 \newblock Indels, structural variation, and recombination drive genomic diversity in {\it Plasmodium falciparum}.
-\newblock {\em Genome Res\/}~{\em26\/}, 1288--1299.
+\newblock {\em Genome Res.\/}~{\em26\/}, 1288--1299.
 
 \bibitem[\protect\citeauthoryear{Pearson, Amato, Auburn, Miotto,
   Almagro-Garcia, Amaratunga, Suon, Mao, Noviyanti, Trimarsanto, Marfurt,
@@ -516,14 +510,13 @@ Miles, A. {\em et al}. (2015)
   Rockett, Miles, Rayner, Fairhurst, Nosten, Price, and Kwiatkowski}{Pearson
   et~al.}{2016}]{Pearson2016}
 Pearson, R.~D. {\em et al}. (2016)
-\newblock {Genomic analysis of local variation and recent evolution in
-  Plasmodium vivax}.
-\newblock {\em Nat Genet\/}~{\em 48}, 959--964.
+\newblock {Genomic analysis of local variation and recent evolution in {\it Plasmodium vivax}}.
+\newblock {\em Nat. Genet.\/}~{\em 48}, 959--964.
 
 \bibitem[\protect\citeauthoryear{O\'Connell, Gurdasani and Delaneau}{O'Connell et~al.}{2016}]{Oconnell2014}
 O'Connell J., {\em et al}. (2014)
 \newblock {A General Approach for Haplotype Phasing across the Full Spectrum of Relatedness}.
-\newblock {\em PLOS Genetics\/}~{\em 10\/}(4), e1004234.
+\newblock {\em PLoS Genet.\/}~{\em 10\/}(4), e1004234.
 
 \bibitem[\protect\citeauthoryear{Pf3k}{Pf3k}{2016}]{Pf3k2016}
 The Pf3k Project: pilot data release 5 (2016)
@@ -531,7 +524,8 @@ The Pf3k Project: pilot data release 5 (2016)
 
 \bibitem[\protect\citeauthoryear{O'Brien}{O'Brien et~al.}{2015}]{Jack2016}
 O'Brien D,J. {\em et al}. (2016)
-\newblock Inferring Strain Mixture within Clinical {\em Plasmodium falciparum} Isolates from Genomic Sequence Data. \newblock {\em PLoS Comput Biol\/}~{\em 12\/}(6): e1004824. doi: 10.1371/journal.pcbi.1004824
+\newblock Inferring Strain Mixture within Clinical {\em Plasmodium falciparum} Isolates from Genomic Sequence Data.
+\newblock {\em PLoS Comput. Biol.\/}~{\em 12\/}(6): e1004824. doi: 10.1371/journal.pcbi.1004824
 
 \bibitem[\protect\citeauthoryear{Sabetil,Reich,Higgins, Levine,Richter}{Sabetil et~al.}{2002}]{Sabeti2002}
 Sabeti1. P.~C. {\em et al}. (2002)
@@ -544,7 +538,7 @@ Wendler, J. (2015)
 \newblock {Ph.\ D. thesis, University of Oxford.}
 
 \bibitem[\protect\citeauthoryear{WHO}{WHO}{2016}]{WHO2016}
-~~~~~WHO. (2016)
+WHO. (2016)
 \newblock {World Malaria Report 2015}.
 \newblock {\em World Health Organization\/}.
 \end{thebibliography}
