@@ -297,7 +297,7 @@ Similarly, for samples {\textmd PG0398-C} to {\textmd PG0415-C}, we let variable
 
 \subsubsection{Proportions and number of strains}
 
-To validate our method we applied \texttt{DEploid} to 27 lab-mixed {\it in vitro} samples. As described in Section~\ref{sec:updateP}, we start by assuming at most five strains present in the mixtures and discard strains with an inferred proportion less than 1\%. \texttt{DEploid} successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). The deviation between our proportion estimates and the truth is at most 2\%.
+To validate our method we applied \texttt{DEploid} to 27 lab-mixed {\it in vitro} samples. We start by assuming at most three strains present in the mixtures and discard strains with an inferred proportion less than 1\%. \texttt{DEploid} successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). The deviation between our proportion estimates and the truth is at most 2\%.
 
 However, we also found that in some cases, \texttt{DEploid} fits additional strains. For example, in Table~\ref{tab:jason}, we infer six of the HB3 and 7G8 mixtures as mixing of three.  On further inspection, two inferred strains are near identical, but seperated because of a few heterozygous sites with high coverage resulting in high leverage in our model (Supplemental Material Figure~S3.3(a)). These sites are likely artefacts arising from duplicated sequence that is absent from the reference strain.  Such erroneous markers are not currently inferred by \texttt{DEploid}, though this could be included in future versions.
 
