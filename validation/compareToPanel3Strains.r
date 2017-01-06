@@ -34,8 +34,9 @@ cases = paste(sampleName, c(".14.noPanel",
 #                            ,".14.asiaAfrica2"
 #                            ), sep="")
 
+png(paste("differentPanelForSample.", sampleName, "Mid.png", sep=""), width = 4800, height = 2700, res=170)
 
-png(paste("differentPanelForSample.", sampleName, "Hi.png", sep=""), width = 9600, height = 5400, res=350)
+#png(paste("differentPanelForSample.", sampleName, "Hi.png", sep=""), width = 9600, height = 5400, res=350)
 #png(paste("differentPanelForSample.", sampleName, "Hi2.png", sep=""), width = 9600, height = 7560, res=350)
 
 par ( mfrow = c(length(cases),1))
