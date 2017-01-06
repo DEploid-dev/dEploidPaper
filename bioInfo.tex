@@ -74,7 +74,8 @@ $p$              & Observed within sample allele frequency (WSAF) \\
 $q$              & Unadjusted expected WSAF  \\
 $\pi$            & Adjusted expected WSAF \\
 $\Xi$            & Reference panel\\
-%$g_{p}$          & Allelic state of reference strain $p$\\ %Is this ever used?
+$\xi_{k,i}$     & Allelic state of reference panel strain $k$ at site $i$\\
+$G$              & Scaling factor used for genetic map\\
 $e$              & Probability of read error\\ \hline
 \end{tabular}
 \caption{Table summarising the notation used in this article.}\label{tab:notation}
@@ -100,15 +101,17 @@ P(n, \mathbf{w}, \mathbf{h}) = P(n) \times P(\mathbf{w} | n) \times \prod_{k=1}^
 
 \subsubsection{Likelihood function}
 
-Let $\mathbf w = [w_1,\dots, w_n]$ and $\mathbf{h}_i = [h_{1,i},\dots,h_{n,i}]$ denote the proportions and alleic state of the $n$ parasite strains at site $i$. We use \citet{Jack2016}'s expression for the expected WSAF at site $i$, $q_{i}$, as:
+Let $\mathbf w = [w_1,\dots, w_n]$ and $\mathbf{h}_i = [h_{1,i},\dots,h_{n,i}]$ denote the proportions and alleic states of the $n$ parasite strains at site $i$. We use \citet{Jack2016}'s expression for the expected WSAF at site $i$, $q_{i}$, as:
 
 \begin{equation}
 q_i= (\mathbf{w}\cdot\mathbf{h}_{i})  =  \sum_{k=1}^{n} w_k \cdot h_{k,i} .\label{eqn:qij_full_sum}
 \end{equation}
 
-\noindent The data, which can be summarised by the reference and alternative allele read counts at each site, is modelled through a beta-binomial distribution given the WSAF.  We model the data at distinct segregating sites as independent.  Thus the likelihood function  in Eqn.~\eqref{eqn:post} is only dependent on the haplotypes present and their frequencies through their contribution to $q_{i}$; i.e. $L(n, \mathbf{w}, \mathbf{h}, | \Xi, e, D) = \prod_{i=1}^l L(q_i | \Xi, e, D)$.
+\noindent The data, which can be summarised by the reference and alternative allele read counts at each site, is modelled through a beta-binomial distribution given the expected WSAF.  We model the data at distinct segregating sites as independent.  Thus the likelihood function  in Eqn.~\eqref{eqn:post} is only dependent on the haplotypes present and their frequencies through their contribution to $q_{i}$.
 
-To incorporate sequencing error, we modify the WSAF such that the expected allele frequency of `REF' read as `ALT' is $(1 - q_i)e$, and the expected allele frequency of `ALT' read as `REF' is $q_ie$. Thus, the adjusted WSAF becomes:
+%; i.e. $L(n, \mathbf{w}, \mathbf{h}, | \Xi, e, D) = \prod_{i=1}^l L(q_i | \Xi, e, D)$.
+
+To incorporate sequencing error, we modify the expected WSAF such that the allele frequency of `REF' read as `ALT' is $(1 - q_i)e$, and the allele frequency of `ALT' read as `REF' is $q_ie$. Thus, the adjusted expected WSAF becomes:
 
 \begin{equation}
 \pi_i = q_i + (1 - q_i)e - q_ie = q_i + (1 - 2q_i)e.\label{eqn:adj_q}
@@ -133,14 +136,17 @@ w_k = \frac{\exp(x_k)}{\sum_{j=1}^n \exp(x_j)},
 
 \noindent and the prior density is given by the distribution function for the value of $\mathbf{x}$.
 
-Haplotypes, $\mathbf{h}$, are modelled as being generated independently from the reference panel by the \citet{Li2003} process, though with a rate of mis-copying that is independent of the panel size. That is, under the prior, a path through the reference panel is sampled as a Markov process where recombination enables switching between members of the reference panel and mis-copying allows the allelic state of the haplotype within the sample to differ from the allelic state of the reference panel haplotype being copied at the site.  The transition probability of switching from copying reference haplotype $a$ to reference haplotype $b$ is $(1-\exp(-\psi_i))/|\Xi|$, where $\psi_i$ is the genetic distance (in Morgans) between sites $i$ and $i+1$ and $|\Xi|$ is the size of the reference panel.  Note that unlike the original model the recombination or switching rate is not dependent on sample size.
+Haplotypes, $\mathbf{h}$, are modelled as being generated independently from the reference panel by the \citet{Li2003} process, though with a rate of mis-copying that is independent of the panel size. That is, under the prior, a path through the reference panel is sampled as a Markov process where recombination enables switching between members of the reference panel and mis-copying allows the allelic state of the haplotype within the sample to differ from the allelic state of the reference panel haplotype being copied at the site.  The transition probability of switching from copying reference haplotype $a$ to reference haplotype $b$ is $(1-\exp(-G \psi_i))/|\Xi|$, where $\psi_i$ is the genetic distance (in Morgans) between sites $i$ and $i+1$, $G$, is a scaling factor (described below in more detail) and $|\Xi|$ is the size of the reference panel.  Note that unlike the original model, the recombination or switching rate is not dependent on sample size.
 
 
 For emission probabilities, let $\xi_k$ denote the state of the sequence in the reference panel $\Xi$ that $h_k$ is copying from at given site and $\mu$ denote the probability of miss-copying:
 
-$$\begin{cases}
+$$
+\begin{cases}
 P(\xi_k = h_k) &= 1-\mu, \\
-P(\xi_k \neq h_k) &= \mu.\end{cases}$$
+P(\xi_k \neq h_k) &= \mu.
+\end{cases}
+$$
 
 \noindent As above, this is a simple reparamterisation of the original model, but where the emission probabilities are not dependent on the sample size.
 
@@ -156,7 +162,7 @@ To perform inference about the haplotypes present and their proportions we use M
 
 We update $\mathbf{w}|n$, through the underlying log titres, $\mathbf{x}|n$. Specificly, we choose $i$ uniformly from $n$ and propose new $x_i'$s from $x_i' = x_i + \delta x$, where $\delta x \sim N(0, \sigma^2/s)$, and $s$ is a scaling factor. The new proposed proportion is therefore $\frac{\exp(x_k')}{\sum_{k=1}^n \exp(x_k')}$. Since the proposal distribution is symmetrical, the Hastings ratio is 1. A new update is accepted with probability
 
- $$\min\left(1, \frac{P(\mathbf{w}'|n)}{P(\mathbf{w}|n)} \frac{L(\mathbf{w}', \mathbf{h},\Xi, e|D)}{L(\mathbf{w}, \mathbf{h},\Xi, e|D)}\right).$$
+ $$\min\left(1, \frac{P(\mathbf{w}'|n)}{P(\mathbf{w}|n)} \frac{L(\mathbf{w}', \mathbf{h} | \Xi, e, D)}{L(\mathbf{w}, \mathbf{h} | \Xi, e, D)}\right).$$
 
 
 
@@ -224,14 +230,13 @@ As in the single-haplotype update, the hidden Markov model formulation enables u
 
 \item {\bf Parameters}. In practice, we set the parameters $c=100$ (Equation ~\eqref{eqn:llk}); $\eta = 0$, $\sigma^2 = 3$ and $s=40$ (Sections \ref{sec:prior} and \ref{sec:updateP}).  We set the read error rate as 0.01 and the rate of mis-copying as 0.01.
 
-\item {\bf Recombination rate and scaling}. We assume a uniform recombination map, where the genetic distance between loci $i$ and $i+1$ is computed by $G_i = D_i / d_m$ where $D_i$ denotes the physical distance between loci $i$ and $i+1$ in nucleotides and $d_m$ denotes the average recombination rate in Morgans$^{-1}$. We use a recombination rate for {\it P. falciparum} of 15,000 base pairs per centiMorgan reported by \citet{Miles2016}). Suppose the genetic distance $\psi_i$ is given by $\psi_i = 2N_e G_i$, with $N_e=10$ being the effective population size. In reality, $N_e$ is just a scaling parameter (not the effective population size). We then use the genetic distance $\psi$ to compute the transition probability of switching from copying reference haplotype a to reference haplotype b (see Supplementary Materials for details).
-%Note that {\bf we scale the probabilities with the number of haplotypes in the reference panel}.
+\item {\bf Recombination rate and scaling}. We assume a uniform recombination map, where the genetic distance between loci $i$ and $i+1$ is computed by $\psi_i = D_i / d_m$ where $D_i$ denotes the physical distance between loci $i$ and $i+1$ in nucleotides and $d_m$ denotes the average recombination rate in Morgans bp$^{-1}$. We use the recombination rate for {\it P. falciparum} of 15,000 base pairs per centiMorgan as reported by \citet{Miles2016}. The recombination rate is scaled by a factor $G$, which reflects the effective population size, rate of inbreeding and size and relatedness of the reference panel.  In practice, we have found that a value of $G=10$ works well.  The scaled genetic distance $G\psi$ is used to compute the transition probability of switching from copying reference haplotype a to reference haplotype b (see Supplementary Materials for details).
 
-\item {\bf Update without linkage disequilbrium}. For initialising the chain, or if the markers present are very widely spaced, linkage disequilibrium can be ignored, which is equivalent to setting the genetic distance between adjacent loci to be infitely high.  Under these circumstances, the haplotype updates become much simpler and depend only on the population-level allele frequency (PLAF).
+\item {\bf Update without linkage disequilbrium}. For initialising the chain, or if the markers present are very widely spaced, linkage disequilibrium can be ignored, which is equivalent to setting the genetic distance between adjacent loci to be infinitely high.  Under these circumstances, the haplotype updates become much simpler and depend only on the population-level allele frequency (PLAF), for example as estimated from the reference panel or provided independently.
 
-\item {\bf Reporting} We aim to provide users with a single point estimate of the haplotypes and their proportions, although the full chain is also available for analysis.  To achieve this we report values at the last iteration - i.e. we report a single sample from the posterior.  However, to measure robustness, we also typically repeat deconvolution with multiple random starting points and select the chain with the lowest average deviance (after removing the burn-in) to report. The deviance measures the difference in log likelihood between the fitted and saturated models, the latter being inferred by setting the WSAF to that observed.   These parameters can be modified by users to achieve a preferred balance between computational speed and confidence.  By default, we set the MCMC sampling rate as 5; burn the first 50\% of the states; and keep 800 samples.
+\item {\bf Reporting} We aim to provide users with a single point estimate of the haplotypes and their proportions, although the full chain is also available for analysis.  To achieve this we report values at the last iteration - i.e. we report a single sample from the posterior.  However, to measure robustness, we also typically repeat deconvolution with multiple random starting points and select the chain with the lowest average deviance (after removing the burn-in) to report. The deviance measures the difference in log likelihood between the fitted and saturated models, the latter being inferred by setting the WSAF to that observed.   These parameters can be modified by users to achieve a preferred balance between computational speed and confidence.  By default, we set the MCMC sampling rate as 5, with the first 50\% of samples removed as burn in and 800 samples used for estimation. 
 
-\item {\bf Reference panel construction}. To infer clonal samples for the reference panel we use the Pf3k \citep{Pf3k2016} project data, running the algorithm without LD on all samples and identifying those with a dominant haplotype (proportion > 0.99) as clonal.  These clonal samples are grouped by region of sampling to form location-specific reference panels.
+\item {\bf Reference panel construction}. To infer clonal samples for the reference panel we use the Pf3k \citep{Pf3k2016} project data, running the algorithm without LD on all samples and identifying those with a dominant haplotype (proportion > 0.99) as clonal.  These clonal samples are grouped by region of sampling to form location-specific reference panels.  In addition, we have included a number of reference strains, described in more detail below.
 
 \end{itemize}
 
@@ -240,7 +245,7 @@ As in the single-haplotype update, the hidden Markov model formulation enables u
 
 \section{Validation and Performance}
 
-As validation we used a set of {\it in vitro} mixtures created by \citet{Wendler2015} to simulate mixed infections. DNA was extracted from four laboratory parasite lines: 3D7, Dd2, HB3 and 7G8, and mixed by different proportions (see Table ~\ref{tab:jason}; figures in brackets), and submitted to the MalariaGEN pipeline \citep{MalariaGen2008} for Illumina sequencing and genotyping \citep{Menske2012}.
+As validation we used a set of {\it in vitro} mixtures created by \citet{Wendler2015} to simulate mixed infections. DNA was extracted from four laboratory parasite lines: 3D7, Dd2, HB3 and 7G8, experimentally mixed in different proportions (see Table ~\ref{tab:jason}; figures in brackets), and submitted to the MalariaGEN pipeline \citep{MalariaGen2008} for Illumina sequencing and genotyping \citep{Menske2012}.
 
 \begin{table}[tbh]\centering
 \begin{tabular}[c]{@{}l|llll@{}}\hline
@@ -291,9 +296,9 @@ Similarly, for samples {\textmd PG0398-C} to {\textmd PG0415-C}, we let variable
 
 \subsubsection{Proportions and number of strains}
 
-To validate our method we applied \texttt{DEploid} to 27 lab-mixed {\it in vitro} samples. As described in section~\ref{sec:updateP}, we start by assuming at most three strains present in the mixtures; and discard strains with an inferred proportion less than 1\%. \texttt{DEploid} successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). The deviation between our proportion estimates and the truth is at most 2\%.
+To validate our method we applied \texttt{DEploid} to 27 lab-mixed {\it in vitro} samples. As described in Section~\ref{sec:updateP}, we start by assuming at most five strains present in the mixtures and discard strains with an inferred proportion less than 1\%. \texttt{DEploid} successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). The deviation between our proportion estimates and the truth is at most 2\%.
 
-In some cases, \texttt{DEploid} overfits lab-mixed samples with additional strains. For example, in Table~\ref{tab:jason}, we infer six of the HB3 and 7G8 mixtures as mixing of three, two of which are near identical, but  seperated because of a few heterozygous sites with high coverage resulting in high leverage in our model (Supplemental Material Figure~S3.3(a)). These sites are likely artefacts arising from duplicated sequence that is absent from the reference strain.  Such erroneous markers are not currently inferred by \texttt{DEploid}, though this could be included in future versions.
+However, we also found that in some cases, \texttt{DEploid} fits additional strains. For example, in Table~\ref{tab:jason}, we infer six of the HB3 and 7G8 mixtures as mixing of three.  On further inspection, two inferred strains are near identical, but seperated because of a few heterozygous sites with high coverage resulting in high leverage in our model (Supplemental Material Figure~S3.3(a)). These sites are likely artefacts arising from duplicated sequence that is absent from the reference strain.  Such erroneous markers are not currently inferred by \texttt{DEploid}, though this could be included in future versions.
 
 To investigate how the accuracy of haplotype inference is affected by the quality of the reference panel (in terms of having haplotypes close to those present in the samples) we experimented with deconvoluting the 27 lab-mixed samples with the following reference panels:
 
@@ -307,21 +312,21 @@ To investigate how the accuracy of haplotype inference is affected by the qualit
 
 \item panel IV: panel III with the addition of Dd2;
 
-%\item panel V: 3D7, HB3, 7G8 and Dd2 strains.
+\item panel V: 3D7, HB3, 7G8 and Dd2 strains (the perfect reference panel for the lab mixtures).
 
-%\item panel VI: panel I with the addition of six (three each) clonal strains from Asia and Africa: {\textmd PH0193-C}, {\textmd PH0283-C}, {\textmd PH0305}, {\textmd PT0060-C}, {\textmd PT0146-C} and {\textmd PT0158-C}.
+\item panel VI: panel I with the addition of six (three each) clonal strains from Asia and Africa: {\textmd PH0193-C}, {\textmd PH0283-C}, {\textmd PH0305}, {\textmd PT0060-C}, {\textmd PT0146-C} and {\textmd PT0158-C} (a typical reference panel for field samples of unknown geographical origin).
 
 \end{itemize}
 
 
 
-\noindent In all cases we estimated the number and proportion of strains accurately, for example Figure~\ref{fig:differentRefPanel} y-axes show the proportions of strains Dd2/7G8/HB3 as approximately $\frac{1}{4}$/$\frac{1}{2}$/$\frac{1}{4}$.
+\noindent In all cases we estimated the number and proportion of strains accurately, for example Figure~\ref{fig:differentRefPanel} shows the proportions of strains Dd2/7G8/HB3 as being accurately inferred as approximately $\frac{1}{4}$, $\frac{1}{2}$, and $\frac{1}{4}$.
 
 \begin{figure*}[htb]
 \centerline{
 \includegraphics[width=0.9\textwidth, height = 0.45\textwidth]{{differentPanelForSample.PG0396-C}.png}
 }
-\caption{Comparison of true and inferred haplotypes for Chromosome 14 in sample {\textmd PG0396-C} without any reference strain (top) and with using reference panels I to IV (from the second to the bottom). Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segments from strains 7G8, HB3 and Dd2 respectively. The switch errors are obtained by counting the changes of a strain segment mapped to reference strains; the genotype errors are the discordance between the strain and the mapped reference segments.}
+\caption{Comparison of true and inferred haplotypes for Chromosome 14 in sample {\textmd PG0396-C} without linkage disequilibrium (top) and using reference panels I to IV (from the second to the bottom). Reference Panel V gives results equivalent Panel IV and Panel VI gives results similar to Panel 1.  Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segments from strains 7G8, HB3 and Dd2 respectively. The switch errors are obtained by counting the changes of a strain segment mapped to reference strains; the genotype errors are the discordance between the strain and the mapped reference segments.}
 \label{fig:differentRefPanel}
 \end{figure*}
 
@@ -341,9 +346,9 @@ Our accuracy assessment for inferred haplotypes takes into account both switch e
 
 \begin{itemize}
 
-\item The inference of relative proportions does not seem to be affected by the use of a reference panel or its quality (Figure~\ref{fig:differentRefPanel}).
+\item The inference of relative proportions does not seem to be affected by the use of linkage disequilibrium information from the reference panel or its closeness to the samples being analysed (Figure~\ref{fig:differentRefPanel}).
 
-\item The accuracy of the haplotype is dependent on having an appropriate reference panel (Figure~\ref{fig:differentRefPanel}).
+\item The accuracy of the haplotype is, however, dependent on having an appropriate reference panel in terms of relatedness to the samples being analysed (Figure~\ref{fig:differentRefPanel}).
 
 \item The strain proportion affects the haplotype inference (see Fig~\ref{fig:switchVsMisCopy}). Our method infers strains with proportions over approximately 20\% with high accuracy  accuracy, but struggles with minor strains due to insufficient data, in particularly at sites when the minor strain carries the alternative allele and the dominant strain carries the reference allele (see Figure~\ref{fig:switchVsMisCopy}).
 
@@ -354,14 +359,14 @@ Our accuracy assessment for inferred haplotypes takes into account both switch e
 
 \subsection{Run-time}
 
-The complexity of our program is $\mathcal{O}(lm^2)$ (see Fig~\ref{fig:runtime}), where $m$ and $l$ are the number of reference strains and sites respectively. In practice, we recommend dividing samples into distinct geographical regions to perform deconvolution, using the ten most different local clonal strains as as reference panel. The run time of deconvoluting a field sample range between 1 and 6 hours, depending on the number variants in a sample: For example, it takes $5\frac{1}{2}$ hours to process sample {\textmd QG0182-C} over 372,884 sites.
+The complexity of our program is $\mathcal{O}(lm^2)$ (see Fig~\ref{fig:runtime}), where $m$ and $l$ are the number of reference strains and sites respectively. In practice, we recommend dividing samples into distinct geographical regions to perform deconvolution, using the ten most different local clonal strains as as reference panel. The run time of deconvoluting a field sample range between 1 and 6 hours, depending on the number variants in a sample: For example, it takes $5\frac{1}{2}$ hours to process sample {\textmd QG0182-C} over 372,884 sites.  We give worked examples of deconvoluting mixed infections from field samples in the Supplementary Material.
 
 
 
 \begin{figure}[htb]
 \centering
 \includegraphics[width=.5\textwidth,height=0.35\textwidth]{runTime.png}
-\caption{Run-time and scaling.  CPU time (seconds) for deconvoluting chromosomes 12, 13 and 14 of sample {\textmd PG0412-C} with reference panels I, V and VI, where panel V contains 3D7, HB3, 7G8 and Dd2 strains; and panel VI is equivalent to panel I with the addition of six clonal strains from Asia and Africa: {\textmd PH0193-C}, {\textmd PH0283-C}, {\textmd PH0305}, {\textmd PT0060-C}, {\textmd PT0146-C} and {\textmd PT0158-C}. The run-time is approxmately linear with respect to the number of sites and shows the expected quadratic trend against the number of reference strains.}\label{fig:runtime}
+\caption{Run-time and scaling.  CPU time (seconds) for deconvoluting chromosomes 12, 13 and 14 of sample {\textmd PG0412-C} with reference panels I, V and VI (size 4, 10 and 16 reference haplotypes respectively). The run-time is approxmately linear with respect to the number of sites and shows the expected quadratic trend against the number of reference strains.}\label{fig:runtime}
 \end{figure}
 
 
@@ -369,7 +374,7 @@ The complexity of our program is $\mathcal{O}(lm^2)$ (see Fig~\ref{fig:runtime})
 
 The program \texttt{DEploid} and its analysis pipeline has been originally developed for {\it P. falciparum} studies. Nonetheless, with minor parameter changes, \texttt{DEploid} can be used for deconvoluting any other data set with a mixture of samples from a single species, for example on data from {\it Plasmodium vivax} \citep{Pearson2016} or bacterial and viral pathogens.
 
-There are several limitation of the current implementation, the greatest of which is the quadratic scaling with reference panel size.  In practice, current approaches to related problems such as haplotype phasing \citep{Delaneau2012} or inference from low-coverage sequencing experiments \citep{Davis2016} typically aim to select a few candidate haplotypes (which might be a mosaic) from a reference panel.  Alternatively, the reference panel data can itself be approximated, for example through graphical structures, as in BEAGLE \citep{Browning2007}, or represented through structures that enable efficient computation \citep{Lunter2016}.  Such extensions will be pursued in future work.  Similarly, the observation that a small number of erroneous heterozygous sites can lead to inferring the presence of closely related strains should be addressed. In some cases such sites may reflect {\it in vivo} evolution, but ideally these should be identified automatically and excluded.
+There are several limitation of the current implementation, the greatest of which is the quadratic scaling with reference panel size.  In practice, current approaches to related problems such as haplotype phasing \citep{Delaneau2012} or inference from low-coverage sequencing experiments \citep{Davis2016} typically aim to select a few candidate haplotypes (which might be a mosaic) from a reference panel.  Alternatively, the reference panel data can itself be approximated, for example through graphical structures, as in BEAGLE \citep{Browning2007}, or represented through structures that enable efficient computation \citep{Lunter2016}.  Such extensions will be pursued in future work.  Similarly, the observation that a small number of heterozygous sites can lead to inferring the presence of closely related strains should be addressed. Although, in some cases, such sites will reflect {\it in vivo} evolution, typically most will be erroneous calls and should be identified automatically and excluded.
 
 
 \section*{Acknowledgements}
@@ -417,7 +422,7 @@ Delaneau, O. {\em et al}. (2012)
   et~al.}{2004}]{deRoode2004}
 de~Roode, J. {\em et al}. (2004)
 \newblock Competitive release of drug resistance following drug treatment of
-  mixed {\it Plasmodium Chabaudi} infections.
+  mixed {\it Plasmodium chabaudi} infections.
 \newblock {\em Malaria Journal\/}~{\em 3\/}(33), 1--6.
 
 \bibitem[\protect\citeauthoryear{de~Roode, Pansini, Cheesman, Helinski,
