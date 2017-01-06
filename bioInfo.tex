@@ -7,6 +7,7 @@
 \graphicspath{{./figures/}}
 \definecolor{RubineRed}{RGB}{240, 0, 240}       % RubineRed  Approximate PANTONE RUBINE-RED
 
+
 \usepackage{hyperref}
 \newcommand*{\Scale}[2][4]{\scalebox{#1}{$#2$}}%
 
@@ -324,7 +325,7 @@ To investigate how the accuracy of haplotype inference is affected by the qualit
 
 \begin{figure*}[htb]
 \centerline{
-\includegraphics[width=0.9\textwidth, height = 0.45\textwidth]{{differentPanelForSample.PG0396-C}.png}
+\includegraphics[width=0.9\textwidth]{{differentPanelForSample.PG0396-CHi}.png}
 }
 \caption{Comparison of true and inferred haplotypes for Chromosome 14 in sample {\textmd PG0396-C} without linkage disequilibrium (top) and using reference panels I to IV (from the second to the bottom). Reference Panel V gives results equivalent Panel IV and Panel VI gives results similar to Panel 1.  Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segments from strains 7G8, HB3 and Dd2 respectively. The switch errors are obtained by counting the changes of a strain segment mapped to reference strains; the genotype errors are the discordance between the strain and the mapped reference segments.}
 \label{fig:differentRefPanel}
@@ -338,7 +339,7 @@ Our accuracy assessment for inferred haplotypes takes into account both switch e
 
 \begin{figure}[htb]
 \centerline{
-\includegraphics[width=0.45\textwidth]{{switchVsMisCopyErrlog}.png}
+\includegraphics[width=0.45\textwidth]{{switchVsMisCopyErrlogHi}.png}
 }
 \caption{Relationship between strain proportion and inference accuracy in the experimental validation.   We use reference panel V to deconvolute all 27 samples. Each point represents a deconvoluted haplotype with 18,570 sites. Point shape refers to strain and colour indicates whether it was in mixture with two (red) or three (blue) strains.  Top panel shows switch error rate.  Bottom panel indicates genotyping error rate.}
 \label{fig:switchVsMisCopy}
@@ -365,7 +366,7 @@ The complexity of our program is $\mathcal{O}(lm^2)$ (see Fig~\ref{fig:runtime})
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=.5\textwidth,height=0.35\textwidth]{runTime.png}
+\includegraphics[width=.45\textwidth]{runTimeHi.png}
 \caption{Run-time and scaling.  CPU time (seconds) for deconvoluting chromosomes 12, 13 and 14 of sample {\textmd PG0412-C} with reference panels I, V and VI (size 4, 10 and 16 reference haplotypes respectively). The run-time is approxmately linear with respect to the number of sites and shows the expected quadratic trend against the number of reference strains.}\label{fig:runtime}
 \end{figure}
 

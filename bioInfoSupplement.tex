@@ -97,7 +97,7 @@ Our goal is to sample the allelic states for the haplotype to be updated from th
 Let $F(j,i)$ be the value in the forward matrix for reference strain $j$ at site $i$.  The emission probabilities are calculated as:
 
 \begin{equation}
-L(\xi_{j,i}) = 
+L(\xi_{j,i}) =
 \begin{cases}
 (1-\mu) L(q_{i,h_{s=0}})+\mu L(q_{i,h_{s=1}}) & \text{if $\xi_{j,i}=0$}\\
 \mu L(q_{i,h_{s=0}})+(1-\mu) L(q_{i,h_{s=1}}) & \text{if $\xi_{j,i}=1$}.
@@ -114,7 +114,7 @@ F(j,1)=\frac{1}{|\Xi|}L(\xi_{j,1}).
 \noindent We use $\psi_i$ to denote the genetic distance, $G$, the scaling factor and $\rho_i'$ to denote the probability of \textbf{no} recombination between site $i$ and $i+1$, we have $\rho_i' = \exp(-G \psi_i)$.  The elements of the forward matrix can then be computed from:
 
 \begin{equation}
-F(j,i+1)=\big(\rho_i' F(j,i) + \frac{1-\rho_i'}{|\Xi|}\sum_{k=1}^{|\Xi|}F(k,i)\big) L(\xi_{j,i+1}) 
+F(j,i+1)=\big(\rho_i' F(j,i) + \frac{1-\rho_i'}{|\Xi|}\sum_{k=1}^{|\Xi|}F(k,i)\big) L(\xi_{j,i+1})
 \end{equation}
 
 
@@ -123,7 +123,7 @@ Once the forward matrix has been filled, we then sample first a path through the
 
 \subsection{Gibbs update for a pair of haplotypes}
 
-Similar to the previous section, we consider updating the allelic states of the pair of haplotypes $s_1$ and $s_2$ given the reference panel, the prior on paths through this panel, the rate of mis-copying, and the error distribution for read counts at sites.  However, here the underlying state is the pair of paths through the reference panel (hence the quadratic nature of the algorithm).  
+Similar to the previous section, we consider updating the allelic states of the pair of haplotypes $s_1$ and $s_2$ given the reference panel, the prior on paths through this panel, the rate of mis-copying, and the error distribution for read counts at sites.  However, here the underlying state is the pair of paths through the reference panel (hence the quadratic nature of the algorithm).
 
 At each site, the emission probabilities for each pair of paths (where the two paths may be copying the same haplotype in the reference panel) are given by combining the expected WSAF calculation of Equations 11-14 in the main text with the mis-copying process, as for the single haplotype case.  For the sake of brevity we omit the equations as they follow naturally, noting that the two haplotypes are not exchangeable due to their having different proportions.  As above, we complete the forward matrix, sample a pair of paths through the matrix and then the mis-copying process to provide a sample of strain haplotypes from the marginal posterior.
 
@@ -151,7 +151,7 @@ where ``{\tt -vcf PG0395-C.wg.vcf.gz}'' defines the input VCF file. Notice that,
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=.9\textwidth]{{supplementDEploidExample/PG0395-CaltVsRefAndWSAFvsPLAF}.png}
+\includegraphics[width=.9\textwidth]{{supplementDEploidExample/PG0395-CaltVsRefAndWSAFvsPLAFHi}.png}
 \caption{Data exploration of sample {\textmd PG0395-C}. From left to right, it shows:
 1. Alternative read counts vs reference read counts.
 2. Histogram of the allele frequencies within sample.
@@ -183,7 +183,6 @@ dEploid -vcf PG0396-C.wg.vcf.gz \
 \linespread{1.5}
 where flags ``{\tt -vcf}'', ``{\tt -plaf}'' and ``{\tt -exclude}'' are used in the same manner as in the previous example; ``{\tt -panel labStrainsPanelFinal.txt}'' specifies a text file including haplotypes of lab strains 3D7, HB3, 7G8 and Dd2; options ``{\tt -nSample}'', ``{\tt -rate}'' and ``{\tt -burn}'' specify the total number of MCMC samples to take, the sampling rate and the burn-in fraction of the MCMC chain respectively. For detailed documentation, please see \url{http://deploid.readthedocs.io/en/latest/input.html}.
 
-\newpage
 
 We use a utility {\tt R} script to plot and interpret the output produced by DEploid. The following command is used to generate Figures~\ref{fig:0396} (a) -- (e).
 \linespread{1}
@@ -199,10 +198,10 @@ R --slave "--args -vcf PG0396-C.wg.vcf.gz
 \begin{figure}[ht]
 \centering
 \subfloat[][]{
-\includegraphics[width=.47\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.interpretDEploidFigure.1}.png}
+\includegraphics[width=.47\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.interpretDEploidFigure.1Hi}.png}
 }%\label{fig:pg0396.interpret1}
 \subfloat[][]{
-\includegraphics[width=.53\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.interpretDEploidFigure.2}.png}
+\includegraphics[width=.53\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.interpretDEploidFigure.2Mid}.png}
 }\\
 %\caption{}
 %\end{figure}
@@ -210,13 +209,13 @@ R --slave "--args -vcf PG0396-C.wg.vcf.gz
 %\begin{figure}[ht]
 %\ContinuedFloat
 \subfloat[][]{
-\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single0}.png}
+\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single0Mid}.png}
 }
 \subfloat[][]{
-\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single1}.png}
+\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single1Mid}.png}
 }
 \subfloat[][]{
-\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single2}.png}
+\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single2Mid}.png}
 }\\
 \caption{Sample {\textmd PG0396-C} deconvolution with Reference Panel V. (a) Diagnostic panels from the \texttt{DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF inferred from our model (see Equation~(3) in main article). The next three plots from left to right show: 1. MCMC samples for the strain proportions, with the fraction of each color indicating the proportion of a different strain at each MCMC sample. The three colored blocks suggest that there are three strains within sample {\textmd PG0396-C}, with proportions approximately 1/4, 1/4 and 1/2.
 2. Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. A low correlation suggests poor fitting.
@@ -251,24 +250,24 @@ dEploid -vcf PG0415-C.wg.vcf.gz \
     %-plaf labStrains_PLAF.txt
     %-exclude labStrainsExclude.txt
     %-dEprefix PG0415-C_seed2k3
-    %-o PG0396-C_seed2k3" < ~/DEploid/utilities/interpretDEploid.r
+    %-o PG0415-C_seed2k3" < ~/DEploid/utilities/interpretDEploid.r
 
 \linespread{1.5}
 \begin{figure}[th]
 \subfloat[][]{
-\includegraphics[width=.47\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.1}.png}
+\includegraphics[width=.47\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.1Hi}.png}
 }
 \subfloat[][]{
-\includegraphics[width=.53\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.2}.png}
+\includegraphics[width=.53\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.2Mid}.png}
 }\\
 \subfloat[][]{
-\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single0}.png}
+\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single0Mid}.png}
 }\label{fig:pg0415.postprob_a}
 \subfloat[][]{
-\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single1}.png}
+\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single1Mid}.png}
 }\label{fig:pg0415.postprob_b}
 \subfloat[][]{
-\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single2}.png}
+\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single2Mid}.png}
 }\label{fig:pg0415.postprob_c}\\
 \caption{Sample {\textmd PG0415-C} deconvolution with Reference Panel V. (a) Diagnostic panels from the \texttt{DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF inferred from our model (see Eqn.~(3) in main article). The next three plots from left to right show: 1. MCMC samples for the strain proportions. 2. Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. 3. Log likelihood of the MCMC chain. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain porportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively. (b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome. (c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the reference panel V. In each figure, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively. Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.}\label{fig:0415}
 \end{figure}
@@ -288,13 +287,13 @@ We compare the simulated genotypes against the true genotypes of HB3/7G8: {\tt 0
 
 \begin{figure}[h]
 \subfloat[][Mean coverage at 10x.]{
-\includegraphics[width=.32\textwidth]{{supplementCoverage/PG0402-C.14.meanCov.10.errorVsTotalCoverage}.png}
+\includegraphics[width=.32\textwidth]{{supplementCoverage/PG0402-C.14.meanCov.10.errorVsTotalCoverageHi}.png}
 }
 \subfloat[][Mean coverage at 30x.]{
-\includegraphics[width=.32\textwidth]{{supplementCoverage/PG0402-C.14.meanCov.30.errorVsTotalCoverage}.png}
+\includegraphics[width=.32\textwidth]{{supplementCoverage/PG0402-C.14.meanCov.30.errorVsTotalCoverageHi}.png}
 }
 \subfloat[][Mean coverage at 40x.]{
-\includegraphics[width=.32\textwidth]{{supplementCoverage/PG0402-C.14.meanCov.40.errorVsTotalCoverage}.png}
+\includegraphics[width=.32\textwidth]{{supplementCoverage/PG0402-C.14.meanCov.40.errorVsTotalCoverageHi}.png}
 }
 \caption{Error rates for inferred genotypes at different read depths.}\label{fig:sup.coverage}
 \end{figure}

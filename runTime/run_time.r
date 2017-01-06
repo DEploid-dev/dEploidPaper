@@ -67,6 +67,15 @@ png("runTime.png", width = 800, height = 800)
 myBar+ theme(text = element_text(size=20))
 dev.off()
 
+png("runTimeHi.png", width = 4000, height = 4000, res=350)
+myBar+ theme(text = element_text(size=20))
+dev.off()
+
+tiff("runTimeHi.tif", width = 4000, height = 4000, res=350)
+myBar+ theme(text = element_text(size=20))
+dev.off()
+
+
 #    myBar+ geom_line(aes(x=as.numeric(PanelSize), y=Runtime), colour="blue")
 
 #plot(as.numeric(as.character(Time_data$SeqLength))[c(1,5,9)], Time_data$Runtime[c(1,5,9)],type="l")

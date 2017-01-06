@@ -1,5 +1,7 @@
 rm(list=ls())
-png("switchVsMisCopyErrlog.png", width=800, height = 800)
+#png("switchVsMisCopyErrlog.png", width=800, height = 800)
+#png("switchVsMisCopyErrlogHi.png", width=4000, height = 4000, res = 350)
+tiff("switchVsMisCopyErrlogHi.tif", width=4000, height = 4000, res = 350)
 
 
 simpleMix = paste("PG03", 89:94, "-C", sep="")
