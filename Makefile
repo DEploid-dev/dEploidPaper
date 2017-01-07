@@ -24,7 +24,7 @@ plain.pdf: bioInfo.tex
 	sed -e "s/bioinfo/article/" \
 	 -e "s/\\\usepackage{todonotes}/\\\usepackage{fontenc,inputenc,crop,graphicx,amsmath,array,color,amssymb,flushend,stfloats,amsthm,chngpage,times,fullpage, amsmath,natbib,todonotes}\n\\\def\\\address#1{\\\global\\\def\\\@issue{#1}}\n\\\def\\\history#1{\\\global\\\def\\\@history{#1}}\n\\\def\\\abstract#1{\\\global\\\def\\\@abstract{#1}}\n\\\def\\\corresp#1{\\\global\\\def\\\@corresp{#1}}\n/" \
 	 -e "/copyrightyear/d" \
-	 -e "s/\\\title\[Deconvolute mixed genomes\]/\\\title/" \
+	 -e "s/\\\title\[Deconvoluting multiple infections\]/\\\title/" \
 	 -e "s/\\\author\[Zhu \\\textit{et~al}.\]/\\\author/" \
 	 -e "/Advance Access/d" \
 	 -e "/Original Paper/d" \
