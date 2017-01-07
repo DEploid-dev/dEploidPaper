@@ -189,7 +189,7 @@ Given the structure of the hidden Markov model and the above likelihoods, the fo
 
 \begin{figure}[tbh]
 \centering
-\includegraphics[width=0.5\textwidth]{coupled-painting.png}
+\includegraphics[width=0.5\textwidth]{LS.pdf}
 \caption{The \citet{Li2003} algorithm as applied to the problem of multiple strain inference. Strain 1 haplotype is made up from reference haplotype segments of 1 and 2; and strain 2 haplotype is made up from reference haplotype segments of 3 and 4. With mis-copying, we allow strain states differ from the path: At the third last position of strain 1, the path is copied from reference haplotype 2, with the state of 0.}
 \label{fig:ls}
 \end{figure}
@@ -325,7 +325,7 @@ To investigate how the accuracy of haplotype inference is affected by the qualit
 
 \begin{figure*}[htb]
 \centerline{
-\includegraphics[width=0.9\textwidth]{{differentPanelForSample.PG0396-CHi}.png}
+\includegraphics[width=\textwidth]{{differentPanelForSample.PG0396-C}.pdf}
 }
 \caption{Comparison of true and inferred haplotypes for Chromosome 14 in sample {\textmd PG0396-C} without linkage disequilibrium (top) and using reference panels I to IV (from the second to the bottom). Reference Panel V gives results equivalent Panel IV and Panel VI gives results similar to Panel I.  Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segments from strains 7G8, HB3 and Dd2 respectively. The switch errors are obtained by counting the changes of a strain segment mapped to reference strains; the genotype errors are the discordance between the strain and the mapped reference segments.}
 \label{fig:differentRefPanel}
@@ -339,7 +339,7 @@ Our accuracy assessment for inferred haplotypes takes into account both switch e
 
 \begin{figure}[htb]
 \centerline{
-\includegraphics[width=0.45\textwidth]{{switchVsMisCopyErrlogHi}.png}
+\includegraphics[width=0.45\textwidth]{{switchVsMisCopyErrlogHi}.pdf}
 }
 \caption{Relationship between strain proportion and inference accuracy in the experimental validation.   We use reference panel V to deconvolute all 27 samples. Each point represents a deconvoluted haplotype with 18,570 sites. Point shape refers to strain and colour indicates whether it was in mixture with two (red) or three (blue) strains.  Top panel shows switch error rate.  Bottom panel indicates genotyping error rate.}
 \label{fig:switchVsMisCopy}
@@ -366,7 +366,7 @@ The complexity of our program is $\mathcal{O}(lm^2)$ (see Fig~\ref{fig:runtime})
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=.45\textwidth]{runTimeHi.png}
+\includegraphics[width=.45\textwidth]{runTimeHi.pdf}
 \caption{Run-time and scaling.  CPU time (seconds) for deconvoluting chromosomes 12, 13 and 14 of sample {\textmd PG0412-C} with reference panels I, V and VI (size 4, 10 and 16 reference haplotypes respectively). The run-time is approximately linear with respect to the number of sites and shows the expected quadratic trend against the number of reference strains.}\label{fig:runtime}
 \end{figure}
 

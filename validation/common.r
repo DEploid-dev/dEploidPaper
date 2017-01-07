@@ -123,8 +123,8 @@ fun.plotHapWithProp <- function( hap, prop, fig.title, max.at ){
 
     xrange = c(0, max.at)
     yrange = c(0, 1)
-    plot( xrange, yrange, type= "n", xlim=xrange, ylim = yrange, ylab="", main=fig.title, xlab = "", cex.lab = 2, cex.main = 4, cex.axis=2)
-#    plot( xrange, yrange, type= "n", xlim=xrange, ylim = yrange, ylab="", main=fig.title, xlab = "")
+#    plot( xrange, yrange, type= "n", xlim=xrange, ylim = yrange, ylab="", main=fig.title, xlab = "", cex.lab = 2, cex.main = 4, cex.axis=2)
+    plot( xrange, yrange, type= "n", xlim=xrange, ylim = yrange, ylab="", main=fig.title, xlab = "", cex.lab = 2, cex.main = 3, cex.axis=2)
 
     xleft = 0:(haplength-1)
     xright = xleft+1

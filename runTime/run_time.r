@@ -75,6 +75,9 @@ tiff("runTimeHi.tif", width = 4000, height = 4000, res=350)
 myBar+ theme(text = element_text(size=20))
 dev.off()
 
+pdf("runTimeHi.pdf", width = 8, height = 6)
+myBar+ theme(text = element_text(size=20))
+dev.off()
 
 #    myBar+ geom_line(aes(x=as.numeric(PanelSize), y=Runtime), colour="blue")
 
