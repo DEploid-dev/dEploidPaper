@@ -102,18 +102,18 @@ Our observations from this example can be summariesd as the following:
 
 \begin{figure}[h]
 \centering
-\subfloat[][Alternative read counts vs reference read counts. The number of clusters or blobs $n$ in the figure can provide some intuition on the number of mixed strains: $\lceil n/2\rceil$.]{
+\subfloat[][]{
 \includegraphics[width=\textwidth]{{pf3kSimField/PD0577-C/Untitled}.png}
 }\\
 
-\subfloat[][Haplotypes comparison of simulated mixture of samples {\textmd PH0064-C} and {\textmd PH0193-C} chromosome 14 deconvolution without any reference strain (bottom) versus with using reference panels I to III (from the top to the second last). Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The cyan and yellow background label the haplotype segments from strains {\textmd PH0064-C} and {\textmd PH0193-C}.]{
-\includegraphics[width=\textwidth]{{pf3kSimField/differentPanelForSample.75v25.withError}.png}
+\subfloat[][]{
+\includegraphics[width=\textwidth]{{pf3kSimField/differentPanelForSample.75v25.withError}.pdf}
 }\\
 
-\subfloat[][The level of multiple infection and intra-sample diversity varies across populations]{
+\subfloat[][]{
 \missingfigure[figwidth=\textwidth]{The level of multiple infection and intra-sample diversity varies across populations}
 }
-\caption{to come}\label{fig:main}
+\caption{TITLE TO COME ... Alternative read counts vs reference read counts. The number of clusters or blobs $n$ in the figure can provide some intuition on the number of mixed strains: $\lceil n/2\rceil$. Haplotypes comparison of simulated mixture of samples {\textmd PH0064-C} and {\textmd PH0193-C} chromosome 14 deconvolution without any reference strain (bottom) versus with using reference panels I to III (from the top to the second last). Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The cyan and yellow background label the haplotype segments from strains {\textmd PH0064-C} and {\textmd PH0193-C}. The level of multiple infection and intra-sample diversity varies across populations.}\label{fig:main}
 \end{figure}
 
 
@@ -128,14 +128,14 @@ We can infer inbreeding by looking at how different strains within a sample are 
 
 \begin{figure}[h]
 \centering
-\subfloat[][We find multiple cases of strains that are within 1-2 meioses of each other]{
+\subfloat[][]{
 \missingfigure[figwidth=\textwidth]{strains that are within 1-2 meioses of each other}
 }\\
 
-\subfloat[][big variations between populations in the level of inbreeding]{
+\subfloat[][]{
 \missingfigure[figwidth=\textwidth]{big variations between populations in the level of inbreeding}
 }
-\caption{to come}
+\caption{to come ... We find multiple cases of strains that are within 1-2 meioses of each other. big variations between populations in the level of inbreeding. }
 
 \end{figure}
 
@@ -307,50 +307,59 @@ where flags ``{\tt -ref}'', ``{\tt -alt}'', ``{\tt -plaf}'' and ``{\tt -exclude}
 
 \begin{figure}[ht]
 \centering
-\subfloat[][Diagnostic panels from the DEploid output.]{
+\subfloat[][%Diagnostic panels from the DEploid output.
+]{
 \includegraphics[width=.47\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.interpretDEploidFigure.1}.png}
 }%\label{fig:pg0396.interpret1}
-\subfloat[][Allele frequencies within sample across the genome.]{
+\subfloat[][%Allele frequencies within sample across the genome.
+]{
 \includegraphics[width=.53\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.interpretDEploidFigure.2}.png}
 }\\
 
-\subfloat[][Posterior painting probabilities for\\the deconvoluted strain 1 when using \\the reference panel Asia-1.]{
+\subfloat[][%Posterior painting probabilities for\\the deconvoluted strain 1 when using \\the reference panel Asia-1.
+]{
 \includegraphics[width=.32\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.single0}.png}
 }
-\subfloat[][Posterior painting probabilities for\\the deconvoluted strain 2 when using \\the reference panel Asia-1.]{
+\subfloat[][%Posterior painting probabilities for\\the deconvoluted strain 2 when using \\the reference panel Asia-1.
+]{
 \includegraphics[width=.32\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.single1}.png}
 }
-\subfloat[][Posterior painting probabilities for\\the deconvoluted strain 3 when using the\\reference panel Asia-1.]{
+\subfloat[][%Posterior painting probabilities for\\the deconvoluted strain 3 when using the\\reference panel Asia-1.
+]{
 \includegraphics[width=.32\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.single2}.png}
 }\\
-\caption{Sample {\textmd PD0577-C} deconvolution with the reference panel Asia-1.}\label{fig:PD0577}
+\caption{Sample {\textmd PD0577-C} deconvolution with Reference Panel Asia-1. (a) Diagnostic panels from the \texttt{DEploid} output. The top three panels are used as data exploration of sample {\textmd PD0577-C}. From left to right, it shows: 1. Alternative read counts vs reference read counts. 2. Histogram of the allele frequencies within sample.
+3. Allele frequencies at the population level (PLAF) vs allele frequencies within the sample (WSAF): red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF. The next three plots from left to right show: 1. MCMC samples for the strain proportions, with the fraction of each color indicating the proportion of a different strain at each MCMC sample. The three colored blocks suggest that there are three strains within sample {\textmd PD0577-C}, with proportions approximately 1/4, 1/4 and 1/2.
+2. Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. A low correlation suggests poor fitting.
+3. Log likelihood of the MCMC chain. This figure is used to indicate whether the MCMC has converged. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain porportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively. (b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome. (c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the Reference Panel Asia-1. Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.
+}\label{fig:PD0577}
 \end{figure}
 
 
-Here, we briefly describe each panel in Fig.~\ref{fig:PD0577}:
-\begin{itemize}
-\item (a) Diagnostic panels from the DEploid output. From the top to the bottom, it shows:
-%The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF inferred from our model (see Eqn.~(3) in main article). The next three plots from left to right show:
-\begin{enumerate}
-\item Alternative read counts vs reference read counts. The number of clusters or blobs $n$ in the figure can provide some intuition on the number of mixed strains: $\lceil n/2\rceil$. However, this can be misleading, as the number of clusters does not always reflect the true number of mixed strains (see examples in \citet{Zhu2017}).
+%Here, we briefly describe each panel in Fig.~\ref{fig:PD0577}:
+%\begin{itemize}
+%\item (a) Diagnostic panels from the DEploid output. From the top to the bottom, it shows:
+%%The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF inferred from our model (see Eqn.~(3) in main article). The next three plots from left to right show:
+%\begin{enumerate}
+%\item Alternative read counts vs reference read counts. The number of clusters or blobs $n$ in the figure can provide some intuition on the number of mixed strains: $\lceil n/2\rceil$. However, this can be misleading, as the number of clusters does not always reflect the true number of mixed strains (see examples in \citet{Zhu2017}).
 
-\item Histogram of the allele frequencies within sample. Similar to the alternative vs reference counts figure, the number of WSAF modes can be used as an indication of the number of strains and proportions within a field isolate.
+%\item Histogram of the allele frequencies within sample. Similar to the alternative vs reference counts figure, the number of WSAF modes can be used as an indication of the number of strains and proportions within a field isolate.
 
-\item Allele frequencies at the population level (PLAF) vs allele frequencies within sample (WSAF). The PLAF is calculated from total read counts across many samples, whereas the WSAF is calculated by using allele counts specific to one sample. Red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF inferred from our model
+%\item Allele frequencies at the population level (PLAF) vs allele frequencies within sample (WSAF). The PLAF is calculated from total read counts across many samples, whereas the WSAF is calculated by using allele counts specific to one sample. Red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF inferred from our model
 
-\item MCMC samples for the strain proportions, with the fraction of each color indicating the proportion of a different strain at each MCMC sample. The three colored blocks suggest that there are three strains within sample {\textmd PD0577-C}, with proportions approximately 1/4, 1/4 and 1/2.
+%\item MCMC samples for the strain proportions, with the fraction of each color indicating the proportion of a different strain at each MCMC sample. The three colored blocks suggest that there are three strains within sample {\textmd PD0577-C}, with proportions approximately 1/4, 1/4 and 1/2.
 
-\item Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. A low correlation suggests poor fitting.
+%\item Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. A low correlation suggests poor fitting.
 
-\item Log likelihood of the MCMC chain. This figure indicates whether the MCMC has converged. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain porportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively.
-\end{enumerate}
+%\item Log likelihood of the MCMC chain. This figure indicates whether the MCMC has converged. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain porportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively.
+%\end{enumerate}
 
-\item (b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome.
+%\item (b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome.
 
-\item (c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the reference panel Asia-1 (see Table~\ref{tab:panelSamples}). Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.
-\end{itemize}
+%\item (c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the reference panel Asia-1 (see Table~\ref{tab:panelSamples}). Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.
+%\end{itemize}
 
-\newpage
+%\newpage
 
 \begin{thebibliography}{}
 
@@ -359,29 +368,25 @@ Here, we briefly describe each panel in Fig.~\ref{fig:PD0577}:
 Browning, S.~R. and B.~L. Browning (2007)
 \newblock Rapid and accurate haplotype phasing and missing-data inference for
   whole-genome association studies by use of localised haplotype clustering.
-\newblock {\em The American Journal of Human Genetics\/}~{\em 81\/}(5), 1084--1097.
+\newblock {\em Am. J. Hum. Genet.\/}~{\em 81\/}(5), 1084--1097.
 
 \bibitem[\protect\citeauthoryear{Howie, Donnelly, and Marchini}{Howie
   et~al.}{2009}]{Howie2009}
 Howie, B.~N. {\em et al}. (2009)
-\newblock A flexible and accurate genotype imputation method for the next
-  generation of genome-wide association studies.
-\newblock {\em PLoS Genet\/}~{\em 5\/}(6), 1--15.
-
-
+\newblock A flexible and accurate genotype imputation method for the next generation of genome-wide association studies.
+\newblock {\em PLoS Genet.\/}~{\em 5\/}(6), 1--15.
 
 \bibitem[\protect\citeauthoryear{O'Brien}{O'Brien et~al.}{2015}]{Jack2016}
 O'Brien D,J. {\em et al}. (2016)
-\newblock Inferring Strain Mixture within Clinical {\em Plasmodium falciparum} Isolates from Genomic Sequence Data. \newblock {\em PLoS Comput Biol\/}~{\em 12\/}(6): e1004824. doi: 10.1371/journal.pcbi.1004824
-
+\newblock Inferring Strain Mixture within Clinical {\em Plasmodium falciparum} Isolates from Genomic Sequence Data.
+\newblock {\em PLoS Comput. Biol.\/}~{\em 12\/}(6): e1004824. doi: 10.1371/journal.pcbi.1004824
 
 \bibitem[\protect\citeauthoryear{Pf3k}{Pf3k}{2016}]{Pf3k2016}
 The Pf3k Project: pilot data release 5 (2016)
 \newblock {www.malariagen.net/data/pf3k-5} [accessed 1 June 2016]
 
-
 \bibitem[\protect\citeauthoryear{Zhu, Garcia, McVean}{Zhu et~al.}{201*}]{Zhu2017}
-Zhu, J. S.\, J. A. Garcia\, G. McVean. (201*)
+Zhu, J. S.\, J. A. Garcia\, G. McVean. (2017)
 \newblock {DEploid: Untangling complexity of infection in {\it Plasmodium falciparum}}.
 \newblock {\em JOURNAL\/}~{\em NUMBER\/}, PAGES.
 

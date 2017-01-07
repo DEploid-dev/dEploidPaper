@@ -114,7 +114,7 @@ fun.plotHapWithProp <- function( hap, prop, fig.title, max.at ){
 
     xrange = c(0, max.at)
     yrange = c(0, 1)
-    plot( xrange, yrange, type= "n", xlim=xrange, ylim = yrange, ylab="", main=fig.title, xlab = "", cex.lab = 2, cex.main = 2, cex.axis=2)
+    plot( xrange, yrange, type= "n", xlim=xrange, ylim = yrange, ylab="", main=fig.title, xlab = "", cex.lab = 2, cex.main = 3, cex.axis=2)
 
     xleft = 0:(haplength-1)
     xright = xleft+1
@@ -156,8 +156,8 @@ RefNames=c(Ref1Name, Ref2Name)
 #          "PG0412-C.14.labPanel")
 
 #suffix = ".noError"
-#suffix = ".withError"
-suffix = ".noErrormiss0001"
+suffix = ".withError"
+#suffix = ".noErrormiss0001"
 #suffix = ".withErrormiss0001"
 #sampleName = "25v75"
 sampleName = "75v25"
@@ -166,11 +166,14 @@ sampleName = "75v25"
 cases = c(paste(sampleName, "panel", c(1,2,3), suffix, sep=""),
           paste(sampleName, "noPanel", suffix, sep = ""))
 
-png(paste("differentPanelForSample.", sampleName, suffix, ".png", sep=""), width = 1920, height = 1080)
+panelNames = c(paste("Panel ", c("I", "II", "III"), sep=""), "No panel")
+paneli = 0
+
+pdf(paste("differentPanelForSample.", sampleName, suffix, ".pdf", sep=""), width = 18, height = 10)
 par ( mfrow = c(length(cases),1))
 
 for ( prefix in cases ){
-
+    paneli = paneli + 1
     tmpProp = read.table(paste(prefix,".prop",sep=""), header=F)
     prop = as.numeric(tmpProp[dim(tmpProp)[1],])
 
@@ -197,7 +200,8 @@ for ( prefix in cases ){
 
         hapAndError = fun.computeErrors2( tmpHap, tmpRef1, tmpRef2)
 
-        tmpTitle = paste(prefix, rownames(table(asia1[,1]))[chrom], sum(hapAndError$switchError), "switch errors", RefNames, hapAndError$mutError, "miss copy errors")
+#        tmpTitle = paste(prefix, rownames(table(asia1[,1]))[chrom], sum(hapAndError$switchError), "switch errors", RefNames, hapAndError$mutError, "miss copy errors")
+        tmpTitle = paste(panelNames[paneli],", total switch errors:", sum(hapAndError$switchError), ", total genotype errors:", sum(hapAndError$mutError))
 
         fun.plotHapWithProp (hapAndError$hap, tmpProp,
              tmpTitle,
