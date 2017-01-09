@@ -40,9 +40,9 @@ pdf(paste("differentPanelForSample.", sampleName, ".pdf", sep=""), width = 18, h
 #png(paste("differentPanelForSample.", sampleName, "Hi.png", sep=""), width = 9600, height = 5400, res=350)
 #png(paste("differentPanelForSample.", sampleName, "Hi2.png", sep=""), width = 9600, height = 7560, res=350)
 
-par ( mfrow = c(length(cases),1))
+par ( mfrow = c(length(cases),1), oma=c(6, 6, 2, 2), las=1)
 
-panelNames = c("No panel,",
+panelNames = c("No LD,",
                "Panel I,",
                "Panel II,",
                "Panel III,",
@@ -99,6 +99,9 @@ print(prefix)
     write.table(c(switchError, mutError), file = paste(prefix,".errorCount", sep=""), quote = F, row.names=F, col.names=F)
     paneli= paneli+1
 }
+
+mtext("Marker index", 1, 3, outer=TRUE, cex = 2)
+mtext("Strain Proportion", 2, 3, outer=TRUE, cex = 2, las=0)
 
 dev.off()
 
