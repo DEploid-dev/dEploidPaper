@@ -166,11 +166,11 @@ sampleName = "75v25"
 cases = c(paste(sampleName, "panel", c(1,2,3), suffix, sep=""),
           paste(sampleName, "noPanel", suffix, sep = ""))
 
-panelNames = c(paste("Panel ", c("I", "II", "III"), sep=""), "No panel")
+panelNames = c(paste("Panel ", c("I", "II", "III"), sep=""), "No LD")
 paneli = 0
 
 pdf(paste("differentPanelForSample.", sampleName, suffix, ".pdf", sep=""), width = 18, height = 10)
-par ( mfrow = c(length(cases),1))
+par ( mfrow = c(length(cases),1), oma=c(6, 6, 2, 2), las=1)
 
 for ( prefix in cases ){
     paneli = paneli + 1
@@ -212,4 +212,6 @@ for ( prefix in cases ){
     write.table(c(switchError, mutError), file = paste(prefix,".errorCount", sep=""), quote = F, row.names=F, col.names=F)
 }
 
+mtext("Marker index", 1, 3, outer=TRUE, cex = 2)
+mtext("Strain Proportion", 2, 3, outer=TRUE, cex = 2, las=0)
 dev.off()

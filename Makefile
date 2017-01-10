@@ -20,7 +20,7 @@ bioInfoSupplement.pdf: bioInfoSupplement.tex ${supDEploidfigures} ${supCoveragef
 clean:
 	rm -f *.blg *snm *nav *.bbl *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out bioInfo.pdf bioInfoSupplement.pdf
 
-plain.pdf: bioInfo.tex
+plain.pdf: bioInfo.tex Makefile
 	sed -e "s/bioinfo/article/" \
 	 -e "s/\\\usepackage{todonotes}/\\\usepackage{fontenc,inputenc,crop,graphicx,amsmath,array,color,amssymb,flushend,stfloats,amsthm,chngpage,times,fullpage, amsmath,natbib,todonotes}\n\\\def\\\address#1{\\\global\\\def\\\@issue{#1}}\n\\\def\\\history#1{\\\global\\\def\\\@history{#1}}\n\\\def\\\abstract#1{\\\global\\\def\\\@abstract{#1}}\n\\\def\\\corresp#1{\\\global\\\def\\\@corresp{#1}}\n/" \
 	 -e "/copyrightyear/d" \
@@ -33,10 +33,16 @@ plain.pdf: bioInfo.tex
 	 -e "s/\\\sfb//g" \
 	 -e "s/\\\sf//g" \
 	 -e "/\\\history{/d" \
-	 -e "/\\\editor{/d" \
-	 -e "/\\\begin{methods}/d" \
-	 -e "/\\\end{methods}/d" \
-	 -e "s/\\\maketitle/\\\maketitle\n\\\noindent1. Wellcome Trust Centre for Human Genetics, University of Oxford, Oxford OX3 7BN, UK \\\\\\\2. Big data institute, Li Ka Shing Centre for Health Information and Discovery, University of Oxford, Oxford OX3 7BN, UK\\\\\\\\*. To whom correspondence should be addressed.\n/" \
+	 -e "/\\\maketitle/d" \
+	 -e "s/\\\editor{Associate Editor: \\\textcolor{red}{XXXXXXX}}/\\\maketitle\n\\\noindent1. Wellcome Trust Centre for Human Genetics, University of Oxford, Oxford, UK \\\\\\\2. Medical Research Council (MRC) Centre for Genomics and Global Health, University of Oxford, Oxford, UK  \\\\\\\3. Wellcome Trust Sanger Institute, Hinxton, UK \\\\\\\4. Big Data Institute, Li Ka Shing Centre for Health Information and Discovery, University of Oxford, Oxford, UK \\\\\\\{*\} To whom correspondence should be addressed.\\\\\\\/" \
+	 -e "s/\\\abstract{\\\textbf{Motivation:}/\\\begin{abstract}\\\\\\\\\\\noindent\\\textbf{Motivation:}  \\\\\\\ \\\noindent /g" \
+	 -e "s/\\\textbf{Supplementary information:} Supplementary data are available at \\\textit{Bioinformatics} online.}/\\\end{abstract}/g" \
+	 -e "s/\\\textbf{Results:}/\\\textbf{Results:}  \\\\\\\ \\\noindent /g" \
+	 -e "s/\\\textbf{Availability and implementation:}/\\\textbf{Results:}  \\\\\\\ \\\noindent /g" \
+	 -e "s/\\\textbf{Contact:}/\\\textbf{Contact:}  \\\\\\\ \\\noindent /g" \
+	 -e "s/0.45\\\textwidth/0.9\\\textwidth/g" \
+	 -e "s/0.5\\\textwidth/0.9\\\textwidth/g" \
+	 -e "s/.45\\\textwidth/0.9\\\textwidth/g" \
 	  bioInfo.tex > plain.tex
 	pdflatex plain.tex
 	pdflatex plain.tex
