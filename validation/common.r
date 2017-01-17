@@ -128,7 +128,9 @@ fun.plotHapWithProp <- function( hap, prop, fig.title, max.at ){
 
     xleft = 0:(haplength-1)
     xright = xleft+1
-    ycum = c(0, cumsum(prop))
+#    ycum = as.numeric(c(0, prop[1], 1))
+    ycum = as.numeric(c(0, cumsum(as.numeric(prop))))
+#cat(ycum, "\n")
 
     for ( k in c(1:nhap) ){
       tmpHap = hap[,k]

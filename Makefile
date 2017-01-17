@@ -1,5 +1,5 @@
 .PHONY: all clean
-all: clean bioInfo.pdf bioInfoSupplement.pdf pf3kDEploidNotes.pdf
+all: clean natMethods.pdf
 
 mainfigures = $(shell grep png bioInfo.tex | sed -e "s/^.*{/figures\//g" -e "s/\}//g" )
 supDEploidfigures = $(shell grep png bioInfoSupplementDEploid.tex | sed -e "s/^.*{//g" -e "s/\}//g" )
@@ -13,12 +13,20 @@ bioInfo.pdf: bioInfo.tex
 	pdflatex bioInfo.tex
 	pdflatex bioInfo.tex
 
+natMethods.pdf: natMethods.tex natMethods.bbl
+	pdflatex natMethods.tex
+	pdflatex natMethods.tex
+
+natMethods.bbl: natMethods.bib
+	pdflatex natMethods.tex
+	bibtex natMethods.aux
+
 bioInfoSupplement.pdf: bioInfoSupplement.tex ${supDEploidfigures} ${supCoveragefigures} ${suptex} supplementReset.tex
 	pdflatex bioInfoSupplement.tex
 	pdflatex bioInfoSupplement.tex
 
 clean:
-	rm -f *.blg *snm *nav *.bbl *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out bioInfo.pdf bioInfoSupplement.pdf
+	rm -f *.blg *snm *nav *.bbl *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out bioInfoSupplement.pdf natMethods.pdf
 
 plain.pdf: bioInfo.tex Makefile
 	sed -e "s/bioinfo/article/" \
@@ -38,7 +46,7 @@ plain.pdf: bioInfo.tex Makefile
 	 -e "s/\\\abstract{\\\textbf{Motivation:}/\\\begin{abstract}\\\\\\\\\\\noindent\\\textbf{Motivation:}  \\\\\\\ \\\noindent /g" \
 	 -e "s/\\\textbf{Supplementary information:} Supplementary data are available at \\\textit{Bioinformatics} online.}/\\\end{abstract}/g" \
 	 -e "s/\\\textbf{Results:}/\\\textbf{Results:}  \\\\\\\ \\\noindent /g" \
-	 -e "s/\\\textbf{Availability and implementation:}/\\\textbf{Results:}  \\\\\\\ \\\noindent /g" \
+	 -e "s/\\\textbf{Availability and implementation:}/\\\textbf{Availability and implementation:}  \\\\\\\ \\\noindent /g" \
 	 -e "s/\\\textbf{Contact:}/\\\textbf{Contact:}  \\\\\\\ \\\noindent /g" \
 	 -e "s/0.45\\\textwidth/0.9\\\textwidth/g" \
 	 -e "s/0.5\\\textwidth/0.9\\\textwidth/g" \
