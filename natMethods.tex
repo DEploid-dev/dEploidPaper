@@ -16,6 +16,7 @@
 \newcommand*{\Scale}[2][4]{\scalebox{#1}{$#2$}}%
 
 
+\newcounter{firstbib}
 
 
 \begin{document}
@@ -139,7 +140,190 @@ Methods and any associated references are available in the online version of the
 \end{addendum}
 
 \bibliographystyle{naturemag}
-\bibliography{natMethods}
+%\bibliography{natMethods}
+
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\providecommand{\bibinfo}[2]{#2}
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem{WHO2016}
+\bibinfo{author}{WHO}.
+\newblock \bibinfo{title}{World malaria report 2015}.
+\newblock \bibinfo{howpublished}{World Health Organization}
+  (\bibinfo{year}{2016}).
+
+\bibitem{deRoode2005}
+\bibinfo{author}{de~Roode, J.~C.} \emph{et~al.}
+\newblock \bibinfo{title}{Virulence and competitive ability in genetically
+  diverse malaria infections}.
+\newblock \emph{\bibinfo{journal}{Proc. Natl. Acad. Sci. USA}}
+  \textbf{\bibinfo{volume}{102}}, \bibinfo{pages}{7624--7628}
+  (\bibinfo{year}{2005}).
+
+\bibitem{Arnot1998}
+\bibinfo{author}{Arnot, D.}
+\newblock \bibinfo{title}{Unstable malaria in sudan: the influence of the dry
+  season: Clone multiplicity of {{\em {P}lasmodium falciparum}} infections in
+  individuals exposed to variable levels of disease transmission}.
+\newblock \emph{\bibinfo{journal}{Trans. R. Soc. Trop. Med. Hyg.}}
+  \textbf{\bibinfo{volume}{92}}, \bibinfo{pages}{580--585}
+  (\bibinfo{year}{1998}).
+
+\bibitem{deRoode2004}
+\bibinfo{author}{de~Roode, J.}, \bibinfo{author}{Culleton, R.},
+  \bibinfo{author}{Bell, A.} \& \bibinfo{author}{Read, A.}
+\newblock \bibinfo{title}{Competitive release of drug resistance following drug
+  treatment of mixed {{\em {P}lasmodium chabaudi}} infections}.
+\newblock \emph{\bibinfo{journal}{Malar. J.}} \textbf{\bibinfo{volume}{3}},
+  \bibinfo{pages}{33} (\bibinfo{year}{2004}).
+
+\bibitem{Bell2006}
+\bibinfo{author}{Bell, A.}, \bibinfo{author}{de~Roode, J.},
+  \bibinfo{author}{Sim, D.} \& \bibinfo{author}{AF, R.}
+\newblock \bibinfo{title}{Within-host competition in genetically diverse
+  malaria infection: parasite virulence and competitive success.}
+\newblock \emph{\bibinfo{journal}{Evolution}} \textbf{\bibinfo{volume}{60}},
+  \bibinfo{pages}{1358--1371} (\bibinfo{year}{2006}).
+
+\bibitem{Harris2013}
+\bibinfo{author}{Harris, K.} \& \bibinfo{author}{Nielsen, R.}
+\newblock \bibinfo{title}{Inferring demographic history from a spectrum of
+  shared haplotype lengths}.
+\newblock \emph{\bibinfo{journal}{PLoS Genet.}} \textbf{\bibinfo{volume}{9}},
+  \bibinfo{pages}{e1003521} (\bibinfo{year}{2013}).
+
+\bibitem{Lawson2012}
+\bibinfo{author}{Lawson, D.~J.}, \bibinfo{author}{Hellenthal, G.},
+  \bibinfo{author}{Myers, S.} \& \bibinfo{author}{Falush, D.}
+\newblock \bibinfo{title}{Inference of population structure using dense
+  haplotype data}.
+\newblock \emph{\bibinfo{journal}{PLOS Genet.}} \textbf{\bibinfo{volume}{8}},
+  \bibinfo{pages}{e1002453} (\bibinfo{year}{2012}).
+
+\bibitem{Mathieson2014}
+\bibinfo{author}{Mathieson, I.} \& \bibinfo{author}{McVean, G.}
+\newblock \bibinfo{title}{Demography and the age of rare variants}.
+\newblock \emph{\bibinfo{journal}{PLoS Genet.}} \textbf{\bibinfo{volume}{10}},
+  \bibinfo{pages}{e1004528} (\bibinfo{year}{2014}).
+
+\bibitem{Sabeti2002}
+\bibinfo{author}{Sabeti, P.~C.} \emph{et~al.}
+\newblock \bibinfo{title}{Detecting recent positive selection in the human
+  genome from haplotype structure}.
+\newblock \emph{\bibinfo{journal}{Nature}} \textbf{\bibinfo{volume}{419}},
+  \bibinfo{pages}{832--837} (\bibinfo{year}{2002}).
+
+\bibitem{Browning2007}
+\bibinfo{author}{Browning, S.~R.} \& \bibinfo{author}{Browning, B.~L.}
+\newblock \bibinfo{title}{Rapid and accurate haplotype phasing and missing-data
+  inference for whole-genome association studies by use of localized haplotype
+  clustering}.
+\newblock \emph{\bibinfo{journal}{Am. J. Hum. Genet.}}
+  \textbf{\bibinfo{volume}{81}}, \bibinfo{pages}{1084 -- 1097}
+  (\bibinfo{year}{2007}).
+
+\bibitem{Howie2009}
+\bibinfo{author}{Howie, B.~N.}, \bibinfo{author}{Donnelly, P.} \&
+  \bibinfo{author}{Marchini, J.}
+\newblock \bibinfo{title}{A flexible and accurate genotype imputation method
+  for the next generation of genome-wide association studies}.
+\newblock \emph{\bibinfo{journal}{PLOS Genet.}} \textbf{\bibinfo{volume}{5}},
+  \bibinfo{pages}{e1000529} (\bibinfo{year}{2009}).
+
+\bibitem{Delaneau2012}
+\bibinfo{author}{Delaneau, O.}, \bibinfo{author}{Marchini, J.} \&
+  \bibinfo{author}{Zagury, J.-F.}
+\newblock \bibinfo{title}{A linear complexity phasing method for thousands of
+  genomes}.
+\newblock \emph{\bibinfo{journal}{Nat. Methods}} \textbf{\bibinfo{volume}{9}},
+  \bibinfo{pages}{179--181} (\bibinfo{year}{2012}).
+
+\bibitem{Oconnell2014}
+\bibinfo{author}{O'Connell, J.} \emph{et~al.}
+\newblock \bibinfo{title}{A general approach for haplotype phasing across the
+  full spectrum of relatedness}.
+\newblock \emph{\bibinfo{journal}{PLOS Genet.}} \textbf{\bibinfo{volume}{10}},
+  \bibinfo{pages}{e1004234} (\bibinfo{year}{2014}).
+
+\bibitem{Galinsky2015}
+\bibinfo{author}{Galinsky, K.} \emph{et~al.}
+\newblock \bibinfo{title}{{COIL: a methodology for evaluating malarial
+  complexity of infection using likelihood from single nucleotide polymorphism
+  data}}.
+\newblock \emph{\bibinfo{journal}{Malar. J.}} \textbf{\bibinfo{volume}{14}}
+  (\bibinfo{year}{2015}).
+
+\bibitem{Jack2016}
+\bibinfo{author}{O'Brien, J.~D.}, \bibinfo{author}{Iqbal, Z.},
+  \bibinfo{author}{Wendler, J.} \& \bibinfo{author}{Amenga-Etego, L.}
+\newblock \bibinfo{title}{Inferring strain mixture within clinical {{\it
+  {P}lasmodium falciparum}} isolates from genomic sequence data}.
+\newblock \emph{\bibinfo{journal}{PLoS Comput. Biol.}}
+  \textbf{\bibinfo{volume}{12}}, \bibinfo{pages}{1--20} (\bibinfo{year}{2016}).
+
+\bibitem{Pf3k2016}
+\bibinfo{title}{The pf3k project: pilot data release 5} (\bibinfo{year}{2016}).
+\newblock \urlprefix\url{www.malariagen.net/data/pf3k-5}.
+\newblock \bibinfo{note}{[accessed 1 June 2016]}.
+
+\bibitem{Wendler2015}
+\bibinfo{author}{Wendler, J.}
+\newblock \emph{\bibinfo{title}{Accessing complex genomic variation in
+  {\em{{P}lasmodium falciparum}} natural infection}}.
+\newblock Ph.D. thesis, \bibinfo{school}{University of Oxford}
+  (\bibinfo{year}{2015}).
+
+\bibitem{MalariaGen2008}
+\bibinfo{author}{MalariaGEN}.
+\newblock \bibinfo{title}{A global network for investigating the genomic
+  epidemiology of malaria}.
+\newblock \emph{\bibinfo{journal}{Nature}} \textbf{\bibinfo{volume}{456}},
+  \bibinfo{pages}{732--737} (\bibinfo{year}{2008}).
+
+\bibitem{Menske2012}
+\bibinfo{author}{Manske, M.} \emph{et~al.}
+\newblock \bibinfo{title}{Analysis of {{\em Plasmodium falciparum}} diversity
+  in natural infections by deep sequencing.}
+\newblock \emph{\bibinfo{journal}{Nature}} \textbf{\bibinfo{volume}{487}},
+  \bibinfo{pages}{375--379} (\bibinfo{year}{2012}).
+
+\bibitem{Miles2016}
+\bibinfo{author}{Miles, A.} \emph{et~al.}
+\newblock \bibinfo{title}{Indels, structural variation, and recombination drive
+  genomic diversity in {{\it {P}lasmodium falciparum}}}.
+\newblock \emph{\bibinfo{journal}{Genome Res.}} \textbf{\bibinfo{volume}{26}},
+  \bibinfo{pages}{1288--1299} (\bibinfo{year}{2016}).
+
+\bibitem{Pearson2016}
+\bibinfo{author}{Pearson, R.~D.} \emph{et~al.}
+\newblock \bibinfo{title}{Genomic analysis of local variation and recent
+  evolution in {{\em Plasmodium vivax}}}.
+\newblock \emph{\bibinfo{journal}{Nat. Genet.}} \textbf{\bibinfo{volume}{48}},
+  \bibinfo{pages}{959--964} (\bibinfo{year}{2016}).
+
+\bibitem{Davis2016}
+\bibinfo{author}{Davies, R.~W.}, \bibinfo{author}{Flint, J.},
+  \bibinfo{author}{Myers, S.} \& \bibinfo{author}{Mott, R.}
+\newblock \bibinfo{title}{Rapid genotype imputation from sequence without
+  reference panels}.
+\newblock \emph{\bibinfo{journal}{Nat. Genet.}} \textbf{\bibinfo{volume}{48}},
+  \bibinfo{pages}{965--969} (\bibinfo{year}{2016}).
+
+\bibitem{Lunter2016}
+\bibinfo{author}{Lunter, G.}
+\newblock \bibinfo{title}{{Fast haplotype matching in very large cohorts using
+  the Li and Stephens model}}.
+\newblock \emph{\bibinfo{journal}{bioRxiv}}  (\bibinfo{year}{2016}).
+
+\setcounter{firstbib}{\value{enumiv}}
+
+\end{thebibliography}
+
+
+
 
 \newpage
 
@@ -300,6 +484,19 @@ As in the single-haplotype update, the hidden Markov model formulation enables u
 
 \end{itemize}
 
+
+\begin{thebibliography}{9}
+\setcounter{enumiv}{\value{firstbib}}
+\bibitem{Li2003}
+{Li, N.} \& {Stephens, M.}
+\newblock {Modeling linkage disequilibrium and identifying
+  recombination hotspots using single-nucleotide polymorphism data}.
+\newblock \emph{{Genetics}} \textbf{{165}},
+  {2213--2233} ({2003}).
+\end{thebibliography}
+
+
+
 \begin{table}\centering
 {\renewcommand{\arraystretch}{0.6}
 \begin{tabular}{c|c}\hline
@@ -393,6 +590,5 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 \includegraphics[width=0.9\textwidth]{runTimeHi.pdf}
 \caption{Run-time and scaling.  CPU time (seconds) for deconvoluting chromosomes 12, 13 and 14 of sample {\textmd PG0412-C} with reference panels I, V and VI (size 4, 10 and 16 reference haplotypes respectively). The run-time is approximately linear with respect to the number of sites and shows the expected quadratic trend against the number of reference strains.}\label{fig:runtime}
 \end{figure}
-
 
 \end{document}

@@ -13,7 +13,7 @@ bioInfo.pdf: bioInfo.tex
 	pdflatex bioInfo.tex
 	pdflatex bioInfo.tex
 
-natMethods.pdf: natMethods.tex natMethods.bbl
+natMethods.pdf: natMethods.tex
 	pdflatex natMethods.tex
 	pdflatex natMethods.tex
 
