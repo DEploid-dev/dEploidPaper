@@ -499,32 +499,6 @@ As in the single-haplotype update, the hidden Markov model formulation enables u
 
 \begin{table}\centering
 {\renewcommand{\arraystretch}{0.6}
-\begin{tabular}{c|c}\hline
-$i$              & Marker index\\
-$j$              & Sample index \\
-$r$              & Read count for reference allele \\
-$a$              & Read count for alternative allele \\
-$f$              & Population level allele frequency (PLAF) \\
-$n$              & Number of strains within sample \\
-$l$              & Sequence length \\
-$\mathbf{w}$      & Proportions of strains \\
-$\mathbf{x}$	& Log titre of strains \\
-$\mathbf{h}_{i}$ & Allelic states of $n$ parasite strains at site $i$ \\
-$h_{k,i}$   & Allelic state of parasite strain $k$ at site $i$\\
-$p$              & Observed within sample allele frequency (WSAF) \\
-$q$              & Unadjusted expected WSAF  \\
-$\pi$            & Adjusted expected WSAF \\
-$\Xi$            & Reference panel\\
-$\xi_{k,i}$     & Allelic state of reference panel strain $k$ at site $i$\\
-$G$              & Scaling factor used for genetic map\\
-$e$              & Probability of read error\\ \hline
-\end{tabular}
-}
-\caption{Table summarising the notation used in this article.}\label{tab:notation}
-\end{table}
-
-\begin{table}\centering
-{\renewcommand{\arraystretch}{0.6}
 \begin{tabular}[c]{@{}l|llll@{}}\hline
 sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 {\textmd	PG0389-C}	&	88.5	(90)	&	11.5	(10)	&		0	&		0	\tabularnewline
@@ -562,16 +536,38 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 \end{table}
 
 
-\begin{figure}
-\centering
-\includegraphics[width=0.9\textwidth]{LS.pdf}
-\caption{The \cite{Li2003} algorithm as applied to the problem of multiple strain inference. Strain 1 haplotype is made up from reference haplotype segments of 1 and 2; and strain 2 haplotype is made up from reference haplotype segments of 3 and 4. With mis-copying, we allow strain states differ from the path: At the third last position of strain 1, the path is copied from reference haplotype 2, with the state of 0.}
-\label{fig:ls}
-\end{figure}
+
+\begin{table}\centering
+{\renewcommand{\arraystretch}{0.6}
+\begin{tabular}{c|c}\hline
+$i$              & Marker index\\
+$j$              & Sample index \\
+$r$              & Read count for reference allele \\
+$a$              & Read count for alternative allele \\
+$f$              & Population level allele frequency (PLAF) \\
+$n$              & Number of strains within sample \\
+$l$              & Sequence length \\
+$\mathbf{w}$      & Proportions of strains \\
+$\mathbf{x}$	& Log titre of strains \\
+$\mathbf{h}_{i}$ & Allelic states of $n$ parasite strains at site $i$ \\
+$h_{k,i}$   & Allelic state of parasite strain $k$ at site $i$\\
+$p$              & Observed within sample allele frequency (WSAF) \\
+$q$              & Unadjusted expected WSAF  \\
+$\pi$            & Adjusted expected WSAF \\
+$\Xi$            & Reference panel\\
+$\xi_{k,i}$     & Allelic state of reference panel strain $k$ at site $i$\\
+$G$              & Scaling factor used for genetic map\\
+$e$              & Probability of read error\\ \hline
+\end{tabular}
+}
+\caption{Table summarising the notation used in this article.}\label{tab:notation}
+\end{table}
+
+
 
 \begin{figure}
 \centerline{
-\includegraphics[width=\textwidth]{{differentPanelForSample.PG0396-C}.pdf}
+\includegraphics[width=\textwidth]{{Fig1}.pdf}
 }
 \caption{Comparison of true and inferred haplotypes for Chromosome 14 in sample {\textmd PG0396-C} without linkage disequilibrium (top) and using Reference Panels I to IV (from the second to the bottom). Reference Panel V gives results equivalent Panel IV and Panel VI gives results similar to Panel I.  Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segments from strains 7G8, HB3 and Dd2 respectively. The switch errors are obtained by counting the changes of a strain segment mapped to reference strains; the genotype errors are the discordance between the strain and the mapped reference segments.}
 \label{fig:differentRefPanel}
@@ -579,7 +575,7 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 
 \begin{figure}
 \centerline{
-\includegraphics[width=0.9\textwidth]{{switchVsMisCopyErrlogHi}.pdf}
+\includegraphics[width=0.9\textwidth]{{Fig2}.pdf}
 }
 \caption{Relationship between strain proportion and inference accuracy in the experimental validation.   We use reference panel V to deconvolute all 27 samples. Each point represents a deconvoluted haplotype with 18,570 sites. Point shape refers to strain and colour indicates whether it was in mixture with two (red) or three (blue) strains.  Top panel shows switch error rate.  Bottom panel indicates genotyping error rate.}
 \label{fig:switchVsMisCopy}
@@ -587,8 +583,17 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 
 \begin{figure}
 \centering
-\includegraphics[width=0.9\textwidth]{runTimeHi.pdf}
+\includegraphics[width=0.9\textwidth]{Fig3.pdf}
 \caption{Run-time and scaling.  CPU time (seconds) for deconvoluting chromosomes 12, 13 and 14 of sample {\textmd PG0412-C} with reference panels I, V and VI (size 4, 10 and 16 reference haplotypes respectively). The run-time is approximately linear with respect to the number of sites and shows the expected quadratic trend against the number of reference strains.}\label{fig:runtime}
 \end{figure}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.9\textwidth]{Fig4.pdf}
+\caption{The \cite{Li2003} algorithm as applied to the problem of multiple strain inference. Strain 1 haplotype is made up from reference haplotype segments of 1 and 2; and strain 2 haplotype is made up from reference haplotype segments of 3 and 4. With mis-copying, we allow strain states differ from the path: At the third last position of strain 1, the path is copied from reference haplotype 2, with the state of 0.}
+\label{fig:ls}
+\end{figure}
+
 
 \end{document}

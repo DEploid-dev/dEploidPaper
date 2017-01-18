@@ -1,0 +1,16 @@
+rm(list = ls())
+coil = read.csv("coil.k.csv", header=T)
+deploid = read.csv("deploid.k.csv", header=T)
+true = read.csv("true.k.csv", header=T)
+
+#myd <- data.frame( deploid = deploid$k, coil = coil$k, k = as.factor(true$k))
+pdf("trueVsInferredK.pdf", width = 8, height = 8)
+set.seed(1)
+jitterOff = 0.5
+plot(c(.85,3.15),c(.85,3.15), type="n", xaxt = "n", yaxt="n", xlab = "True number of strains", ylab = "Inferred number of strains", cex.lab= 1.4)
+points(jitter(true$k, jitterOff), jitter(coil$k,jitterOff), cex = 2, col = 'blue', pch = 20)
+points(jitter(true$k, jitterOff), jitter(deploid$k,jitterOff), cex = 2, col = 'red', pch = 20)
+axis(1, at=c(1, 2, 3), labels=c("1", "2", "3"), cex.lab= 1.2)
+axis(2, at=c(1, 2, 3), labels=c("1", "2", "3"), cex.lab= 1.2)
+legend("topleft", legend = c("DEploid", "COIL"), col = c("red", "blue"), text.col = c("red", "blue"), pch = 20, cex=1.4)
+dev.off()
