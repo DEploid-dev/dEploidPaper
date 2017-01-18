@@ -37,7 +37,7 @@
 
 \begin{abstract}
 \noindent\textbf{Motivation:}  \\ \noindent
-The presence of multiple infecting strains of the malarial parasite {\it Plasmodium falciparum} affects  key phenotypic  traits, including drug resistance and risk of severe disease. Advances in protocols and sequencing technology have made it possible  to obtain  high-coverage genome-wide  sequencing data from blood samples and blood spots taken in the field. However, analysing and interpreting such data is challenging  because of the high rate of multiple infections present.\\
+The presence of multiple infecting strains of the malarial parasite {\it Plasmodium falciparum} affects  key phenotypic  traits, including drug resistance and risk of severe disease. Advances in protocols and sequencing technology have made it possible  to obtain  high-coverage genome-wide  sequencing data from blood samples and blood spots taken in the field. However, analyzing and interpreting such data is challenging  because of the high rate of multiple infections present.\\
 \textbf{Results:}  \\ \noindent  We have developed a statistical method and implementation for deconvoluting multiple genome sequences present in an individual with mixed infections.  The software package {\it DEploid} uses haplotype structure within a reference panel of clonal isolates as a prior for haplotypes present in a given sample. It estimates the number of strains, their relative proportions and the haplotypes presented in a sample, allowing researchers to study multiple infection in malaria with an unprecedented level of detail.\\
 \textbf{Availability and implementation:}  \\ \noindent  The open source implementation {\it DEploid} is freely available at \href{https://github.com/mcveanlab/DEploid}{https://github.com/mcveanlab/DEploid} under the conditions of the GPLv3 license. \\
 An R version is available at \href{https://github.com/mcveanlab/DEploid-r}{https://github.com/mcveanlab/DEploid-r}.\\
@@ -56,7 +56,7 @@ As part of the Pf3k project \cite{Pf3k2016}, an effort to map the genetic divers
 
 As validation we used a set of {\it in vitro} mixtures created by \cite{Wendler2015} to simulate mixed infections. DNA was extracted from four laboratory parasite lines: 3D7, Dd2, HB3 and 7G8, experimentally mixed in different proportions (see Table ~\ref{tab:jason}; figures in brackets), and submitted to the MalariaGEN pipeline \cite{MalariaGen2008} for Illumina sequencing and genotyping \cite{Menske2012}.
 
-This data set only contains two unmixed samples, which is insufficient for constructing a reference panel. Moreover, the {\em P. falciparum} genetic crosses project \cite{Miles2016} found that due to sequencing error, mapping error and variation among variant calling methods, genotype calls vary at the same locus for the same strain of {\it P. falciparum}. To create a basline reference haplotype for each strain we therefore considered mutiple samples that contains the same parasite strains.
+This data set only contains two unmixed samples, which is insufficient for constructing a reference panel. Moreover, the {\em P. falciparum} genetic crosses project \cite{Miles2016} found that due to sequencing error, mapping error and variation among variant calling methods, genotype calls vary at the same locus for the same strain of {\it P. falciparum}. To create a baseline reference haplotype for each strain we therefore considered multiple samples that contains the same parasite strains.
 
 \paragraph{Inferring haplotypes for Dd2 strain.}
 Since 3D7 is the reference strain, we assume that strain Dd2 is the only source of `ALT' reads in samples {\textmd PG0389-C} to {\textmd PG0394-C}. Assuming markers are independent from each other, let $y$ be the read count for `ALT' allele and $x$ be the total read count weighted by the Dd2 mixing proportion (see Table~\ref{tab:jason} in brackets), we use a regression model ($y = \beta_0 + \beta_{1} x$) to infer the Dd2 genotype: 1 if $\beta_{1}$ is significant with $p$-values below $0.001$; 0 otherwise.
@@ -66,10 +66,10 @@ Similarly, for samples {\textmd PG0398-C} to {\textmd PG0415-C}, we let variable
 
 \subsubsection*{Accuracy}
 
-\paragraph{Accuracy of proportions and number of strains inferrence.}
+\paragraph{Accuracy of proportions and number of strains inference.}
 To validate our method we applied \texttt{DEploid} to 27 lab-mixed {\it in vitro} samples. We start by assuming at most three strains present in the mixtures and discard strains with an inferred proportion less than 1\%. \texttt{DEploid} successfully recovers the proportions with haplotypes of the input (see Table~\ref{tab:jason}). The deviation between our proportion estimates and the truth is at most 2\%.
 
-However, we also found that in some cases, \texttt{DEploid} fits additional strains. For example, in Table~\ref{tab:jason}, we infer six of the HB3 and 7G8 mixtures as mixing of three.  On further inspection, two inferred strains are near identical, but seperated because of a few heterozygous sites with high coverage resulting in high leverage in our model (Supplemental Material Figure~S3.3(a)). These sites are likely artefacts arising from duplicated sequence that is absent from the reference strain.  Such erroneous markers are not currently inferred by \texttt{DEploid}, though this could be included in future versions.
+However, we also found that in some cases, \texttt{DEploid} fits additional strains. For example, in Table~\ref{tab:jason}, we infer six of the HB3 and 7G8 mixtures as mixing of three.  On further inspection, two inferred strains are near identical, but separated because of a few heterozygous sites with high coverage resulting in high leverage in our model (Supplemental Material Figure~S3.3(a)). These sites are likely artifacts arising from duplicated sequence that is absent from the reference strain.  Such erroneous markers are not currently inferred by \texttt{DEploid}, though this could be included in future versions.
 
 To investigate how the accuracy of haplotype inference is affected by the quality of the reference panel (in terms of having haplotypes close to those present in the samples) we experimented with deconvoluting the 27 lab-mixed samples with the following reference panels:
 
@@ -95,13 +95,13 @@ To investigate how the accuracy of haplotype inference is affected by the qualit
 
 
 \paragraph{Accuracy of haplotype inference.}
-Our accuracy assessment for inferred haplotypes takes into account both switch errors and genotype discordance, which reflects recombination and misscopying events. To understand how the inferred haplotypes relates to those present we split haplotypes into sets of 50 consecutive variants and assigned them to the reference strains through maximal identity.  Switches occur when adjacent segments of inferred haplotypes are closest to different reference strains.  Genotyping errors occur when a subset of sites within the segment differ from the closest reference strain.  Example deconvolutions are shown in Figure ~\ref{fig:differentRefPanel} and an overview of all experiments is shown in Figure ~\ref{fig:switchVsMisCopy}.  From our assessment of haplotype inference, we conclude:
+Our accuracy assessment for inferred haplotypes takes into account both switch errors and genotype discordance, which reflects recombination and miscopying events. To understand how the inferred haplotypes relates to those present we split haplotypes into sets of 50 consecutive variants and assigned them to the reference strains through maximal identity.  Switches occur when adjacent segments of inferred haplotypes are closest to different reference strains.  Genotyping errors occur when a subset of sites within the segment differ from the closest reference strain.  Example deconvolutions are shown in Figure ~\ref{fig:differentRefPanel} and an overview of all experiments is shown in Figure ~\ref{fig:switchVsMisCopy}.  From our assessment of haplotype inference, we conclude:
 
 
 
 \begin{itemize}
 
-\item The inference of relative proportions does not seem to be affected by the use of linkage disequilibrium information from the reference panel or its closeness to the samples being analysed (Figure~\ref{fig:differentRefPanel}).
+\item The inference of relative proportions does not seem to be affected by the use of linkage disequilibrium information from the reference panel or its closeness to the samples being analyzed (Figure~\ref{fig:differentRefPanel}).
 
 \item The accuracy of haplotype inference is, however, dependent on having an appropriate reference panel in terms of relatedness to the samples being analysed (Figure~\ref{fig:differentRefPanel}).
 
@@ -330,12 +330,12 @@ Methods and any associated references are available in the online version of the
 \noindent{\LARGE \bf ONLINE METHODS}
 \section*{Notations}
 
-We first introduce our notation (see Table~\ref{tab:notation}). Our data, $D$, are the allele read counts of sample $j$ at a given site $i$, denoted as $r_{j,i}$ and $a_{j,i}$ for reference (REF) and alternative (ALT) alleles respectively.  These are assigned values of $0$ and $1$ resepctively. Here we consider only biallelic loci, though future extension to include multi-allelic sites is simple.  The empirical allele frequencies within a sample (WSAF) $p_{j,i}$ and at population level (PLAF) $f_i$ are calculated by $ \frac{a_{j,i}}{a_{j,i} + r_{j,i}}$ and $ \frac{\sum_j a_{j,i}}{\sum_j a_{j,i} + \sum_j r_{j,i}}$ respectively. Since all data in this section refers to the same sample, we drop the subscript $j$ from now on.
+We first introduce our notation (see Table~\ref{tab:notation}). Our data, $D$, are the allele read counts of sample $j$ at a given site $i$, denoted as $r_{j,i}$ and $a_{j,i}$ for reference (REF) and alternative (ALT) alleles respectively.  These are assigned values of $0$ and $1$ respectively. Here we consider only biallelic loci, though future extension to include multi-allelic sites is simple.  The empirical allele frequencies within a sample (WSAF) $p_{j,i}$ and at population level (PLAF) $f_i$ are calculated by $ \frac{a_{j,i}}{a_{j,i} + r_{j,i}}$ and $ \frac{\sum_j a_{j,i}}{\sum_j a_{j,i} + \sum_j r_{j,i}}$ respectively. Since all data in this section refers to the same sample, we drop the subscript $j$ from now on.
 
 
 \section*{Model}
 
-We descibe the mixed infection problem by considering the number of strains, $n$, the relative abundance of each strain, $\mathbf{w}$, and their allelic states, $\mathbf{h}$. Similar to \cite{Jack2016}, we use a Bayesian approach and define the posterior probabilities of $n$, $\mathbf{w}$ and $\mathbf{h}$ given a reference panel, $\Xi$, and the read error rate, $e$, as:
+We describe the mixed infection problem by considering the number of strains, $n$, the relative abundance of each strain, $\mathbf{w}$, and their allelic states, $\mathbf{h}$. Similar to \cite{Jack2016}, we use a Bayesian approach and define the posterior probabilities of $n$, $\mathbf{w}$ and $\mathbf{h}$ given a reference panel, $\Xi$, and the read error rate, $e$, as:
 
 \begin{equation}
 P(n, \mathbf{w}, \mathbf{h}, | \Xi, e, D) \propto L(n, \mathbf{w}, \mathbf{h}, | \Xi, e, D) \times P(n, \mathbf{w}, \mathbf{h}). \label{eqn:post}
@@ -358,7 +358,7 @@ Let $\mathbf w = [w_1,\dots, w_n]$ and $\mathbf{h}_i = [h_{1,i},\dots,h_{n,i}]$ 
 q_i= (\mathbf{w}\cdot\mathbf{h}_{i})  =  \sum_{k=1}^{n} w_k \cdot h_{k,i} .\label{eqn:qij_full_sum}
 \end{equation}
 
-\noindent The data, which can be summarised by the reference and alternative allele read counts at each site, is modelled through a beta-binomial distribution given the expected WSAF.  We model the data at distinct segregating sites as independent.  Thus the likelihood function  in Eqn.~\eqref{eqn:post} is only dependent on the haplotypes present and their frequencies through their contribution to $q_{i}$.
+\noindent The data, which can be summarized by the reference and alternative allele read counts at each site, is modeled through a beta-binomial distribution given the expected WSAF.  We model the data at distinct segregating sites as independent.  Thus the likelihood function  in Eqn.~\eqref{eqn:post} is only dependent on the haplotypes present and their frequencies through their contribution to $q_{i}$.
 
 %; i.e. $L(n, \mathbf{w}, \mathbf{h}, | \Xi, e, D) = \prod_{i=1}^l L(q_i | \Xi, e, D)$.
 
@@ -368,7 +368,7 @@ To incorporate sequencing error, we modify the expected WSAF such that the allel
 \pi_i = q_i + (1 - q_i)e - q_ie = q_i + (1 - 2q_i)e.\label{eqn:adj_q}
 \end{equation}
 
-\noindent We model over-dispersion in read counts relative to the Binomial using a Beta-binomial distribution. Specifically, the read counts of `ALT' are identically and independently distributed (i.i.d.) Bernoulli random variables with probability of success $v_i$; i.e. $a_i \sim Binom(a_i + r_i, v_i)$, and $v_i \sim Beta(\alpha, \beta)$, where $E(v_i) = \alpha/(\alpha+\beta) = \pi_{i}$. This is achieved by setting $\alpha = c\cdot \pi_{i} $ and $\beta = c\cdot (1-\pi_{i})$, such that the variance of the WSAF is inversley proportion to $c$.  Combined, we have:
+\noindent We model over-dispersion in read counts relative to the Binomial using a Beta-binomial distribution. Specifically, the read counts of `ALT' are identically and independently distributed (i.i.d.) Bernoulli random variables with probability of success $v_i$; i.e. $a_i \sim Binom(a_i + r_i, v_i)$, and $v_i \sim Beta(\alpha, \beta)$, where $E(v_i) = \alpha/(\alpha+\beta) = \pi_{i}$. This is achieved by setting $\alpha = c\cdot \pi_{i} $ and $\beta = c\cdot (1-\pi_{i})$, such that the variance of the WSAF is inversely proportion to $c$.  Combined, we have:
 
 \begin{equation}
 L(q_{i}| e, D) \propto \frac{\Gamma(a_i + c\cdot \pi_{i}) \Gamma(r_i + c\cdot (1-\pi_{i}))}{\Gamma(c\cdot \pi_{i})\Gamma(c\cdot (1-\pi_{i}))}. \label{eqn:llk}
@@ -379,7 +379,7 @@ L(q_{i}| e, D) \propto \frac{\Gamma(a_i + c\cdot \pi_{i}) \Gamma(r_i + c\cdot (1
 
 Rather than model the number of strains, $n$, directly, we take the approach of fixing $n$ to be at the upper end of what can realistically be inferred (typically $5$), using a skewed prior for proportions (such that typically only $1-2$ strains might be at appreciable frequency) and then discarding strains inferred to have a proportion less than some critical amount (e.g. 1 percent).
 
-To achieve this, we model the proportions of the $n$ strains through a log titre, $x_k$, drawn from a $N(\eta, \sigma^2)$ prior.  The proportion of strain $k$, $w_k$, is given by
+To achieve this, we model the proportions of the $n$ strains through a log titer, $x_k$, drawn from a $N(\eta, \sigma^2)$ prior.  The proportion of strain $k$, $w_k$, is given by
 
 \begin{equation}
 w_k = \frac{\exp(x_k)}{\sum_{j=1}^n \exp(x_j)},
@@ -387,7 +387,7 @@ w_k = \frac{\exp(x_k)}{\sum_{j=1}^n \exp(x_j)},
 
 \noindent and the prior density is given by the distribution function for the value of $\mathbf{x}$.
 
-Haplotypes, $\mathbf{h}$, are modelled as being generated independently from the reference panel by the \cite{Li2003} process, though with a rate of mis-copying that is independent of the panel size. That is, under the prior, a path through the reference panel is sampled as a Markov process where recombination enables switching between members of the reference panel and mis-copying allows the allelic state of the haplotype within the sample to differ from the allelic state of the reference panel haplotype being copied at the site.  The transition probability of switching from copying reference haplotype $a$ to reference haplotype $b$ is $(1-\exp(-G \psi_i))/|\Xi|$, where $\psi_i$ is the genetic distance (in Morgans) between sites $i$ and $i+1$, $G$, is a scaling factor (described below in more detail) and $|\Xi|$ is the size of the reference panel.  Note that unlike the original model, the recombination or switching rate is not dependent on sample size.
+Haplotypes, $\mathbf{h}$, are modeled as being generated independently from the reference panel by the \cite{Li2003} process, though with a rate of mis-copying that is independent of the panel size. That is, under the prior, a path through the reference panel is sampled as a Markov process where recombination enables switching between members of the reference panel and mis-copying allows the allelic state of the haplotype within the sample to differ from the allelic state of the reference panel haplotype being copied at the site.  The transition probability of switching from copying reference haplotype $a$ to reference haplotype $b$ is $(1-\exp(-G \psi_i))/|\Xi|$, where $\psi_i$ is the genetic distance (in Morgans) between sites $i$ and $i+1$, $G$, is a scaling factor (described below in more detail) and $|\Xi|$ is the size of the reference panel.  Note that unlike the original model, the recombination or switching rate is not dependent on sample size.
 
 
 For miscopying, let $\xi_k$ denote the state of the sequence in the reference panel $\Xi$ that $h_k$ is copying from at given site and $\mu$ denote the probability of miss-copying:
@@ -399,7 +399,7 @@ P(\xi_k \neq h_k) &= \mu.
 \end{cases}
 $$
 
-\noindent As above, this is a simple reparamterisation of the original model, but where the miscopying rate is independent of the sample size. The emission probabilities are given by the convolution of the reference panel parts and the miscopying process, strain proportions and the read error rate.
+\noindent As above, this is a simple reparamterization of the original model, but where the miscopying rate is independent of the sample size. The emission probabilities are given by the convolution of the reference panel parts and the miscopying process, strain proportions and the read error rate.
 
 
 
@@ -411,7 +411,7 @@ To perform inference about the haplotypes present and their proportions we use M
 
 \subsection*{Metropolis-Hastings update for proportions}\label{sec:updateP}
 
-We update $\mathbf{w}|n$, through the underlying log titres, $\mathbf{x}|n$. Specificly, we choose $i$ uniformly from $n$ and propose new $x_i'$s from $x_i' = x_i + \delta x$, where $\delta x \sim N(0, \sigma^2/s)$, and $s$ is a scaling factor. The new proposed proportion is therefore $\frac{\exp(x_k')}{\sum_{k=1}^n \exp(x_k')}$. Since the proposal distribution is symmetrical, the Hastings ratio is 1. A new update is accepted with probability
+We update $\mathbf{w}|n$, through the underlying log titers, $\mathbf{x}|n$. Specifically, we choose $i$ uniformly from $n$ and propose new $x_i'$s from $x_i' = x_i + \delta x$, where $\delta x \sim N(0, \sigma^2/s)$, and $s$ is a scaling factor. The new proposed proportion is therefore $\frac{\exp(x_k')}{\sum_{k=1}^n \exp(x_k')}$. Since the proposal distribution is symmetrical, the Hastings ratio is 1. A new update is accepted with probability
 
  $$\min\left(1, \frac{P(\mathbf{w}'|n)}{P(\mathbf{w}|n)} \frac{L(\mathbf{w}', \mathbf{h} | \Xi, e, D)}{L(\mathbf{w}, \mathbf{h} | \Xi, e, D)}\right).$$
 
@@ -435,9 +435,6 @@ q_{i,h_s=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s}} + w_s \times 1. \
 \noindent We substitute Equations~\eqref{eqn:qij0} and \eqref{eqn:qij1} into Equation ~\eqref{eqn:llk} after adjustment for read error.
 
 Given the structure of the hidden Markov model and the above likelihoods, the forward algorithm can be used to sample a path through the reference panel, and subsequent mis-copying, efficiently from the marginal posterior distribution.  In effect, the reference panel is used as a prior on haplotypes present in the sample (with recombination creating a mosaic of the different haplotypes) and the mis-copying process allows for recent mutation, recurrent mutation, gene conversion and some types of technical error.  Figure ~\ref{fig:ls} illustrates the approach.
-
-
-
 
 
 
@@ -476,7 +473,7 @@ As in the single-haplotype update, the hidden Markov model formulation enables u
 
 \item {\bf Recombination rate and scaling}. We assume a uniform recombination map, where the genetic distance between loci $i$ and $i+1$ is computed by $\psi_i = D_i / d_m$ where $D_i$ denotes the physical distance between loci $i$ and $i+1$ in nucleotides and $d_m$ denotes the average recombination rate in Morgans bp$^{-1}$. We use the recombination rate for {\it P. falciparum} of 15,000 base pairs per centiMorgan as reported by \cite{Miles2016}. The recombination rate is scaled by a factor $G$, which reflects the effective population size, rate of inbreeding and size and relatedness of the reference panel.  In practice, we have found that a value of $G=20$ works well.  The scaled genetic distance $G\psi$ is used to compute the transition probability of switching from copying reference haplotype a to reference haplotype b (see Supplementary Materials for details).
 
-\item {\bf Update without linkage disequilbrium}. For initialising the chain, or if the markers present are very widely spaced, linkage disequilibrium can be ignored, which is equivalent to setting the genetic distance between adjacent loci to be infinitely high.  Under these circumstances, the haplotype updates become much simpler and depend only on the population-level allele frequency (PLAF), for example as estimated from the reference panel or provided independently.
+\item {\bf Update without linkage disequilibrium}. For initializing the chain, or if the markers present are very widely spaced, linkage disequilibrium can be ignored, which is equivalent to setting the genetic distance between adjacent loci to be infinitely high.  Under these circumstances, the haplotype updates become much simpler and depend only on the population-level allele frequency (PLAF), for example as estimated from the reference panel or provided independently.
 
 \item {\bf Reporting} We aim to provide users with a single point estimate of the haplotypes and their proportions, although the full chain is also available for analysis.  To achieve this we report values at the last iteration - i.e. we report a single sample from the posterior.  However, to measure robustness, we also typically repeat deconvolution with multiple random starting points and select the chain with the lowest average deviance (after removing the burn-in) to report. The deviance measures the difference in log likelihood between the fitted and saturated models, the latter being inferred by setting the WSAF to that observed.   These parameters can be modified by users to achieve a preferred balance between computational speed and confidence.  By default, we set the MCMC sampling rate as 5, with the first 50\% of samples removed as burn in and 800 samples used for estimation.
 
@@ -531,7 +528,7 @@ sample    & 3D7 & Dd2 & HB3 & 7G8 \\ \hline
 \hline
 \end{tabular}
 }
-\caption{Experimental validation of the \texttt{DEploid} method.  Inferred percentages (true values in brackets) of the mixed samples. In some cases \texttt{DEploid} identifies two near identical strains due to some erroneously called heterzygous sites. The ``$+$'' sign indicates the combined proportion.}
+\caption{Experimental validation of the \texttt{DEploid} method.  Inferred percentages (true values in brackets) of the mixed samples. In some cases \texttt{DEploid} identifies two near identical strains due to some erroneously called heterozygous sites. The ``$+$'' sign indicates the combined proportion.}
 \label{tab:jason}
 \end{table}
 
@@ -560,7 +557,7 @@ $G$              & Scaling factor used for genetic map\\
 $e$              & Probability of read error\\ \hline
 \end{tabular}
 }
-\caption{Table summarising the notation used in this article.}\label{tab:notation}
+\caption{Table summarizing the notation used in this article.}\label{tab:notation}
 \end{table}
 
 
@@ -577,7 +574,7 @@ $e$              & Probability of read error\\ \hline
 \centerline{
 \includegraphics[width=0.9\textwidth]{{Fig2}.pdf}
 }
-\caption{Relationship between strain proportion and inference accuracy in the experimental validation.   We use reference panel V to deconvolute all 27 samples. Each point represents a deconvoluted haplotype with 18,570 sites. Point shape refers to strain and colour indicates whether it was in mixture with two (red) or three (blue) strains.  Top panel shows switch error rate.  Bottom panel indicates genotyping error rate.}
+\caption{Relationship between strain proportion and inference accuracy in the experimental validation.   We use reference panel V to deconvolute all 27 samples. Each point represents a deconvoluted haplotype with 18,570 sites. Point shape refers to strain and color indicates whether it was in mixture with two (red) or three (megenta) strains.  Top panel shows switch error rate.  Bottom panel indicates genotyping error rate.}
 \label{fig:switchVsMisCopy}
 \end{figure}
 
