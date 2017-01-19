@@ -1,5 +1,5 @@
 .PHONY: all clean
-all: clean natMethods.pdf
+all: clean natMethods.pdf natMethodsSupplement.pdf
 
 mainfigures = $(shell grep png bioInfo.tex | sed -e "s/^.*{/figures\//g" -e "s/\}//g" )
 supDEploidfigures = $(shell grep png bioInfoSupplementDEploid.tex | sed -e "s/^.*{//g" -e "s/\}//g" )
@@ -16,6 +16,10 @@ bioInfo.pdf: bioInfo.tex
 natMethods.pdf: natMethods.tex
 	pdflatex natMethods.tex
 	pdflatex natMethods.tex
+
+natMethodsSupplement.pdf: natMethodsSupplement.tex
+	pdflatex natMethodsSupplement.tex
+	pdflatex natMethodsSupplement.tex
 
 natMethods.bbl: natMethods.bib
 	pdflatex natMethods.tex

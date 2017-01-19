@@ -1,0 +1,335 @@
+\documentclass{article}
+\usepackage{fullpage,amsmath,url,cases}
+\usepackage{natbib,longtable,graphicx,tikz}
+\usepackage{subfig}
+\usepackage{url}
+%\@ifundefined{showcaptionsetup}{}{%
+%\PassOptionsToPackage{caption=false}{subfig}}
+\graphicspath{{./figures/}}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\definecolor{RubineRed}{RGB}{240, 0, 240}       % RubineRed  Approximate PANTONE RUBINE-RED
+\usepackage{subfig}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+\lstset{language=bash}
+
+\usepackage{todonotes}
+\newcommand*{\Scale}[2][4]{\scalebox{#1}{$#2$}}%
+
+%\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{decorations.pathreplacing}
+
+\usetikzlibrary{shapes,arrows}
+% Define block styles
+\tikzstyle{decision} = [diamond, draw, fill=blue!20,
+    text width=4.5em, text badly centered, node distance=3cm, inner sep=0pt]
+\tikzstyle{action} = [rectangle, draw, fill=blue!20,
+    text width=10em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{input} = [draw, ellipse,fill=red!20,
+    minimum height=2em]
+\tikzstyle{output} = [draw, rounded corners, fill=green!20, text centered, text width=8em,
+    minimum height=2em]
+
+\usetikzlibrary{calc}
+
+\usepackage{setspace}
+\linespread{1.5}
+
+
+\usepackage{hyperref}
+\usetikzlibrary{shapes.geometric}
+
+
+%\usepackage{xcolor}
+%\usepackage{colortbl}
+%%\definecolor{mygrey}{rgb}{.9,.9,.9}
+%\definecolor{RubineRed}{RGB}{240, 0, 240}       % RubineRed  Approximate PANTONE RUBINE-RED
+
+\title{Deconvoluting mixed infections in {\it Plasmodium falciparum} from high throughput sequencing data: Supplementary Material}
+\author{Sha Joe Zhu, Jacob Almagro-Garcia and Gil McVean}
+\date{}
+
+\begin{document}
+\maketitle
+
+\setcounter{section}{0}
+
+\input{supplementReset.tex}
+
+%\begin{center}
+%\textbf{\large Supplemental Materials of DEploid}
+%\end{center}
+
+\section{Technical details} \label{sup:sec:alg}
+
+Here we describe the Gibbs-sampling algorithms used for updating both single haplotypes and pairs of haplotypes given estimated proportions for all strains and the allelic states of those haplotypes not being updated.  Unless stated otherwise, we use the notation described in the main article.
+
+
+
+\subsection{Gibbs update for single haplotype}
+
+Our goal is to sample the allelic states for the haplotype to be updated from the posterior distribution given the reference panel, the prior on paths through this panel, the rate of mis-copying, and the error distribution for read counts at sites.  This can be achieved through the use of the forward algorithm within the hidden Markov model formulation.
+
+Let $F(j,i)$ be the value in the forward matrix for reference strain $j$ at site $i$.  The emission probabilities are calculated as:
+
+\begin{equation}
+L(\xi_{j,i}) =
+\begin{cases}
+(1-\mu) L(q_{i,h_{s=0}})+\mu L(q_{i,h_{s=1}}) & \text{if $\xi_{j,i}=0$}\\
+\mu L(q_{i,h_{s=0}})+(1-\mu) L(q_{i,h_{s=1}}) & \text{if $\xi_{j,i}=1$}.
+\end{cases}
+\label{eqn:emiss_1hap}
+\end{equation}
+
+\noindent We initialise the forward matrix with
+
+\begin{equation}
+F(j,1)=\frac{1}{|\Xi|}L(\xi_{j,1}).
+\end{equation}
+
+\noindent We use $\psi_i$ to denote the genetic distance, $G$, the scaling factor and $\rho_i'$ to denote the probability of \textbf{no} recombination between site $i$ and $i+1$, we have $\rho_i' = \exp(-G \psi_i)$.  The elements of the forward matrix can then be computed from:
+
+\begin{equation}
+F(j,i+1)=\big(\rho_i' F(j,i) + \frac{1-\rho_i'}{|\Xi|}\sum_{k=1}^{|\Xi|}F(k,i)\big) L(\xi_{j,i+1})
+\end{equation}
+
+
+Once the forward matrix has been filled, we then sample first a path through the matrix using the standard approach and, conditional on this path, the mis-copying process.  The resultant haplotype is therefore drawn, as desired, from the posterior distribution of haplotypes.
+
+
+\subsection{Gibbs update for a pair of haplotypes}
+
+Similar to the previous section, we consider updating the allelic states of the pair of haplotypes $s_1$ and $s_2$ given the reference panel, the prior on paths through this panel, the rate of mis-copying, and the error distribution for read counts at sites.  However, here the underlying state is the pair of paths through the reference panel (hence the quadratic nature of the algorithm).
+
+At each site, the emission probabilities for each pair of paths (where the two paths may be copying the same haplotype in the reference panel) are given by combining the expected WSAF calculation of Equations 11-14 in the main text with the mis-copying process, as for the single haplotype case.  For the sake of brevity we omit the equations as they follow naturally, noting that the two haplotypes are not exchangeable due to their having different proportions.  As above, we complete the forward matrix, sample a pair of paths through the matrix and then the mis-copying process to provide a sample of strain haplotypes from the marginal posterior.
+
+
+\input{supplementReset.tex}
+
+
+\section{DEploid examples} \label{sup:sec:deploid}
+
+Our program {\texttt DEploid } is freely available, including C++ source code at \url{https://github.com/mcveanlab/DEploid} under the conditions of the GPLv3 license. A detailed document can be found at \url{http://deploid.readthedocs.io/en/latest/}. An R version is available at \url{https://github.com/mcveanlab/DEploid-r}.
+
+\subsection{Data exploration example}
+As a demonstration, we show some examples of mixed {\em P. falciparum} genome deconvolution using one of the reference panels described in the main article (Reference Panel V). All data used in this chapter is avaiable at \url{https://github.com/shajoezhu/DEploid-Supplementary-Materials}. First, we use an {\tt R} script to plot and explore the data of a mixed sample. For instance, sample {\textmd PG0395-C} is a mixture of strains HB3, 7G8 and Dd2 with equal proportions, we run the following command
+
+\linespread{1}
+\begin{lstlisting}
+R --slave "--args -vcf PG0395-C.wg.vcf.gz
+    -plaf labStrains_PLAF.txt
+    -exclude labStrainsExclude.txt
+    -o PG0395-C" < ~/DEploid/utilities/dataExplore.r
+\end{lstlisting}
+\linespread{1.5}
+
+where ``{\tt -vcf PG0395-C.wg.vcf.gz}'' defines the input VCF file. Notice that, in this example, we assume all variant sites are single nucleotide polymorphisms, and every site is tagged with {\tt PASS} at the {\tt QUAL} column. The read counts of the reference and alternative alleles must be presented in the {\tt AD} field at all sites; ``{\tt -plaf labStrains\_PLAF.txt}'' contains the population allele frequencies calculated from total read counts (see main article Secion 2.1 Notations). Note that we use option ``{\tt -exclude labStrainsExclude.txt}'' to skip deconvoluting sites at which the alternative allele counts are zeros.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=.9\textwidth]{{supplementDEploidExample/PG0395-CaltVsRefAndWSAFvsPLAFHi}.png}
+\caption{Data exploration of sample {\textmd PG0395-C}. From left to right, it shows:
+1. Alternative read counts vs reference read counts.
+2. Histogram of the allele frequencies within sample.
+3. Allele frequencies at the population level (PLAF) vs allele frequencies within the sample (WSAF).
+}\label{fig:0395}
+\end{figure}
+
+The number of clusters in Figure~\ref{fig:0395} can provide some intuition on the number of mixed strains, see Figure~\ref{fig:0396}~(a). However, this can be misleading, as the number of clusters does not always reflect the true number of mixed strains. In the example shown in Figure~\ref{fig:0395}, the alternative vs reference counts figure only show two clusters, but the true number of mixture is three.
+
+Similar to the alternative vs reference counts figure, the number of WSAF modes can be used as an indication of the number of strains and proportions within a field isolate (Figure~\ref{fig:0396}~(a)). Again, this is not always true, Figure~\ref{fig:0395} shows that two modes of WSAF at approximately 0.33 and 0.66, but the true number of mixed strains is three, and the proportions are 1/3, 1/3 and 1/3.
+
+
+\subsection{Deconvoluting examples}
+\paragraph{Deconvoluting sample {\textmd PG0396-C}}
+The following example shows a specific {\textmd DEploid} command to deconvolute the mixed sample {\textmd PG0396-C}:
+\linespread{1}
+\begin{lstlisting}
+dEploid -vcf PG0396-C.wg.vcf.gz \
+    -plaf labStrains_PLAF.txt \
+    -exclude labStrainsExclude.txt \
+    -panel labStrainsPanelFinal.txt \
+    -seed 5 \
+    -nSample 250 \
+    -rate 8 \
+    -burn 0.67 \
+    -k 3 \
+    -o PG0396-C_seed5k3 \
+    -exportPostProb
+\end{lstlisting}
+\linespread{1.5}
+where flags ``{\tt -vcf}'', ``{\tt -plaf}'' and ``{\tt -exclude}'' are used in the same manner as in the previous example; ``{\tt -panel labStrainsPanelFinal.txt}'' specifies a text file including haplotypes of lab strains 3D7, HB3, 7G8 and Dd2; options ``{\tt -nSample}'', ``{\tt -rate}'' and ``{\tt -burn}'' specify the total number of MCMC samples to take, the sampling rate and the burn-in fraction of the MCMC chain respectively. For detailed documentation, please see \url{http://deploid.readthedocs.io/en/latest/input.html}.
+
+
+We use a utility {\tt R} script to plot and interpret the output produced by DEploid. The following command is used to generate Figures~\ref{fig:0396} (a) -- (e).
+\linespread{1}
+\begin{lstlisting}
+R --slave "--args -vcf PG0396-C.wg.vcf.gz
+    -plaf labStrains_PLAF.txt
+    -exclude labStrainsExclude.txt
+    -dEprefix PG0396-C_seed5k3
+    -o PG0396-C_seed5k3" < ~/DEploid/utilities/interpretDEploid.r
+\end{lstlisting}
+\linespread{1.5}
+
+\begin{figure}[ht]
+\centering
+\subfloat[][]{
+\includegraphics[width=.47\textwidth]{{supplementDEploidExample/PG0396-C1}.pdf}
+}%\label{fig:pg0396.interpret1}
+\subfloat[][]{
+\includegraphics[width=.53\textwidth]{{supplementDEploidExample/PG0396-C2}.pdf}
+}\\
+%\caption{}
+%\end{figure}
+
+%\begin{figure}[ht]
+%\ContinuedFloat
+\subfloat[][]{
+\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0396-Csingle0}.pdf}
+}
+\subfloat[][]{
+\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0396-Csingle1}.pdf}
+}
+\subfloat[][]{
+\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0396-Csingle2}.pdf}
+}\\
+\caption{Sample {\textmd PG0396-C} deconvolution with Reference Panel V. (a) Diagnostic panels from the \texttt{DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF inferred from our model (see Equation~(3) in main article). The next three plots from left to right show: 1. MCMC samples for the strain proportions, with the fraction of each color indicating the proportion of a different strain at each MCMC sample. The three colored blocks suggest that there are three strains within sample {\textmd PG0396-C}, with proportions approximately 1/4, 1/4 and 1/2.
+2. Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. A low correlation suggests poor fitting.
+3. Log likelihood of the MCMC chain. This figure is used to indicate whether the MCMC has converged. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain porportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively. (b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome. (c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the Reference Panel V. In each figure, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively. Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.
+}\label{fig:0396}
+\end{figure}
+
+In this example, the second inferred haplotype (Figure~\ref{fig:0396}~(d)) represents the 7G8 strain, which has relative proportion of 1/2. The remaining two strains have approximately equal proportions, which increase the difficulty to deconvolute them. In practice, we find more switching errors when deconvoluting samples containing strains at similar proportions, for example, Figure~\ref{fig:0396}~(c) and (e) both show high probabilities of copying from strains HB3 and Dd2. More specificly, Figure~\ref{fig:0396}~(c) panel 1 shows almost every position of inferred haplotype chromosome 1 is copying from strain HB3; but chromosome 2 is copying from strain Dd2; chromosome 3 is partly copying from strains HB3 and Dd2, with presence of one switching error. These observations suggest that our program DEploid can characterize the main genome diversities within a mixed samples, yet there is still room to improve to overcome the switching errors.
+
+
+
+\paragraph{Deconvoluting sample {\textmd PG0415-C}}
+
+As metioned in the main article, we assume that there are more strains than necessary, and only keep strains with inferred relative proportions greater than 0.01 in practice. In the following example, we show the deconvolution of a clonal sample ({\textmd PG0415-C}) when starting from three strains.
+
+\linespread{1}
+\begin{lstlisting}
+dEploid -vcf PG0415-C.wg.vcf.gz \
+    -panel labStrainsPanelFinal.csv \
+    -plaf labStrains_PLAF.txt \
+    -exclude labStrainsExclude.txt \
+    -seed 2 \
+    -nSample 250 \
+    -rate 8 \
+    -burn 0.67 \
+    -k 3 \
+    -o PG0415-C_seed2k3 \
+    -exportPostProb
+\end{lstlisting}
+
+%R --slave "--args -vcf PG0415-C.wg.vcf.gz
+    %-plaf labStrains_PLAF.txt
+    %-exclude labStrainsExclude.txt
+    %-dEprefix PG0415-C_seed2k3
+    %-o PG0415-C_seed2k3" < ~/DEploid/utilities/interpretDEploid.r
+
+\linespread{1.5}
+\begin{figure}[th]
+\subfloat[][]{
+\includegraphics[width=.47\textwidth]{{supplementDEploidExample/PG0415-C1}.pdf}
+}
+\subfloat[][]{
+\includegraphics[width=.53\textwidth]{{supplementDEploidExample/PG0415-C2}.pdf}
+}\\
+\subfloat[][]{
+\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0415-Csingle0}.pdf}
+}\label{fig:pg0415.postprob_a}
+\subfloat[][]{
+\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0415-Csingle1}.pdf}
+}\label{fig:pg0415.postprob_b}
+\subfloat[][]{
+\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0415-Csingle2}.pdf}
+}\label{fig:pg0415.postprob_c}\\
+\caption{Sample {\textmd PG0415-C} deconvolution with Reference Panel V. (a) Diagnostic panels from the \texttt{DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF inferred from our model. The next three plots from left to right show: 1. MCMC samples for the strain proportions. 2. Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. 3. Log likelihood of the MCMC chain. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain proportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively. (b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome. (c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the reference panel V. In each figure, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively. Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.}\label{fig:0415}
+\end{figure}
+
+Figure~\ref{fig:0415}~(a) and (e) suggests that our program successfully dropped out one strain, reduced the number of strains to two. However, our model overfits this clonal sample as a mixture of two strains. This is caused by a number of problematic sites with both high number of alternative and reference allele counts, resulting in high leverage in our model. When we paint the haplotypes with the reference panel strains, Figure~\ref{fig:0415} (c) and (d) suggest that both haplotypes are in fact copying from the same strain (7G8).
+
+\paragraph{Deconvoluting field sample {\textmd PD0577-C}}
+As part of the Pf3k project analysis, we have applied DEploid to all 2512 field samples. Figures~\ref{fig:PD0577} (a)--(e) show example of deconvoluting mixed sample {\textmd PD0577-C} with calculated inbreeding probabilities within sample.
+
+\begin{figure}[ht]
+\centering
+\subfloat[][%Diagnostic panels from the DEploid output.
+]{
+\includegraphics[width=.47\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.inbreeding.interpretDEploidFigure.1}.pdf}
+}%\label{fig:pg0396.interpret1}
+\subfloat[][%Allele frequencies within sample across the genome.
+]{
+\includegraphics[width=.53\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.inbreeding.interpretDEploidFigure.2}.pdf}
+}\\
+
+\subfloat[][%Posterior painting probabilities for\\the deconvoluted strain 1 when using \\the reference panel Asia-1.
+]{
+\includegraphics[width=.32\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.inbreeding.single0.inbreeding}.pdf}
+}
+\subfloat[][%Posterior painting probabilities for\\the deconvoluted strain 2 when using \\the reference panel Asia-1.
+]{
+\includegraphics[width=.32\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.inbreeding.single1.inbreeding}.pdf}
+}
+\subfloat[][%Posterior painting probabilities for\\the deconvoluted strain 3 when using the\\reference panel Asia-1.
+]{
+\includegraphics[width=.32\textwidth]{{pf3kSimField/PD0577-C/PD0577-C.eg.inbreeding.single2.inbreeding}.pdf}
+}\\
+\caption{Sample {\textmd PD0577-C} deconvolution with 10 reference strains from Asia. (a) Diagnostic panels from the \texttt{DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue does show the expected WSAF inferred from our model. The next three plots from left to right show: 1. MCMC samples for the strain proportions. 2. Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. 3. Log likelihood of the MCMC chain. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain proportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively. (b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome. (c) (d) and (e) show the inbreeding probabilities (red) for the deconvoluted strains. Each panel represents the inbreeding probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.
+}\label{fig:PD0577}
+\end{figure}
+
+
+
+\input{supplementReset.tex}
+
+
+\section{Assessing coverage requirements} \label{sup:sec:coverage}
+
+In order to investigate how sensitive our method is to the sequence coverage, we simulate alternative and reference alleles read counts, and assess how the deconvoluted haplotypes compare to the truth. The previous section has shown that switching errors are common when two strain have similar proportions. Therefore here we consider to simulate data with uneven proportions.
+
+We simulate total coverage from a Poisson distribution. Specifically we set the distribution mean to 10, 30, 40, and 50. Given the simulated total coverage, we then use a binomial distribution to simulate alternative allele counts using the expected WSAF calculated using Equation~(3), where the allele states are of HB3 and 7G8, and the relative proportion used are 85\% and 15\% respectively, to mock sequence data of sample {\textmd PG0402-C} at different depths. Note that the expected WSAFs are adjusted using a constant error rate 0.01 (see Equation~(4)). In this experiment, we only simulated data for chromosome 14, in particular at sites the PLAFs are non-zero (2425 sites in total). We then use DEploid to deconvolute the data, with a fixed number of strains of two.
+
+We compare the simulated genotypes against the true genotypes of HB3/7G8: {\tt 0/0}, {\tt 0/1}, {\tt 1/0} and {\tt 1/1}. We first count occurrences of each true genotype. For each case, we then compare the inferred genotype against the truth, and count the number of times it was wrongly inferred, which is then divided by the true genotype occurrence to obtain the error rate. Figure~\ref{fig:sup.coverage} (a) -- (c) shows high error rates for rare events (low coverage frequencies), and more importantly, the error rate decays when the mean coverage increases. When the coverage is above 50, we find low error rate in all cases, which suggests that expected coverage of the minor strain needs to be $\ge 7$.
+
+\begin{figure}[h]
+\subfloat[][Mean coverage at 10x.]{
+\includegraphics[width=.32\textwidth]{{supplementCoverage/PG0402-C.14.meanCov.10.errorVsTotalCoverage}.pdf}
+}
+\subfloat[][Mean coverage at 30x.]{
+\includegraphics[width=.32\textwidth]{{supplementCoverage/PG0402-C.14.meanCov.30.errorVsTotalCoverage}.pdf}
+}
+\subfloat[][Mean coverage at 40x.]{
+\includegraphics[width=.32\textwidth]{{supplementCoverage/PG0402-C.14.meanCov.40.errorVsTotalCoverage}.pdf}
+}
+\caption{Error rates for inferred genotypes at different read depths.}\label{fig:sup.coverage}
+\end{figure}
+
+
+\end{document}
