@@ -30,7 +30,7 @@ bioInfoSupplement.pdf: bioInfoSupplement.tex ${supDEploidfigures} ${supCoveragef
 	pdflatex bioInfoSupplement.tex
 
 clean:
-	rm -f *.blg *snm *nav *.bbl *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out bioInfoSupplement.pdf natMethods.pdf
+	rm -f *.blg *snm *nav *.bbl *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out bioInfoSupplement.pdf natMethods.pdf natMethodsSupplement.pdf
 
 plain.pdf: bioInfo.tex Makefile
 	sed -e "s/bioinfo/article/" \
