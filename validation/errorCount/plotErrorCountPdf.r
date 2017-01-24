@@ -149,7 +149,7 @@ layout(rbind(1,2,3), heights=c(10,10,1))  # put legend on bottom 1/8th of the ch
 
 #par(mfrow = c(2,1))
 
-plot(mytable$prop, mytable$switchError, ylab= "Number of switches when copying", xlab="Strain proportion", col=mytable$color, log="y", ylim= c(1, 700), xlim = c(0,1.05), type="n", cex.lab=1.4)
+plot(mytable$prop, mytable$switchError, ylab= "Number of switches when copying", xlab="Strain proportions", col=mytable$color, log="y", ylim= c(1, 700), xlim = c(0,1.05), type="n", cex.lab=1.6)
 
 strains = unique(mytable2$strainName)
 for ( strain in strains ){
@@ -191,7 +191,7 @@ legend("topright", legend = levels(mytable$marker), pch = c(1,2,3,4), cex=1.4, p
 legend("top", legend = c("DEploid (Mixture of 2)", "DEploid (Mixture of 3)", "BEAGLE (Mixture of 2)", "SHAPEIT (Mixture of 2)"), text.col = c(deploid2Color,deploid3Color,beagleColor,shapeitColor), cex=1.4, ncol=2)
 
 
-plot(mytable$prop, mytable$missCopy/18571, ylab= "Genotype error rate", xlab="Strain proportion", col=mytable$color, log="y", ylim= c(0.02, 0.5), xlim = c(0,1.05), type="n", cex.lab=1.4)
+plot(mytable$prop, mytable$missCopy/18571, ylab= "Genotype error rate", xlab="Strain proportions", col=mytable$color, log="y", ylim= c(0.02, 0.5), xlim = c(0,1.05), type="n", cex.lab=1.6)
 
 strains = unique(mytable3$strainName)
 for ( strain in strains ){

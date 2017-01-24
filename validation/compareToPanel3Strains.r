@@ -36,7 +36,7 @@ cases = paste(sampleName, c(".14.noPanel",
 
 #png(paste("differentPanelForSample.", sampleName, "Mid.png", sep=""), width = 4800, height = 2700, res=170)
 #pdf(paste("differentPanelForSample.", sampleName, ".pdf", sep=""), width = 18, height = 13)
-pdf(paste("Fig1.pdf", sep=""), width = 18, height = 13)
+pdf(paste("Fig2.pdf", sep=""), width = 18, height = 13)
 #png(paste("differentPanelForSample.", sampleName, "Hi.png", sep=""), width = 9600, height = 5400, res=350)
 #png(paste("differentPanelForSample.", sampleName, "Hi2.png", sep=""), width = 9600, height = 7560, res=350)
 

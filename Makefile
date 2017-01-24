@@ -1,5 +1,5 @@
 .PHONY: all clean
-all: clean natMethods.pdf natMethodsSupplement.pdf
+all: clean bioInfo.pdf
 
 mainfigures = $(shell grep png bioInfo.tex | sed -e "s/^.*{/figures\//g" -e "s/\}//g" )
 supDEploidfigures = $(shell grep png bioInfoSupplementDEploid.tex | sed -e "s/^.*{//g" -e "s/\}//g" )
@@ -30,7 +30,7 @@ bioInfoSupplement.pdf: bioInfoSupplement.tex ${supDEploidfigures} ${supCoveragef
 	pdflatex bioInfoSupplement.tex
 
 clean:
-	rm -f *.blg *snm *nav *.bbl *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out bioInfoSupplement.pdf natMethods.pdf natMethodsSupplement.pdf
+	rm -f *.blg *snm *nav *.bbl *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out bioInfo.pdf
 
 plain.pdf: bioInfo.tex Makefile
 	sed -e "s/bioinfo/article/" \
