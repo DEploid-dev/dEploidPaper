@@ -362,15 +362,16 @@ Our accuracy assessment for inferred haplotypes takes into account both switch e
 
 
 \subsection{Comparison to existing methods}
-The number of strains, strain proportions and haplotypes are three key components used to describe mixed infections. Existing methods could only infer one of the three variables; or, at the best, simultaneously estimate the first two variables. The number of strains and proportions are correlated, but both are independent from strain haplotypes. To systematically resolve all three variables has only become possible until \texttt{DEploid}.
+The number of strains, strain proportions and haplotypes are three key components used to describe mixed infections. Existing methods could only infer one of the three variables; or, at the best, simultaneously estimate the first two variables. To systematically resolve all three variables has only become available until our method.
 
-In order to show how our method can significantly advance studies in relation to mixed infections, we have compared our inference results on number of strains, strain proportions and haplotypes with COIL, pfmix\citep{Jack2016}, BEAGLE and SHAPEIT, using the {\it in vitro} dataset from the previous sections.
+In order to show how our method can significantly advance studies in relation to mixed infections, we have compared our inference results on number of strains, strain proportions and haplotypes with COIL, pfmix\citep{Jack2016}, BEAGLE and SHAPEIT, using the same dataset (see supplementary material for details).
 
-Our method shows robust inference result on number of strains when relative abundance of each strain is above 1\%; whereas COIL struggles to identify strain of which proportion is below 5\% (Figure~\ref{fig:switchVsMisCopy}(a)).
+Our method shows robust inference result on number of strains when relative abundance of each strain is above 1\%. DEploid correctly infers the number of strain for 26 samples out of 27. In comparison, COIL infers correctly three cases less than DEploid: COIL struggles to identify strain of which proportion is below 5\% (Figure~\ref{fig:switchVsMisCopy}(a)).
 
-The deviation between our proportion estimates and the truth is consistent with inference results using \citet{Jack2016}'s pfmix method (see {Figure~\ref{fig:switchVsMisCopy}(b)}). The at most of 2\% deviation is a likely result of experimental variations.
+The proportion inference of both \citet{Jack2016}'s and our methods are consistent with minor differences. The deviation between the estimates from pfmix and the truth (see {Figure~\ref{fig:switchVsMisCopy}(b)}) is within 3.6\%; whereas DEploid estimates differ 2\%  at the most.
+%our proportion  and is consistent with inference results using . The at most of 2\% deviation is a likely result of experimental variations.
 
-We experimented to haplotype phasing with conventional tools for diploid samples: BEAGLE and SHAPEIT. As expected, these methods only return meaningful results for mixture of two strains. Both BEAGLE and SHAPEIT worked well for balanced mixtures in the same fashion as a diploid sample. However, as the result of tilted proportions, both BEAGLE and SHAPEIT wrongly infer heterozygous sites as homozygous, which bias towards dominant strains, and infer strains with proportions below 20\% the same as the dominant strains (Figure~\ref{fig:switchVsMisCopy}(c)).
+We experimented to haplotype phasing with conventional tools for diploid samples: BEAGLE and SHAPEIT. As expected, these methods only returned meaningful results for mixture of two strains. Both BEAGLE and SHAPEIT worked well for balanced mixtures (proportions between 40\% and 60\%) in the same fashion as a diploid sample. However, as the result of tilted proportions, both BEAGLE and SHAPEIT wrongly inferred heterozygous sites as homozygous, which bias towards dominant strains. Strains with proportions below 20\% were inferred the same as the dominant strains (Figure~\ref{fig:switchVsMisCopy}(c)).
 
 
 \subsection{Run-time}

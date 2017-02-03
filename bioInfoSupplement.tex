@@ -298,5 +298,31 @@ We compare the simulated genotypes against the true genotypes of HB3/7G8: {\tt 0
 \caption{Error rates for inferred genotypes at different read depths.}\label{fig:sup.coverage}
 \end{figure}
 
+\input{supplementReset.tex}
+
+\newpage
+\section{Comparison to existing methods} \label{sup:sec:benchmark}
+
+In order to show how our method can significantly advance studies in relation to mixed infections, we have compared our inference results on number of strains, strain proportions and haplotypes with \texttt{COIL}, \texttt{pfmix}, \texttt{BEAGLE} and \texttt{SHAPEIT}, using the 27 {\it in vitro} samples. Code and data are available online at \url{https://github.com/shajoezhu/DEploid-Supplementary-Materials/tree/master/benchMark}.
+
+\subsection{\texttt{COIL}}
+\texttt{COIL} uses genotype information to infer number of strains. The program input is a text file. Each row contains the sample name, and its sequence, which takes homozygous reference alleles and encodes heterozygous site as ``N'', and missing site as ``X''. We then submit the input file to the online portal \url{http://portals.broadinstitute.org/infect/malaria/coil//}, then inference results will then follow.
+
+\subsection{\texttt{pfmix}}
+The \texttt{pfmix} method uses allele count information to infer the strain proportion. We extract reference and alternative allele counts, and save them in text files, which consist with three columns: chromosome information, position, and allele counts. This method works sample-by-sample. The original method requires user to provide a maximum number of strains to check. Since we already know the truth, we feed the program with the correct strain number, and use MCMC samples to infer the proportion.
+ %`R' code %To run the analysis, use the following command,
+
+\subsection{\texttt{BEAGLE}}
+The software package \texttt{BEAGLE} input is a VCF file that contains the genotype likelihood information of all 27 samples. We express the genotype likelihood by $r \log_{10}(1-x) + a \log_{10}(x)$, where $r$ and $a$ denote the reference and alternative allele counts respectively. Let $x$ denote the error rate, which takes value of 0.01, 0.5 and 0.99, in the cases of homozygous reference, heterozygous and homozygous alternative respectively.
+%$$\begin{cases}
+ %0.01, &\textrm{homozygous reference}, \\
+ %0.5, & \textrm{heterozygous},\\
+ %0.99, & \textrm{homozygous alternative}.
+%\end{cases}$$
+We first convert allele count information into genotype likelihood, then use \texttt{BEAGLE} to infer the haplotypes, which are phased at the same time.
+
+\subsection{\texttt{SHAPEIT}}
+The program \texttt{SHAPEIT} takes the genotype information of all 27 samples, and phase the haplotypes chromosome-by-chromosome. The input VCF file must include attribute \texttt{GT} in the \texttt{FORMAT} field. Note that these genotypes are inferred by GATK Best Practices. We split the VCF file by chromosome IDs. Then use \texttt{SHAPEIT} to phase the haplotypes, which are saved in plain text files. We then concatenate the output files, and extract the haplotypes in each sample.
+
 
 \end{document}
