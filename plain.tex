@@ -1,5 +1,10 @@
-\documentclass{bioinfo}
-\usepackage{todonotes}
+\documentclass{article}
+\usepackage{fontenc,inputenc,crop,graphicx,amsmath,array,color,amssymb,flushend,stfloats,amsthm,chngpage,times,fullpage, amsmath,natbib,todonotes}
+\def\address#1{\global\def\@issue{#1}}
+\def\history#1{\global\def\@history{#1}}
+\def\abstract#1{\global\def\@abstract{#1}}
+\def\corresp#1{\global\def\@corresp{#1}}
+
 
 \usepackage{xcolor}
 \usepackage{colortbl}
@@ -12,38 +17,32 @@
 \newcommand*{\Scale}[2][4]{\scalebox{#1}{$#2$}}%
 
 
-\copyrightyear{2016} \pubyear{2016}
-\access{Advance Access Publication Date: Day Month Year}
-\appnotes{Original Paper}
 
 
 \begin{document}
-\firstpage{1}
 
-\subtitle{Genome analysis}
 
-\title[Deconvolution of multiple infections]{Deconvolution of multiple infections in {\it Plasmodium falciparum} from high throughput sequencing data}
-\author[Zhu \textit{et~al}.]{Sha Joe Zhu\,$^{\text{\sfb 1},*}$, Jacob Almagro-Garcia\,$^{\text{\sfb 1,2,3}}$ and Gil McVean\,$^{\text{\sfb 1,4},*}$}
-\address{$^{\text{\sf 1}}$ Wellcome Trust Centre for Human Genetics, University of Oxford, Oxford, UK \\
-$^{\text{\sf 2}}$ Medical Research Council (MRC) Centre for Genomics and Global Health, University of Oxford, Oxford, UK \\
-$^{\text{\sf 3}}$ Wellcome Trust Sanger Institute, Hinxton, UK \\
-$^{\text{\sf 4}}$ Big Data Institute, Li Ka Shing Centre for Health Information and Discovery, University of Oxford, Oxford, UK
+\title{Deconvolution of multiple infections in {\it Plasmodium falciparum} from high throughput sequencing data}
+\author{Sha Joe Zhu\,$^{\text{ 1},*}$, Jacob Almagro-Garcia\,$^{\text{ 1,2,3}}$ and Gil McVean\,$^{\text{ 1,4},*}$}
+\address{$^{\text{ 1}}$ Wellcome Trust Centre for Human Genetics, University of Oxford, Oxford, UK \\
+$^{\text{ 2}}$ Medical Research Council (MRC) Centre for Genomics and Global Health, University of Oxford, Oxford, UK \\
+$^{\text{ 3}}$ Wellcome Trust Sanger Institute, Hinxton, UK \\
+$^{\text{ 4}}$ Big Data Institute, Li Ka Shing Centre for Health Information and Discovery, University of Oxford, Oxford, UK
 }
 
 \corresp{$^\ast$To whom correspondence should be addressed.}
 
-\history{Received on \textcolor{red}{XXXXX}; revised on \textcolor{red}{XXXXX}; accepted on \textcolor{red}{XXXXX}}
-
-\editor{Associate Editor: \textcolor{red}{XXXXXXX}}
-
-\abstract{\textbf{Motivation:}
-The presence of multiple infecting strains of the malarial parasite {\it Plasmodium falciparum} affects  key phenotypic  traits, including drug resistance and risk of severe disease. Advances in protocols and sequencing technology have made it possible  to obtain  high-coverage genome-wide  sequencing data from blood samples and blood spots taken in the field. However, analysing and interpreting such data is challenging  because of the high rate of multiple infections present.\\
-\textbf{Results:} We have developed a statistical method and implementation for deconvolving multiple genome sequences present in an individual with mixed infections.  The software package {\it DEploid} uses haplotype structure within a reference panel of clonal isolates as a prior for haplotypes present in a given sample. It estimates the number of strains, their relative proportions and the haplotypes presented in a sample, allowing researchers to study multiple infection in malaria with an unprecedented level of detail.\\
-\textbf{Availability and implementation:} The open source implementation {\it DEploid} is freely available at \href{https://github.com/mcveanlab/DEploid}{https://github.com/mcveanlab/DEploid} under the conditions of the GPLv3 license. An R version is available at \href{https://github.com/mcveanlab/DEploid-r}{https://github.com/mcveanlab/DEploid-r}.\\
-\textbf{Contact:} \href{joe.zhu@well.ox.ac.uk}{joe.zhu@well.ox.ac.uk} or \href{mcvean@well.ox.ac.uk}{mcvean@well.ox.ac.uk}\\
-\textbf{Supplementary information:} Supplementary data are available at \textit{Bioinformatics} online.}
 
 \maketitle
+\noindent1. Wellcome Trust Centre for Human Genetics, University of Oxford, Oxford, UK \\2. Medical Research Council (MRC) Centre for Genomics and Global Health, University of Oxford, Oxford, UK  \\3. Wellcome Trust Sanger Institute, Hinxton, UK \\4. Big Data Institute, Li Ka Shing Centre for Health Information and Discovery, University of Oxford, Oxford, UK \\{*} To whom correspondence should be addressed.\\
+
+\begin{abstract}\\\noindent\textbf{Motivation:}  \\ \noindent 
+The presence of multiple infecting strains of the malarial parasite {\it Plasmodium falciparum} affects  key phenotypic  traits, including drug resistance and risk of severe disease. Advances in protocols and sequencing technology have made it possible  to obtain  high-coverage genome-wide  sequencing data from blood samples and blood spots taken in the field. However, analysing and interpreting such data is challenging  because of the high rate of multiple infections present.\\
+\textbf{Results:}  \\ \noindent  We have developed a statistical method and implementation for deconvolving multiple genome sequences present in an individual with mixed infections.  The software package {\it DEploid} uses haplotype structure within a reference panel of clonal isolates as a prior for haplotypes present in a given sample. It estimates the number of strains, their relative proportions and the haplotypes presented in a sample, allowing researchers to study multiple infection in malaria with an unprecedented level of detail.\\
+\textbf{Availability and implementation:}  \\ \noindent  The open source implementation {\it DEploid} is freely available at \href{https://github.com/mcveanlab/DEploid}{https://github.com/mcveanlab/DEploid} under the conditions of the GPLv3 license. An R version is available at \href{https://github.com/mcveanlab/DEploid-r}{https://github.com/mcveanlab/DEploid-r}.\\
+\textbf{Contact:}  \\ \noindent  \href{joe.zhu@well.ox.ac.uk}{joe.zhu@well.ox.ac.uk} or \href{mcvean@well.ox.ac.uk}{mcvean@well.ox.ac.uk}\\
+\end{abstract}
+
 
 \section{Introduction}
 Malaria remains one of the top global health problems. The majority of malaria related deaths are caused by the {\it Plasmodium falciparum} parasite \citep{WHO2016}, transmitted by mosquitoes of the genus {\it Anopheles}. Patients are often infected with more than one distinct parasite strain (termed mixed infection, multiple infection, or complexity of infection), due to bites from multiple mosquitoes, mosquitoes carrying multiple genetic types or a combination of both. Mixed infections  can lead to competition among co-existing strains and may influence disease development \citep{deRoode2005}, transmission rates \citep{Arnot1998} and the spread of drug resistance \citep{deRoode2004}. In addition, within-host evolution can lead to the presence of more than one genetically and phenotypically distinct strains \citep{Bell2006}.
@@ -192,7 +191,7 @@ Given the structure of the hidden Markov model and the above likelihoods, the fo
 
 \begin{figure}[tbh]
 \centering
-\includegraphics[width=0.5\textwidth]{Fig1.pdf}
+\includegraphics[width=0.8\textwidth]{Fig1.pdf}
 \caption{The \citet{Li2003} algorithm as applied to the problem of multiple strain inference. Strain 1 haplotype is made up from reference haplotype segments of 1 and 2; and strain 2 haplotype is made up from reference haplotype segments of 3 and 4. With mis-copying, we allow strain states differ from the path: At the third last position of strain 1, the path is copied from reference haplotype 2, with the state of 0.}
 \label{fig:ls}
 \end{figure}
@@ -330,7 +329,7 @@ To investigate how the accuracy of haplotype inference is affected by the qualit
 
 \begin{figure*}[htb]
 \centerline{
-\includegraphics[width=\textwidth]{Fig2.pdf}
+\includegraphics[width=0.8\textwidth]{Fig2.pdf}
 }
 \caption{Comparison of true and inferred haplotypes for Chromosome 14 in sample {\textmd PG0396-C} without linkage disequilibrium (top) and using Reference Panels I to IV (from the second to the bottom). Reference Panel V gives results equivalent Panel IV and Panel VI gives results similar to Panel I.  Black bars indicate alternative alleles; red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segments from strains 7G8, HB3 and Dd2 respectively. The switch errors are obtained by counting the changes of a strain segment mapped to reference strains; the genotype errors are the discordance between the strain and the mapped reference segments.}
 \label{fig:differentRefPanel}
@@ -344,7 +343,7 @@ Our accuracy assessment for inferred haplotypes takes into account both switch e
 
 \begin{figure*}[htb]
 \centerline{
-\includegraphics[width=\textwidth]{Fig3.pdf}
+\includegraphics[width=0.8\textwidth]{Fig3.pdf}
 }
 \caption{Comparison of \texttt{DEploid} and existing tools (\texttt{COIL}, \texttt{pfmix}, \texttt{BEAGLE}, and \texttt{SHAPEIT}). (a) Estimates for the number of strains present in each mixed infection (artificially mixed in the lab) as given by \texttt{COIL} and \texttt{DEploid}. (b) Comparison of the proportion estimates of each strain as given by \texttt{pfmix} and \texttt{DEploid}. (c) Relationship between strain proportions and haplotype inference accuracy in the experimental validation for \texttt{DEploid} and \texttt{BEAGLE}/\texttt{SHAPEIT} (only mixtures of two strains). We use reference panel V to deconvolute all 27 samples. Each point represents a deconvoluted haplotype with 18,570 sites. Point shape refers to strain and colour indicates the method applied. Top panel shows switch error rate whereas the bottom panel indicates genotyping error rate.}
 \label{fig:switchVsMisCopy}
@@ -389,7 +388,7 @@ The complexity of our program is $\mathcal{O}(lm^2)$ (see Figure~\ref{fig:runtim
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=.45\textwidth]{Fig4.pdf}
+\includegraphics[width=0.8\textwidth]{Fig4.pdf}
 \caption{Run-time and scaling.  CPU time (seconds) for deconvolving chromosomes 12, 13 and 14 of sample {\textmd PG0412-C} with reference panels I, V and VI (size 4, 10 and 16 reference haplotypes respectively). The run-time is approximately linear with respect to the number of sites and shows the expected quadratic trend against the number of reference strains.}\label{fig:runtime}
 \end{figure}
 

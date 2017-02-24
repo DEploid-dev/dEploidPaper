@@ -32,11 +32,15 @@ bioInfoSupplement.pdf: bioInfoSupplement.tex ${supDEploidfigures} ${supCoveragef
 clean:
 	rm -f *.blg *snm *nav *.bbl *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out bioInfo.pdf
 
-plain.pdf: bioInfo.tex Makefile
+plain.pdf: plain.tex
+	pdflatex plain.tex
+	pdflatex plain.tex
+
+plain.tex: bioInfo.tex Makefile
 	sed -e "s/bioinfo/article/" \
 	 -e "s/\\\usepackage{todonotes}/\\\usepackage{fontenc,inputenc,crop,graphicx,amsmath,array,color,amssymb,flushend,stfloats,amsthm,chngpage,times,fullpage, amsmath,natbib,todonotes}\n\\\def\\\address#1{\\\global\\\def\\\@issue{#1}}\n\\\def\\\history#1{\\\global\\\def\\\@history{#1}}\n\\\def\\\abstract#1{\\\global\\\def\\\@abstract{#1}}\n\\\def\\\corresp#1{\\\global\\\def\\\@corresp{#1}}\n/" \
 	 -e "/copyrightyear/d" \
-	 -e "s/\\\title\[Deconvoluting multiple infections\]/\\\title/" \
+	 -e "s/\\\title\[Deconvolution of multiple infections\]/\\\title/" \
 	 -e "s/\\\author\[Zhu \\\textit{et~al}.\]/\\\author/" \
 	 -e "/Advance Access/d" \
 	 -e "/Original Paper/d" \
@@ -52,12 +56,11 @@ plain.pdf: bioInfo.tex Makefile
 	 -e "s/\\\textbf{Results:}/\\\textbf{Results:}  \\\\\\\ \\\noindent /g" \
 	 -e "s/\\\textbf{Availability and implementation:}/\\\textbf{Availability and implementation:}  \\\\\\\ \\\noindent /g" \
 	 -e "s/\\\textbf{Contact:}/\\\textbf{Contact:}  \\\\\\\ \\\noindent /g" \
-	 -e "s/0.45\\\textwidth/0.9\\\textwidth/g" \
-	 -e "s/0.5\\\textwidth/0.9\\\textwidth/g" \
-	 -e "s/.45\\\textwidth/0.9\\\textwidth/g" \
+	 -e "s/0.45\\\textwidth/0.8\\\textwidth/g" \
+	 -e "s/.45\\\textwidth/0.8\\\textwidth/g" \
+	 -e "s/0.5\\\textwidth/0.8\\\textwidth/g" \
+	 -e "s/width=\\\textwidth/width=0.8\\\textwidth/g" \
 	  bioInfo.tex > plain.tex
-	pdflatex plain.tex
-	pdflatex plain.tex
 
 pf3kFigures = $(shell grep "\.tex" pf3kDEploidNotes.tex | sed -e "s/^.*{//g" -e "s/\}//g" )
 pf3kDEploidNotes.pdf: pf3kDEploidNotes.tex ${pf3kFigures}
