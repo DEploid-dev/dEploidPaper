@@ -290,6 +290,20 @@ dEploid -ref PD0577-C_ref.txt \
 \linespread{1.5}
 where ``{\tt -ref PD0577-C\_ref.txt}'' and ``{\tt -alt PD0577-C\_alt.txt}'' define the input text files \footnote{The Pf3k data was deconvoluted using DEploid version v0.1-beta. Recent versions can take VCF files as input as well.} that record the reference and alternative read counts respectively; ``{\tt -plaf asia-1\_PLAF.txt}'' contains the population allele frequencies calculated from total read counts. Note that we use option ``{\tt -exclude asia-1\_exclude.txt}'' to skip deconvoluting monomophic sites; ``{\tt -panel asia-1\_panel.txt}'' specifies a text file including haplotypes of samples listed in Table~\ref{tab:panelSamples}; options ``{\tt -nSample}'', ``{\tt -rate}'' and ``{\tt -burn}'' specify the total number of MCMC samples to take, the sampling rate and the burning rate of the MCMC chain respectively. For detailed documentation, please see \url{http://deploid.readthedocs.io/en/latest/input.html}.
 
+\linespread{1}
+\begin{lstlisting}
+dEploid -ref PD0577-C_ref.txt \
+    -alt PD0577-C_alt.txt \
+    -plaf asia-1_PLAF.txt \
+    -exclude asia-1_exclude.txt \
+    -panel asia-1_panel.txt \
+    -o PD0577-C.deconv \
+    -painting PD0577-C.deconv.hap
+\end{lstlisting}
+\linespread{1.5}
+
+
+
 We use a utility {\tt R} script to plot and interpret the output produced by DEploid. The following command is used to generate Figures~\ref{fig:PD0577} (a) -- (e).
 \linespread{1}
 \begin{lstlisting}
