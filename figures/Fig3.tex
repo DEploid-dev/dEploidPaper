@@ -3,9 +3,19 @@
 \usepackage{subfig}
 
 \begin{document}
-\begin{tabular}{ccc}
-    \includegraphics{trueVsInferredK.pdf}&\includegraphics{trueVsInferred.pdf}&\includegraphics{HapErrors.pdf}\\
-    {\LARGE \bf (a)}&{\LARGE \bf (b)}&{\LARGE \bf (c)}\\
+\begin{tabular}{cc}
+    \begin{tabular}{@{}c@{}}
+        \includegraphics[height = 0.5\textheight]{trueVsInferredK.pdf} \\
+        {\LARGE \bf (a)}\\
+        \includegraphics[height = 0.5\textheight]{trueVsInferred.pdf} \\
+        {\LARGE \bf (b)}\\
+    \end{tabular} &
+    \begin{tabular}{@{}c@{}}
+        \includegraphics[height = 0.9\textheight]{HapErrors.pdf}\\
+        {\LARGE \bf (c)}
+    \end{tabular}\\
+    %\includegraphics{trueVsInferredK.pdf}&\includegraphics{trueVsInferred.pdf}&\includegraphics{HapErrors.pdf}\\
+    %{\LARGE \bf (a)}&{\LARGE \bf (b)}&{\LARGE \bf (c)}\\
 \end{tabular}
 \end{document}
 

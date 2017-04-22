@@ -69,7 +69,7 @@ fun.computeErrors2 <- function(hap, ref1, ref2){
         countSwitch = matrix(NA, ncol = length(index.of.seg)-1, nrow = 2)
 
         for ( i in 1:(length(index.of.seg)-1) ){
-            tmpIndex = c(index.of.seg[i]:index.of.seg[i+1])
+            tmpIndex = c(index.of.seg[i]:(index.of.seg[i+1]-1))
             # k = 1
             if ( sum(hap[tmpIndex,1] != ref1[tmpIndex]) < sum(hap[tmpIndex,1] != ref2[tmpIndex]) ){
                 hap[tmpIndex,1][hap[tmpIndex,1] != ref1[tmpIndex]] = 2
@@ -156,19 +156,21 @@ fun.computeErrors3 <- function(hap, ref1, ref2, ref3){
         countSwitch = matrix(NA, ncol = length(index.of.seg)-1, nrow = 3)
 
         for ( i in 1:(length(index.of.seg)-1) ){
-            tmpIndex = c(index.of.seg[i]:index.of.seg[i+1])
+            tmpIndex = c(index.of.seg[i]:(index.of.seg[i+1]-1))
             # k = 1
             if ( sum(hap[tmpIndex,1] != ref1[tmpIndex]) < sum(hap[tmpIndex,1] != ref2[tmpIndex]) & sum(hap[tmpIndex,1] != ref1[tmpIndex]) < sum(hap[tmpIndex,1] != ref3[tmpIndex]) ){
                 hap[tmpIndex,1][hap[tmpIndex,1] != ref1[tmpIndex]] = 2
                 hap[tmpIndex,1][hap[tmpIndex,1] == 0] = 5
+                hap[tmpIndex,1][hap[tmpIndex,1] == 1] = 5 # turn off the black color
                 countSwitch[1,i] = 1
             } else if ( sum(hap[tmpIndex,1] != ref2[tmpIndex]) < sum(hap[tmpIndex,1] != ref3[tmpIndex]) ) {
                 hap[tmpIndex,1][hap[tmpIndex,1] != ref2[tmpIndex]] = 2
                 hap[tmpIndex,1][hap[tmpIndex,1] == 0] = 7
+                hap[tmpIndex,1][hap[tmpIndex,1] == 1] = 7 # turn off the black color
                 countSwitch[1,i] = 2
             } else if ( sum(hap[tmpIndex,1] != ref3[tmpIndex]) <= sum(hap[tmpIndex,1] != ref2[tmpIndex]) ) {
                 hap[tmpIndex,1][hap[tmpIndex,1] != ref3[tmpIndex]] = 2
-#                hap[tmpIndex,1][hap[tmpIndex,1] == 0] = 8
+                hap[tmpIndex,1][hap[tmpIndex,1] == 1] = 0 # turn off the black color
                 countSwitch[1,i] = 3
             }
 
@@ -176,29 +178,33 @@ fun.computeErrors3 <- function(hap, ref1, ref2, ref3){
             if ( sum(hap[tmpIndex,2] != ref2[tmpIndex]) < sum(hap[tmpIndex,2] != ref1[tmpIndex]) & sum(hap[tmpIndex,2] != ref2[tmpIndex]) < sum(hap[tmpIndex,2] != ref3[tmpIndex]) ){
                 hap[tmpIndex,2][hap[tmpIndex,2] != ref2[tmpIndex]] = 2
                 hap[tmpIndex,2][hap[tmpIndex,2] == 0] = 7
+                hap[tmpIndex,2][hap[tmpIndex,2] == 1] = 7 # turn off the black color
                 countSwitch[2,i] = 2
             } else if ( sum(hap[tmpIndex,2] != ref3[tmpIndex]) < sum(hap[tmpIndex,2] != ref1[tmpIndex]) ) {
                 hap[tmpIndex,2][hap[tmpIndex,2] != ref3[tmpIndex]] = 2
-#                hap[tmpIndex,2][hap[tmpIndex,2] == 0] = 8
+                hap[tmpIndex,2][hap[tmpIndex,2] == 1] = 0 # turn off the black color
                 countSwitch[2,i] = 3
             } else if ( sum(hap[tmpIndex,2] != ref1[tmpIndex]) <= sum(hap[tmpIndex,2] != ref3[tmpIndex]) ) {
                 hap[tmpIndex,2][hap[tmpIndex,2] != ref1[tmpIndex]] = 2
                 hap[tmpIndex,2][hap[tmpIndex,2] == 0] = 5
+                hap[tmpIndex,2][hap[tmpIndex,2] == 1] = 5 # turn off the black color
                 countSwitch[2,i] = 1
             }
 
             # k = 3
             if ( sum(hap[tmpIndex,3] != ref3[tmpIndex]) < sum(hap[tmpIndex,3] != ref2[tmpIndex]) & sum(hap[tmpIndex,3] != ref3[tmpIndex]) < sum(hap[tmpIndex,3] != ref1[tmpIndex]) ){
                 hap[tmpIndex,3][hap[tmpIndex,3] != ref3[tmpIndex]] = 2
-#                hap[tmpIndex,3][hap[tmpIndex,3] == 0] = 8
+                hap[tmpIndex,3][hap[tmpIndex,3] == 1] = 0 # turn off the black color
                 countSwitch[3,i] = 3
             } else if ( sum(hap[tmpIndex,3] != ref2[tmpIndex]) < sum(hap[tmpIndex,3] != ref1[tmpIndex]) ) {
                 hap[tmpIndex,3][hap[tmpIndex,3] != ref2[tmpIndex]] = 2
                 hap[tmpIndex,3][hap[tmpIndex,3] == 0] = 7
+                hap[tmpIndex,3][hap[tmpIndex,3] == 1] = 7 # turn off the black color
                 countSwitch[3,i] = 2
             } else if ( sum(hap[tmpIndex,3] != ref1[tmpIndex]) <= sum(hap[tmpIndex,3] != ref2[tmpIndex]) ) {
                 hap[tmpIndex,3][hap[tmpIndex,3] != ref1[tmpIndex]] = 2
                 hap[tmpIndex,3][hap[tmpIndex,3] == 0] = 5
+                hap[tmpIndex,3][hap[tmpIndex,3] == 1] = 5 # turn off the black color
                 countSwitch[3,i] = 1
             }
         }
