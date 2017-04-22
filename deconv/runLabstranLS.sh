@@ -4,7 +4,7 @@ root="/well/mcvean/joezhu/pf3k/pf3k_5_1_final/"
 function run_dEploid {
     mkdir ${root}"dEploidOut/"${sample}
     cd ${root}"dEploidOut/"${sample}
-    rm -r ErrFiles OutFiles
+    #rm -r ErrFiles OutFiles
     mkdir ErrFiles OutFiles
 
 echo "
@@ -25,35 +25,23 @@ vcf=${root}/vcf/${sample}.wg.vcf.gz
 
 prefix=${sample}_seed\${SGE_TASK_ID}k$@
 common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${exludeAt} -o \${prefix}\"
-dEploidCommon=\"\${common} -panel \${panel} -seed \${SGE_TASK_ID} -nSample 250 -rate 8 -burn 0.67 -exportPostProb\"
+dEploidCommon=\"\${common} -panel \${panel} -seed \${SGE_TASK_ID} -nSample 250 -rate 8 -burn 0.67\"
 rCommon=\"\${common} -dEprefix \${prefix}\"
 
 (time dEploid \${dEploidCommon} -k $@) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
+
+initialProp=\$( cat \${prefix}.prop | sed -e \"s/\t/ /g\" )
+dEploid \${common} -panel \${panel} -painting \${prefix}.hap -o \${prefix} -initialP \${initialProp}
+
 R --slave \"--args \${rCommon} \" < ~/DEploid/utilities/interpretDEploid.r
 
-#prefix=${sample}_seed\${SGE_TASK_ID}k5
-#common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${exludeAt} -o \${prefix}\"
-#dEploidCommon=\"\${common} -panel \${panel} -seed \${SGE_TASK_ID} -nSample 250 -rate 8 -burn 0.67 -exportPostProb\"
-#rCommon=\"\${common} -dEprefix \${prefix}\"
-
-##(time dEploid \${dEploidCommon} -k 5) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
-#R --slave \"--args \${rCommon} \" < ~/DEploid/utilities/interpretDEploid.r
-
-
-" > ${sample}.sh
-    qsub ${sample}.sh
+" > ${sample}k$@.sh
+    qsub ${sample}k$@.sh
 }
 
 while read sample ; do
     run_dEploid 3
+    run_dEploid 5
 done < labSampleNames
 
 
-#while read sample ; do
-#    run_dEploid 2
-#done < labSampleNames2Strains
-
-#cd ${currentDir}
-#while read sample ; do
-    #run_dEploid 3
-#done < labSampleNames3Strains
