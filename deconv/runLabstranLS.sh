@@ -15,7 +15,7 @@ echo "
 #$ -e ErrFiles
 #$ -o OutFiles
 #$ -N ${sample}
-#$ -t 1-15
+#$ -t 16-30
 
 
 plaf=${root}/labStrains_PLAF.txt
