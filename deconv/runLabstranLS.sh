@@ -30,7 +30,7 @@ rCommon=\"\${common} -dEprefix \${prefix}\"
 
 (time dEploid \${dEploidCommon} -k $@) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
 
-initialProp=\$( cat \${prefix}.prop | sed -e \"s/\t/ /g\" )
+initialProp=\$( cat \${prefix}.prop | tail -1 | sed -e \"s/\t/ /g\" )
 dEploid \${common} -panel \${panel} -painting \${prefix}.hap -o \${prefix} -initialP \${initialProp}
 
 R --slave \"--args \${rCommon} \" < ~/DEploid/utilities/interpretDEploid.r
