@@ -12,8 +12,23 @@
 \usepackage{subfig}
 \usepackage{listings}
 \usepackage{color}
-\usepackage{todonotes}
+
+\usepackage[colorinlistoftodos]{todonotes}
 %\usepackage[disable]{todonotes}
+
+\newcommand{\done}[2][]
+{\todo[color=green!40, #1]{#2}}
+
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    %linkcolor={red!50!black},
+    linkcolor={black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+
 
 \usepackage{lscape} % to use landscape
 
@@ -208,6 +223,54 @@ In this example, the second inferred haplotype (Figure~\ref{fig:0396}~(d)) repre
 
 
 
+\begin{figure}[htp]
+\centering
+\subfloat[][]{
+\includegraphics[width=0.9\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.interpretDEploidFigure.1}.png}
+}
+\caption{Sample {\textmd PG0396-C} deconvolution with Reference Panel V. (a) Diagnostic panels from the \texttt{DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue \textcolor{red}{dots} show the expected WSAF inferred from our model (see Equation~(3) in main article). The next three plots from left to right show: 1. MCMC samples for the strain proportions, with the fraction of each color indicating the proportion of a different strain at each MCMC sample. The three colored blocks suggest that there are three strains within sample {\textmd PG0396-C}, with proportions approximately 1/4, 1/4 and 1/2.
+2. Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. A low correlation suggests poor fitting.
+3. Log likelihood of the MCMC chain. This figure is used to indicate whether the MCMC has converged. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain porportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively. }
+\label{fig:0396}
+\done[inline]{REV1: Figure S2.2 ‘blue dots’}
+\todo[inline]{REV1: figure is far too small}
+\end{figure}
+
+\newpage
+\pagebreak[4]
+ \global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}
+\begin{landscape}
+\begin{figure}[ht]
+\ContinuedFloat
+\centering
+\subfloat[][]{
+\includegraphics[width=1.3\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.interpretDEploidFigure.2}.png}
+}
+\caption{(b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome. }
+\todo[inline]{REV1: Figure S2.2: inconsistencies in WSAF in figures (a) and (b). Histogram of WSAF in panel (a) shows clustering around 0.3 and 1 while the distributions of WSAF across each chromosome in panel (b) cluster around 0.3 and 0? \textcolor{red}{JOE: I don't understand this comment...}}
+\end{figure}
+
+\begin{figure}[ht]
+\ContinuedFloat
+\centering{}
+\subfloat[][]{
+\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single0}.pdf}
+}
+\subfloat[][]{
+\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single1}.pdf}
+}
+\subfloat[][]{
+\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single2}.pdf}
+}\\
+\caption{(c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the Reference Panel V. In each figure, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively. Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.
+}
+\end{figure}
+\end{landscape}
+\pagebreak[4]
+\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}
+
+
+\newpage
 \subsection{Deconvolution of sample {\textmd PG0415-C}}
 
 As metioned in the main article, we assume that there are more strains than necessary, and only keep strains with inferred relative proportions greater than 0.01 in practice. In the following example, we show the deconvolution of a clonal sample ({\textmd PG0415-C}) when starting from three strains.
@@ -238,63 +301,42 @@ dEploid -vcf PG0415-C.wg.vcf.gz \
 Figure~\ref{fig:0415}~(a) and (e) suggests that our program successfully dropped out one strain, reduced the number of strains to two. However, our model overfits this clonal sample as a mixture of two strains. This is caused by a number of problematic sites with both high number of alternative and reference allele counts, resulting in high leverage in our model. When we paint the haplotypes with the reference panel strains, Figure~\ref{fig:0415} (c) and (d) suggest that both haplotypes are in fact copying from the same strain (7G8).
 
 
+\begin{figure}[htp]
+\centering
+\subfloat[][]{
+\includegraphics[width=.9\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.1}.png}
+}
+\caption{Sample {\textmd PG0415-C} deconvolution with Reference Panel V. (a) Diagnostic panels from the \texttt{DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue \textcolor{red}{dots} show the expected WSAF inferred from our model (see Eqn.~(3) in main article). The next three plots from left to right show: 1. MCMC samples for the strain proportions. 2. Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. 3. Log likelihood of the MCMC chain. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain porportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively. }
+\label{fig:0415}
+\done[inline]{REV1: Figure S2.2 ‘blue dots’}
+\todo[inline]{REV1: figure is far too small}
+\end{figure}
 
-\newpage
 \pagebreak[4]
  \global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}
 \begin{landscape}
-
 \begin{figure}[ht]
+\ContinuedFloat
 \centering
 \subfloat[][]{
-\includegraphics[width=.47\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.interpretDEploidFigure.1}.png}
-}%\label{fig:pg0396.interpret1}
-\subfloat[][]{
-\includegraphics[width=.53\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.interpretDEploidFigure.2}.png}
-}\\
-%\caption{}
-%\end{figure}
-
-%\begin{figure}[ht]
-%\ContinuedFloat
-\subfloat[][]{
-\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single0}.pdf}
+\includegraphics[width=1.3\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.2}.png}
 }
-\subfloat[][]{
-\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single1}.pdf}
-}
-\subfloat[][]{
-\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single2}.pdf}
-}\\
-\caption{Sample {\textmd PG0396-C} deconvolution with Reference Panel V. (a) Diagnostic panels from the \texttt{DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue \textcolor{red}{dots} show the expected WSAF inferred from our model (see Equation~(3) in main article). The next three plots from left to right show: 1. MCMC samples for the strain proportions, with the fraction of each color indicating the proportion of a different strain at each MCMC sample. The three colored blocks suggest that there are three strains within sample {\textmd PG0396-C}, with proportions approximately 1/4, 1/4 and 1/2.
-2. Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. A low correlation suggests poor fitting.
-3. Log likelihood of the MCMC chain. This figure is used to indicate whether the MCMC has converged. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain porportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively. (b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome. (c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the Reference Panel V. In each figure, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively. Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.
-}\label{fig:0396}
-\todo[inline]{RE: reviewer 1: Figure S2.2 ‘blue dots’}
+\caption{(b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome. }
 \end{figure}
-\end{landscape}
 
-
-\begin{landscape}
-
-\begin{figure}[th]
+\begin{figure}[ht]
+\ContinuedFloat
+\centering
 \subfloat[][]{
-\includegraphics[width=.47\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.1}.png}
-}
-\subfloat[][]{
-\includegraphics[width=.53\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.2}.png}
-}\\
-\subfloat[][]{
-\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single0}.pdf}
+\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single0}.pdf}
 }\label{fig:pg0415.postprob_a}
 \subfloat[][]{
-\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single1}.pdf}
+\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single1}.pdf}
 }\label{fig:pg0415.postprob_b}
 \subfloat[][]{
-\includegraphics[width=.32\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single2}.pdf}
-}\label{fig:pg0415.postprob_c}\\
-\caption{Sample {\textmd PG0415-C} deconvolution with Reference Panel V. (a) Diagnostic panels from the \texttt{DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue \textcolor{red}{dots} show the expected WSAF inferred from our model (see Eqn.~(3) in main article). The next three plots from left to right show: 1. MCMC samples for the strain proportions. 2. Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. 3. Log likelihood of the MCMC chain. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain porportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively. (b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome. (c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the reference panel V. In each figure, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively. Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.}\label{fig:0415}
-\todo[inline]{RE: reviewer 1: Figure S2.2 ‘blue dots’}
+\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single2}.pdf}
+}
+\caption{(c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the reference panel V. In each figure, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively. Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.}
 \end{figure}
 \end{landscape}
 \pagebreak[4]
@@ -333,6 +375,7 @@ We compare the simulated genotypes against the true genotypes of HB3/7G8: {\tt 0
 In order to show how our method can significantly advance studies in relation to mixed infections, we have compared our inference results on number of strains, strain proportions and haplotypes with \texttt{COIL}, \texttt{pfmix}, \texttt{BEAGLE} and \texttt{SHAPEIT}, using the 27 {\it in vitro} samples. Code and data are available online at \url{https://github.com/shajoezhu/DEploid-Supplementary-Materials/tree/master/benchMark}.
 
 \subsection{\texttt{COIL}}
+\todo[inline]{REV1:  COIL uses genotype information. How did you generate the genotype data used here? Perhaps more information on data processing would be useful.}
 \texttt{COIL} uses genotype information to infer number of strains. The program input is a text file. Each row contains the sample name, and its sequence, which takes homozygous reference alleles and encodes heterozygous site as ``N'', and missing site as ``X''. We then submit the input file to the online portal \url{http://portals.broadinstitute.org/infect/malaria/coil//}, then inference results will then follow.
 
 \subsection{\texttt{pfmix}}
@@ -340,6 +383,7 @@ The \texttt{pfmix} method uses allele count information to infer the strain prop
  %`R' code %To run the analysis, use the following command,
 
 \subsection{\texttt{BEAGLE}}
+\todo[inline]{REV1: BEAGLE requires a reference dataset to infer haplotype phase, typically a large reference dataset. What reference dataset was used? Parameters used in this analysis, and the analysis of other software, would also be useful.}
 The software package \texttt{BEAGLE} input is a VCF file that contains the genotype likelihood information of all 27 samples. We express the genotype likelihood by $r \log_{10}(1-x) + a \log_{10}(x)$, where $r$ and $a$ denote the reference and alternative allele counts respectively. Let $x$ denote the error rate, which takes value of 0.01, 0.5 and 0.99, in the cases of homozygous reference, heterozygous and homozygous alternative respectively.
 %$$\begin{cases}
  %0.01, &\textrm{homozygous reference}, \\
