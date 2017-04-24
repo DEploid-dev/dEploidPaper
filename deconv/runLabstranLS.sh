@@ -1,5 +1,5 @@
 #!/bin/bash
-currentDir="~/dEploidPaper/deconv"
+currentDir="~/dEploidPaper/deconv/"
 root="/well/mcvean/joezhu/pf3k/pf3k_5_1_final/"
 function run_dEploid {
     mkdir ${root}"dEploidOut/"${sample}
@@ -18,10 +18,15 @@ echo "
 #$ -t 16-30
 
 
-plaf=${root}/labStrains_PLAF.txt
-panel=/well/mcvean/joezhu/pf3k/pf3k_5_1_final/panels/labStrainsPanelFinal.csv
-exludeAt=/users/mcvean/joezhu/pf3k_mixed_infection/fieldSamples/clusters/labStrainsExclude.txt
-vcf=${root}/vcf/${sample}.wg.vcf.gz
+#plaf=${root}/labStrains_PLAF.txt
+#panel=/well/mcvean/joezhu/pf3k/pf3k_5_1_final/panels/labStrainsPanelFinal.csv
+#exludeAt=/users/mcvean/joezhu/pf3k_mixed_infection/fieldSamples/clusters/labStrainsExclude.txt
+#vcf=${root}/vcf/${sample}.wg.vcf.gz
+
+plaf=${currentDir}labStrains.eg.PLAF.txt
+panel=${currentDir}labStrains.eg.panel.txt
+excludeAt=${currentDir}exclude.txt
+vcf=${currentDir}${sample}.vcf.gz
 
 prefix=${sample}_seed\${SGE_TASK_ID}k$@
 common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${exludeAt} -o \${prefix}\"
