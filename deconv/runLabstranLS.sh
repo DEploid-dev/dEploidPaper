@@ -15,12 +15,12 @@ echo "
 #$ -e ErrFiles
 #$ -o OutFiles
 #$ -N ${sample}
-#$ -t 16-30
+#$ -t 1-30
 
 
 #plaf=${root}/labStrains_PLAF.txt
 #panel=/well/mcvean/joezhu/pf3k/pf3k_5_1_final/panels/labStrainsPanelFinal.csv
-#exludeAt=/users/mcvean/joezhu/pf3k_mixed_infection/fieldSamples/clusters/labStrainsExclude.txt
+#excludeAt=/users/mcvean/joezhu/pf3k_mixed_infection/fieldSamples/clusters/labStrainsExclude.txt
 #vcf=${root}/vcf/${sample}.wg.vcf.gz
 
 plaf=${currentDir}labStrains.eg.PLAF.txt
@@ -29,8 +29,8 @@ excludeAt=${currentDir}exclude.txt
 vcf=${currentDir}${sample}.vcf.gz
 
 prefix=${sample}_seed\${SGE_TASK_ID}k$@
-common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${exludeAt} -o \${prefix}\"
-dEploidCommon=\"\${common} -panel \${panel} -seed \${SGE_TASK_ID} -nSample 250 -rate 8 -burn 0.67\"
+common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${excludeAt} -o \${prefix}\"
+dEploidCommon=\"\${common} -panel \${panel} -seed \${SGE_TASK_ID} -nSample 500 -rate 8 -burn 0.67\"
 rCommon=\"\${common} -dEprefix \${prefix}\"
 
 (time dEploid \${dEploidCommon} -k $@) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
