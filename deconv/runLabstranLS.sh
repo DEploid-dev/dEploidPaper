@@ -28,14 +28,15 @@ panel=${currentDir}labStrains.eg.panel.txt
 excludeAt=${currentDir}exclude_extensive.txt
 vcf=${currentDir}${sample}.vcf.gz
 
-prefix=${sample}_seed\${SGE_TASK_ID}_exclude_extensivek$@
+prefix=${sample}_seed\${SGE_TASK_ID}_exclude_extensive_panelFreeFirstk$@
 common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${excludeAt} -o \${prefix}\"
-dEploidCommon=\"\${common} -panel \${panel} -seed \${SGE_TASK_ID} -nSample 500 -rate 8 -burn 0.67\"
+dEploidCommon=\"\${common} -seed \${SGE_TASK_ID} -nSample 500 -rate 8 -burn 0.67\"
 rCommon=\"\${common} -dEprefix \${prefix}\"
 
-(time dEploid \${dEploidCommon} -k $@) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
-
+(time dEploid \${dEploidCommon} -noPanel -k $@) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
 initialProp=\$( cat \${prefix}.prop | tail -1 | sed -e \"s/\t/ /g\" )
+(time dEploid \${dEploidCommon} -panel \${panel} -initialP \${initialProp} -k $@) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
+
 dEploid \${common} -panel \${panel} -painting \${prefix}.hap -o \${prefix} -initialP \${initialProp}
 
 R --slave \"--args \${rCommon} \" < ~/DEploid/utilities/interpretDEploid.r
