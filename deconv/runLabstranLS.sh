@@ -14,7 +14,7 @@ echo "
 #$ -P mcvean.prjc -q short.qc
 #$ -e ErrFiles
 #$ -o OutFiles
-#$ -N ${sample}
+#$ -N ${sample}Ex
 #$ -t 1-30
 
 
@@ -25,10 +25,10 @@ echo "
 
 plaf=${currentDir}labStrains.eg.PLAF.txt
 panel=${currentDir}labStrains.eg.panel.txt
-excludeAt=${currentDir}exclude.txt
+excludeAt=${currentDir}exclude_extensive.txt
 vcf=${currentDir}${sample}.vcf.gz
 
-prefix=${sample}_seed\${SGE_TASK_ID}k$@
+prefix=${sample}_seed\${SGE_TASK_ID}_exclude_extensivek$@
 common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${excludeAt} -o \${prefix}\"
 dEploidCommon=\"\${common} -panel \${panel} -seed \${SGE_TASK_ID} -nSample 500 -rate 8 -burn 0.67\"
 rCommon=\"\${common} -dEprefix \${prefix}\"
@@ -45,7 +45,9 @@ R --slave \"--args \${rCommon} \" < ~/DEploid/utilities/interpretDEploid.r
 }
 
 while read sample ; do
+    run_dEploid 2
     run_dEploid 3
+    run_dEploid 4
     run_dEploid 5
 done < labSampleNames
 
