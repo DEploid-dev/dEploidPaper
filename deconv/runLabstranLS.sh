@@ -25,10 +25,10 @@ echo "
 
 plaf=${currentDir}labStrains.eg.PLAF.txt
 panel=${currentDir}labStrains.eg.panel.txt
-excludeAt=${currentDir}exclude_extensive.txt
+excludeAt=${currentDir}exclude.txt
 vcf=${currentDir}${sample}.vcf.gz
 
-prefix=${sample}_seed\${SGE_TASK_ID}_exclude_extensive_panelFreeFirstk$@
+prefix=${sample}_seed\${SGE_TASK_ID}k$@
 common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${excludeAt} -o \${prefix}\"
 dEploidCommon=\"\${common} -seed \${SGE_TASK_ID} -nSample 500 -rate 8 -burn 0.67\"
 rCommon=\"\${common} -dEprefix \${prefix}\"
