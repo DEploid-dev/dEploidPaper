@@ -7,6 +7,11 @@ prefix = args[1]
 source("common.r")
 
 panel = read.table("/well/mcvean/joezhu/pf3k/pf3k_5_1_final/labStrains.eg.panel.txt", header=T)
+keepingIdx = read.table("keeping.idx.txt", header= T)
+
+panel = panel[keepingIdx$IDX,]
+#Need to read exclude sites ... first trim the panel!
+
 #panel = read.table("labStrains.eg.panel.txt", header=T)
 
 endAt = cumsum(table(panel[,1]))
