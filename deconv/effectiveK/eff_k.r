@@ -37,7 +37,7 @@ true.prop[["PG0415-C"]] = c(1)
 
 sampleNames = read.table("../labSampleNames", header=F, stringsAsFactors = F)$V1
 
-pdf("eff_k.pdf", width = 8, height = 14)
+pdf("eff_k.pdf", width = 8, height = 12)
 
 #sampleNames = c("PG0395-C")
 par(mar=c(6.1,20.1,4.1,2.1))
@@ -50,20 +50,39 @@ for (sampleName in sampleNames){
     myk = 5
     true.eff.k = c(true.eff.k, compute.effective.k(true.prop[[sampleName]]))
     a = read.table(paste(sampleName, "k", myk, ".prop", sep=""), header=F)
-
     for (i in 1:dim(a)[1]){
         prop = a[i,]
         strains = which(prop>0.01)
-        points(compute.effective.k(prop[strains]), sampleI + 0.1, col = adjustcolor( "red", alpha.f = 0.2), pch=16, cex=1.4)
+        points(compute.effective.k(prop[strains]), sampleI + 0.2, col = adjustcolor( "red", alpha.f = 0.1), pch=16, cex=1.4)
     }
+
+    myk = 4
+    true.eff.k = c(true.eff.k, compute.effective.k(true.prop[[sampleName]]))
+    a = read.table(paste(sampleName, "k", myk, ".prop", sep=""), header=F)
+    for (i in 1:dim(a)[1]){
+        prop = a[i,]
+        strains = which(prop>0.01)
+        points(compute.effective.k(prop[strains]), sampleI + 0.1, col = adjustcolor( "green", alpha.f = 0.1), pch=16, cex=1.4)
+    }
+
     myk = 3
     a = read.table(paste(sampleName, "k", myk, ".prop", sep=""), header=F)
 #    ef.k = c()
     for (i in 1:dim(a)[1]){
         prop = a[i,]
         strains = which(prop>0.01)
-        points(compute.effective.k(prop[strains]), sampleI - 0.1, col = adjustcolor( "blue", alpha.f = 0.2), pch=16, cex=1.4)
+        points(compute.effective.k(prop[strains]), sampleI - 0.1, col = adjustcolor( "yellow", alpha.f = 0.1), pch=16, cex=1.4)
     }
+
+    myk = 2
+    true.eff.k = c(true.eff.k, compute.effective.k(true.prop[[sampleName]]))
+    a = read.table(paste(sampleName, "k", myk, ".prop", sep=""), header=F)
+    for (i in 1:dim(a)[1]){
+        prop = a[i,]
+        strains = which(prop>0.01)
+        points(compute.effective.k(prop[strains]), sampleI - 0.2, col = adjustcolor( "blue", alpha.f = 0.1), pch=16, cex=1.4)
+    }
+
 #jitter(sampleI, jitterOff)
     points(compute.effective.k(true.prop[[sampleName]]), sampleI, col = "black", pch="X", cex=1.4)
     printingProp = paste( sort(true.prop[[sampleName]]), collapse = ", ")
@@ -73,4 +92,5 @@ for (sampleName in sampleNames){
 }
 
 axis(2, at=1:27,labels=my_y_lab, las=2, lwd = 0, cex=2, cex.axis=1.4)
+legend("topright", legend = paste("k=", c(2:5)), col = c("blue", "yellow", "green", "red"), pch = 16, cex=1.4)
 dev.off()
