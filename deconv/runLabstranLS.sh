@@ -24,11 +24,11 @@ echo "
 #vcf=${root}/vcf/${sample}.wg.vcf.gz
 
 plaf=${currentDir}labStrains.eg.PLAF.txt
-panel=${currentDir}labStrains.eg.panel.txt
+panel=${currentDir}asiaAfrica_hb3_7g8_dd2.eg.panel.txt
 excludeAt=${currentDir}exclude.txt
 vcf=${currentDir}${sample}.vcf.gz
 
-prefix=${sample}_seed\${SGE_TASK_ID}k$@
+prefix=${sample}_panelIV_seed\${SGE_TASK_ID}k$@
 common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${excludeAt} -o \${prefix}\"
 dEploidCommon=\"\${common} -seed \${SGE_TASK_ID} -nSample 500 -rate 8 -burn 0.67\"
 rCommon=\"\${common} -dEprefix \${prefix}\"
