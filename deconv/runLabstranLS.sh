@@ -24,21 +24,21 @@ echo "
 #vcf=${root}/vcf/${sample}.wg.vcf.gz
 
 plaf=${currentDir}labStrains.eg.PLAF.txt
-panel=${currentDir}asiaAfrica_hb3_7g8_dd2.eg.panel.txt
+panel=${currentDir}labStrains.eg.panel.txt
 excludeAt=${currentDir}exclude.txt
 vcf=${currentDir}${sample}.vcf.gz
 
-prefix=${sample}_panelIV_seed\${SGE_TASK_ID}k$@
+prefix=${sample}_seed\${SGE_TASK_ID}k$@
 common=\"-vcf \${vcf} -plaf \${plaf} -exclude \${excludeAt} -o \${prefix}\"
 dEploidCommon=\"\${common} -seed \${SGE_TASK_ID} -nSample 500 -rate 8 -burn 0.67\"
 rCommon=\"\${common} -dEprefix \${prefix}\"
 
 (time dEploid \${dEploidCommon} -panel \${panel} -k $@) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
 #(time dEploid \${dEploidCommon} -noPanel -k $@) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
-#initialProp=\$( cat \${prefix}.prop | tail -1 | sed -e \"s/\t/ /g\" )
+initialProp=\$( cat \${prefix}.prop | tail -1 | sed -e \"s/\t/ /g\" )
 #(time dEploid \${dEploidCommon} -panel \${panel} -initialP \${initialProp} -k $@) &> ${root}/dEploidOut/\${sample}/\${prefix}.time
 
-dEploid \${common} -panel \${panel} -painting \${prefix}.hap -o \${prefix} -initialP \${initialProp}
+#dEploid \${common} -panel \${panel} -painting \${prefix}.hap -o \${prefix} -initialP \${initialProp}
 
 R --slave \"--args \${rCommon} \" < ~/DEploid/utilities/interpretDEploid.r
 
