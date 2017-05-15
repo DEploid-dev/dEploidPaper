@@ -53,10 +53,14 @@
 
 \title[Deconvolution of multiple infections]{Deconvolution of multiple infections in {\it Plasmodium falciparum} from high throughput sequencing data}
 \author[Zhu \textit{et~al}.]{Sha Joe Zhu\,$^{\text{\sfb 1,\textcolor{red}{2}},*}$, Jacob Almagro-Garcia\,$^{\text{\sfb 1,\textcolor{red}{2},3,4}}$ and Gil McVean\,$^{\text{\sfb 1,\textcolor{red}{2}},*}$}
-\address{$^{\text{\sf 1}}$ Wellcome Trust Centre for Human Genetics, University of Oxford, Oxford, UK \\
+\address{
+$^{\text{\sf 1}}$ Wellcome Trust Centre for Human Genetics, University of Oxford, Oxford, UK \\
+\textcolor{red}{
 $^{\text{\sf 2}}$ Big Data Institute, Li Ka Shing Centre for Health Information and Discovery, University of Oxford, Oxford, UK\\
 $^{\text{\sf 3}}$ Medical Research Council (MRC) Centre for Genomics and Global Health, University of Oxford, Oxford, UK \\
 $^{\text{\sf 4}}$ Wellcome Trust Sanger Institute, Hinxton, UK \\
+}
+\donenum[inline]{updated affiliation}
 }
 
 \corresp{$^\ast$To whom correspondence should be addressed.}
@@ -150,7 +154,7 @@ To incorporate sequencing error, we modify the expected WSAF such that the allel
 \pi_i = q_i + (1 - q_i)e - q_ie = q_i + (1 - 2q_i)e.\label{eqn:adj_q}
 \end{equation}
 
-\noindent We model over-dispersion in read counts relative to the Binomial using a Beta-binomial distribution. Specifically, the read counts of `ALT' are identically and independently distributed (i.i.d.) Bernoulli random variables with probability of success $v_i$; i.e. $a_i \sim Binom(a_i + r_i, v_i)$, and $v_i \sim Beta(\alpha, \beta)$, where $E(v_i) = \alpha/(\alpha+\beta) = \pi_{i}$. This is achieved by setting $\alpha = c\cdot \pi_{i} $ and $\beta = c\cdot (1-\pi_{i})$, such that the variance of the WSAF is \textcolor{red}{inversely} \donenum{REV3.6: sp inversley} proportion to $c$, \textcolor{red}{which reflects how much data is available, i.e. the average sequence depth.} \donenum{REV3.5: " what is c? it isn't defined? In general the model section needs some effort in clarification."} Combined, we have:
+\noindent We model over-dispersion in read counts relative to the Binomial using a Beta-binomial distribution. Specifically, the read counts of `ALT' are identically and independently distributed (i.i.d.) Bernoulli random variables with probability of success $v_i$; i.e. $a_i \sim Binom(a_i + r_i, v_i)$, and $v_i \sim Beta(\alpha, \beta)$, where $E(v_i) = \alpha/(\alpha+\beta) = \pi_{i}$. This is achieved by setting $\alpha = c\cdot \pi_{i} $ and $\beta = c\cdot (1-\pi_{i})$, such that the variance of the WSAF is \textcolor{red}{inversely} \donenum{REV3.6: sp inversley} proportion to $c$. Combined, we have:
 
 \begin{equation}
 L(q_{i}| e, D) \propto \frac{\Gamma(a_i + c\cdot \pi_{i}) \Gamma(r_i + c\cdot (1-\pi_{i}))}{\Gamma(c\cdot \pi_{i})\Gamma(c\cdot (1-\pi_{i}))}. \label{eqn:llk}
@@ -193,80 +197,14 @@ To perform inference about the haplotypes present and their proportions we use M
 
 
 
-\subsubsection{Metropolis-Hastings update for proportions}\label{sec:updateP}
-
-We update $\mathbf{w}|n$, through the underlying log titres, $\mathbf{x}|n$. Specifically, we choose $i$ uniformly from $n$ and propose new $x_i'$s from $x_i' = x_i + \delta x$, where $\delta x \sim N(0, \sigma^2/s)$, and $s$ is a scaling factor. The new proposed proportion is therefore $\frac{\exp(x_k')}{\sum_{k=1}^n \exp(x_k')}$. Since the proposal distribution is symmetrical, the Hastings ratio is 1. A new update is accepted with probability
-
- $$\min\left(1, \frac{P(\mathbf{w}'|n)}{P(\mathbf{w}|n)} \frac{L(\mathbf{w}', \mathbf{h} | \Xi, e, D)}{L(\mathbf{w}, \mathbf{h} | \Xi, e, D)}\right).$$
-
-
-
-\subsubsection{Gibbs update for single haplotype}
-
-We choose haplotype strain $s$ uniformly at random from $n$ strains to update.  At each site, given the current proportions, we can calculate the likelihood of the $0$ and $1$ states.  To achieve this, we first remove it from the current WSAF, i.e. subtract $ w_s \cdot h_s$ from Eqn.~\eqref{eqn:qij_full_sum}, which gives
-
-\begin{equation}
-q_{i,-s} = \sum_{k\neq s} w_k \cdot h_k = \textrm{Eqn.~\eqref{eqn:qij_full_sum}} -  w_s \cdot h_s. \label{eqn:qij_full_sum_minus_s}
-\end{equation}
-
-\noindent Therefore, updating the allelic state of strain $s$ to $0$ and $1$, the expected WSAF becomes
-
-\begin{align}
-q_{i,h_s=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s}} \label{eqn:qij0}\\
-q_{i,h_s=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s}} + w_s \times 1. \label{eqn:qij1}
-\end{align}
-
-\noindent We substitute Equations~\eqref{eqn:qij0} and \eqref{eqn:qij1} into Equation ~\eqref{eqn:llk} after adjustment for read error.
-
-Given the structure of the hidden Markov model and the above likelihoods, the forward algorithm can be used to sample a path through the reference panel, and subsequent mis-copying, efficiently from the marginal posterior distribution.  In effect, the reference panel is used as a prior on haplotypes present in the sample (with recombination creating a mosaic of the different haplotypes) and the mis-copying process allows for recent mutation, recurrent mutation, gene conversion and some types of technical error.  Figure ~\ref{fig:ls} illustrates the approach.
-
-
-\begin{figure}[tbh]
-\centering
-\includegraphics[width=0.5\textwidth]{Fig1.pdf}
-\caption{The \citet{Li2003} algorithm as applied to the problem of multiple strain inference. Strain 1 haplotype is made up from reference haplotype segments of 1 and 2; and strain 2 haplotype is made up from reference haplotype segments of 3 and 4. With mis-copying, we allow strain states differ from the path: At the third last position of strain 1, the path is copied from reference haplotype 2, with the state of 0.}
-\label{fig:ls}
-\end{figure}
-
-
-
-
-
-\subsubsection{Gibbs update for a pair of haplotypes}\label{sec:deconvolute}
-
-In order to improve mixing, we also perform Gibbs-sampling updates for pairs of haplotypes (given current proportions). The algorithm proceeds as for the single-haplotype update, though with a larger state space.  First, we sample a pair of haplotypes, $s_1$ and $s_2$, uniformly. As in Equation ~\eqref{eqn:qij_full_sum_minus_s}, we first remove their states from the WSAF:
-
-\begin{equation}
-\begin{split}
-q_{i,-s_1, -s_2} & ~ = ~ \sum_{k\neq s_1,s_2} w_k \cdot h_k \\
-                 & ~ = ~ \textrm{Eqn.~\eqref{eqn:qij_full_sum}} - w_{s_1} \cdot h_{s_1} - w_{s_2} \cdot h_{s_2}.
-\label{eqn:qij_full_sum_minus_s1_s2}
-\end{split}
-\end{equation}
-
-\noindent Considering all four possible combination of genotypes, we can then write down the expected WSAF:
-
-\begin{align}
-q_{i,h_{s_1}=0,h_{s_2}=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} \label{eqn:qij00}\\
-q_{i,h_{s_1}=0,h_{s_2}=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_1} \times 1 \label{eqn:qij10}\\
-q_{i,h_{s_1}=0,h_{s_2}=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_2} \times 1 \label{eqn:qij01}\\
-q_{i,h_{s_1}=0,h_{s_2}=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_1} \times 1 + w_{s_2} \times 1 \label{eqn:qij11}.
-\end{align}
-
-\noindent Substituting expressions.~\eqref{eqn:qij00} to~\eqref{eqn:qij11}, into Equation ~\eqref{eqn:llk}, we then obtain their associated likelihoods.
-
-As in the single-haplotype update, the hidden Markov model formulation enables us to sample a pair of paths through the reference panel (and the mis-copying process) efficiently from the marginal posterior distribution using the forward algorithm, that is given the other haplotypes and their inferred proportions.  Equations describing the calculations are given in the Supplementary Material.
-
-
-
 \subsection{Implementation details}
 
 \begin{itemize}
 \item {\bf Number of strains}. As described above, we aim to infer more strains than are actually present, starting the MCMC chain with a fixed $n$, which has a default of $5$. At the point of reporting, we discard strains with a proportion less than a fixed threshold, typically $0.01$.
 
-\item {\bf Parameters}. In practice, we set the parameters $c=100$ (Equation~\eqref{eqn:llk}), \textcolor{red}{the mean average coverage of the validation data set is 124.487, ranges from 106.20 to 147.04}; $\eta = 0$, $\sigma^2 = 3$ and $s=40$ (Sections \ref{sec:prior} and \ref{sec:updateP}).  We set the read error rate as 0.01 and the rate of mis-copying as 0.01.
+\item {\bf Parameters}. \textcolor{red}{The parameter $c$ (Equation~\eqref{eqn:llk}) reflects how much data is available. The mean coverage of the validation data set ranges from 106.20 to 147.04, with a mean of 124.487.} \donenum{REV3.5: what is c?} In practice, we set the parameters $c=100$; $\eta = 0$, $\sigma^2 = 3$ and $s=40$ (Sections \ref{sec:prior} and \ref{sec:updateP}).  We set the read error rate as 0.01 and the rate of mis-copying as 0.01.
 
-\item {\bf Recombination rate and scaling}. We assume a uniform recombination map, where the genetic distance between loci $i$ and $i+1$ is computed by $\psi_i = D_i / d_m$ where $D_i$ denotes the physical distance between loci $i$ and $i+1$ in nucleotides and $d_m$ denotes the average recombination rate in Morgans bp$^{-1}$. We use the recombination rate for {\it P. falciparum} of 15,000 base pairs per centiMorgan as reported by \citet{Miles2016}. The recombination rate is scaled by a factor $G$, which reflects the effective population size, rate of inbreeding and size and relatedness of the reference panel.  In practice, we have found that a value of $G=20$ \todonum{REV3.2 arbitrary value of G=20 is pretty unconvincing.} works well.  The scaled genetic distance $G\psi$ is used to compute the transition probability of switching from copying reference haplotype a to reference haplotype b (see Supplementary Materials for details).
+\item {\bf Recombination rate and scaling}. We assume a uniform recombination map, where the genetic distance between loci $i$ and $i+1$ is computed by $\psi_i = D_i / d_m$ where $D_i$ denotes the physical distance between loci $i$ and $i+1$ in nucleotides and $d_m$ denotes the average recombination rate in Morgans bp$^{-1}$. We use the recombination rate for {\it P. falciparum} of 15,000 base pairs per centiMorgan as reported by \citet{Miles2016}. The recombination rate is scaled by a factor $G$, which reflects the effective population size, rate of inbreeding and size and relatedness of the reference panel. \textcolor{red}{In practice, we deconvolve over 1 million markers of field samples, we use a value of $G=20$ to ensure small values for recombination probabilities between two markers, with a mean of 0.015. A large value of $G$ will reduce the constrains from the reference panel, it is effectively an LD free model when assuming $G$ is infinity.} \donenum{REV3.2 explain value of G=20.} The scaled genetic distance $G\psi$ is used to compute the transition probability of switching from copying reference haplotype a to reference haplotype b (see Supplementary Materials for details).
 
 \item {\bf Update without linkage disequilibrium}. For initialising the chain, or if the markers present are very widely spaced, linkage disequilibrium can be ignored, which is equivalent to setting the genetic distance between adjacent loci to be infinitely high.  Under these circumstances, the haplotype updates become much simpler and depend only on the population-level allele frequency (PLAF), for example as estimated from the reference panel or provided independently.
 
@@ -278,22 +216,21 @@ As in the single-haplotype update, the hidden Markov model formulation enables u
 
 
 
-
 \section{Validation and Performance}
 
 As validation we used a set of {\it in vitro} mixtures created by \citet{Wendler2015} to simulate mixed infections. DNA was extracted from four laboratory parasite lines: 3D7, Dd2, HB3 and 7G8, experimentally mixed in different proportions (see \textcolor{red}{Figure~\ref{fig:jason}}), and submitted to the MalariaGEN pipeline \citep{MalariaGen2008} for Illumina sequencing and genotyping \citep{Manske2012}.
 
 This data set only contains two unmixed samples, which is insufficient for constructing a reference panel. Moreover, the {\em P. falciparum} genetic crosses project \citep{Miles2016} found that due to sequencing error, mapping error and variation among variant calling methods, genotype calls vary at the same locus for the same strain of {\it P. falciparum}. To create a baseline reference haplotype for each strain we therefore considered multiple samples that contains the same parasite strains.
 
-
-\begin{figure}[h]
+\begin{figure}[htb]
 \centering
 \includegraphics[width=0.5\textwidth]{deconv/effectiveK/eff_k_both.pdf}
-\caption{\textcolor{red}{Experimental validation and effective number of strains inferred from the \texttt{DEploid} method. We use the reference panel V to deconvolve the same lab-mixed samples, by starting to assume different maximal number of strains within a sample. Each experiment is repeated 30 times. Crosses in black indicate the true effective number of strains. The coloured dots show the inferred effective number of strains, where dots in faded colours show inference from multiple runs. Red crosses indicate inference result that we conclude from multiple runs when assuming that the possible number of strains is at the most five. Overall, we show consistence inference when assuming different number of strains. The purple dots show inference results when no panel is provided, which agree with inference with using a panel in most cases. Note that for the case of three strains mixing with equal proportions, the method completely misinterpret the data as a mixing of two strains of proportions 1/3 and 2/3 when a panel is not provided, which addresses the importance of using a reference panel during deconvolution.}}
+\caption{\textcolor{red}{Experimental validation and effective number of strains inferred from the \texttt{DEploid} method. We use the reference panel V to deconvolve the same lab-mixed samples, by starting to assume 3 or 5 strains within a sample. Each inference is then repeated without using a reference panel for comparison. Crosses in black indicate the true effective number of strains. The coloured dots show the inferred effective number of strains, where dots in faded colours show inference from multiple runs. Red crosses indicate inference result that we conclude from 30 replicates when using panel and assuming that the possible number of strains is 5. Overall, we show consistence inference when assuming different number of strains, with or without a reference panel; except one case of mixture of three with equal proportions. Without a reference panel, the method completely misinterpret the data as a mixing of two strains of proportions 1/3 and 2/3, which addresses the importance of using a reference panel during deconvolution.}}
 \label{fig:jason}
 \donenum[inline]{REV2.1: the perczentages shown could vary when re-run with the same parameters. Instead of single values, distributions (e.g. means and variances) need to be shown.}
 \donenum[inline]{REV1.8:  How many reference strains were used for the analysis presented in Table 2 and what strains were these? Were they the baseline reference haplotypes for the four parent strains? Using the four parent strains should produce the best possible results which is unrealistic with field isolates.}
 \end{figure}
+
 
 \paragraph{Inferring haplotypes for Dd2 strain.}
 Since 3D7 is the reference strain, we assume that strain Dd2 is the only source of `ALT' reads in samples {\textmd PG0389-C} to {\textmd PG0394-C}. Assuming markers are independent from each other, let $y$ be the read count for `ALT' allele and $x$ be the total read count weighted by the Dd2 mixing proportion (see \textcolor{red}{Figure~\ref{fig:jason}} in brackets), we use a regression model ($y = \beta_0 + \beta_{1} x$) to infer the Dd2 genotype: 1 if $\beta_{1}$ is significant with $p$-values below $0.001$; 0 otherwise.
@@ -324,7 +261,7 @@ Similarly, for samples {\textmd PG0398-C} to {\textmd PG0415-C}, we let variable
 \subsection{Accuracy}
 \donenum[inline]{REV1.6:  How many SNPs were used in the analysis?}
 \donenum[inline]{REV1.16: Was any filtering of poor quality SNPs performed? This would seem prudent for haplotype phasing.}
-\donenum[inline]{REV3.8: "Such erroneous markers are not currently inferred by DEploid, though this could be included in future versions."}.
+\donenum[inline]{REV3.8: "Such erroneous markers are not currently inferred by DEploid, though this could be included in future versions."}
 
 \noindent \textcolor{red}{Our validation experiments use variant calls of these 27 lab-mixed {\it in vitro} samples, which are produced by the Pf3k pipeline \citep{Pf3k2016} based on GATK best practices \citep{McKenna2010} on 2512 field isolates and 128 lab samples. The filter threshold is set at a level for which false positive genotype calls (calling a variant that doesn't exist) and false negative calls (not calling a true variant) are equal. From the 18,570 SNPs, we observe a small number of heterozygous sites with high coverage, which can potentially mislead our model to over-fit the data with additional strains. After the filtering step (see supplementary materials for details), we deconvolve the remaining 17,530 sites for all experiments in the rest of this section, unless specified otherwise.}
 
@@ -358,11 +295,8 @@ Similarly, for samples {\textmd PG0398-C} to {\textmd PG0415-C}, we let variable
 Then, we tested
 \noindent In all cases we estimated the number and proportion of strains accurately, for example Figure~\ref{fig:differentRefPanel} shows the proportions of strains Dd2/7G8/HB3 as being accurately inferred as approximately $\frac{1}{4}$, $\frac{1}{2}$, and $\frac{1}{4}$.
 
+The deviance between the expected and inferred proportions is then bounded by the deviation between expected and observed effective number of strains inverse (derived in the supplementary material), with an average of 0.023.
 
-
-\subsubsection{Haplotypes}
-
-Our accuracy assessment for inferred haplotypes takes into account both switch errors and genotype discordance, which reflects recombination and miscopying events. To understand how the inferred haplotypes relates to those present we split haplotypes into sets of 50 consecutive variants and assigned them to the reference strains through maximal identity.  Switches occur when adjacent segments of inferred haplotypes are closest to different reference strains.  Genotyping errors occur when a subset of sites within the segment differ from the closest reference strain.  Example deconvolutions are shown in Figure ~\ref{fig:differentRefPanel} and an overview of all experiments is shown in Figure ~\ref{fig:switchVsMisCopy}.  From our assessment of haplotype inference, we conclude:
 
 
 \begin{figure*}[htb]
@@ -376,6 +310,11 @@ Our accuracy assessment for inferred haplotypes takes into account both switch e
 \donenum[inline]{REV3.4.2: It would inform the reader to say what the take home message of all plots should be in the legend.}
 \donenum[inline]{REV1.14: cannot read the figure legends and axes.}
 \end{figure*}
+
+
+\subsubsection{Haplotypes}
+
+Our accuracy assessment for inferred haplotypes takes into account both switch errors and genotype discordance, which reflects recombination and miscopying events. To understand how the inferred haplotypes relates to those present we split haplotypes into sets of 50 consecutive variants and assigned them to the reference strains through maximal identity.  Switches occur when adjacent segments of inferred haplotypes are closest to different reference strains.  Genotyping errors occur when a subset of sites within the segment differ from the closest reference strain.  Example deconvolutions are shown in Figure ~\ref{fig:differentRefPanel} and an overview of all experiments is shown in Figure ~\ref{fig:switchVsMisCopy}.  From our assessment of haplotype inference, we conclude:
 
 \begin{itemize}
 
@@ -391,34 +330,46 @@ Our accuracy assessment for inferred haplotypes takes into account both switch e
 \subsection{Comparison to existing methods}
 A mixed infection can be completely described by the number of co-existing strains, their relative proportions, and their associated haplotypes. Existing methods for characterizing mixed infections are limited to providing a summary statistic of relative inbreeding (F$_{\textrm{ws}}$, \cite{Manske2012}), inferring the number of strains (\texttt{COIL}), or simultaneously inferring the number of strains and their proportions (\texttt{pfmix}, \cite{Jack2016} \donenum{REV1.20: O'Brien (2016)}). DEploid is the only method that can also estimate haplotypes although it can be argued that conventional tools for phasing diploid organisms (\texttt{BEAGLE}, \texttt{SHAPEIT}) could be used to deconvolute mixtures of two strains.
 
-\textcolor{red}{In this section, we use the same dataset (27 samples) to compare \texttt{DEploid} with all the inferential methods mentioned above (see Supplementary Material for details). Our method correctly infers the number of strains in 24 out of 27 samples when a reference panel is provided. In comparison, \texttt{COIL} correctly infers the number of strains in 23 samples. We notice that both methods struggle to identify strains whose relative proportions is below 5\% (Figure~\ref{fig:switchVsMisCopy}(a)). Specifically, both methods fail to detect the minor strain of 1\% in sample PG0414-C. However \texttt{COIL} is in favour of underestimating all strains with proportions no more than 5\%, whereas \texttt{DEploid} tends to over-fit the minor strain with an additional strain of the same proportion. We recommend to adjust inferences on extremely unbalanced samples by ignoring the reference panel in the supplementary materials.}
+\textcolor{red}{In this section, we use the same dataset (27 samples) to compare \texttt{DEploid} with all the inferential methods mentioned above (see Supplementary Material for details). Our method correctly infers the number of strains in 24 out of 27 samples when a reference panel is provided. In comparison, \texttt{COIL} correctly infers the number of strains in 23 samples. We notice that both methods struggle to identify strains whose relative proportions is below 5\% (Figure~\ref{fig:switchVsMisCopy}(a)). Specifically, both methods fail to detect the minor strain of 1\% in sample PG0414-C. However \texttt{COIL} is in favour of underestimating all strains with proportions no more than 5\%, whereas \texttt{DEploid} tends to over-fit the minor strain with an additional strain of the same proportion. We recommend to adjust the value of $\sigma$ for the prior to improve inference for extremely unbalanced samples in the supplementary materials.}
 
 \textcolor{red}{The method \texttt{pfmix} infer the number of strains and proportions only based on the allele frequency imbalance within sample: It infers the strain proportions when assuming the number of strains ranges from one to eight, then uses the Bayesian information criterion to choose the best model. As in the attempt of applying \texttt{pfmix} to the same dataset is unsuccessful, we ignore the model selection step of \texttt{pfmix}, and infer proportions directly with fixed number of strains. Similar to the comparison shown in Figure~\ref{fig:jason}, we compute the observed and expected effective number of strains of each sample, and find consistent results between \texttt{DEploid} and \texttt{pfmix}. Note that even though \texttt{DEploid} over-fits extremely unbalanced samples with an additional strain, the extra strain and its proportion has minor effect when interpreting the mixture as a whole using the effective number of strains.
 }
-\donenum{REV1.12: Figure 3: pfmix infers the number of strains and their proportions, therefore please add the numbers of strains estimated by pfmix to Figure 3 panel (a) for comparison.}
+\donenum{REV1.12: Figure 3: pfmix infers the number of strains.}
 
 We also experimented with \texttt{BEAGLE} and \texttt{SHAPEIT} for deconvolving haplotypes in mixtures of two strains. \textcolor{red}{\texttt{BEAGLE} and \texttt{SHAPEIT} would implicitly assume a 50:50 distribution of alleles with its diploid assumption.} \donenum{REV1.21: BEAGLE assumption.} Both methods worked well for balanced mixtures (i.e. with proportions between 40\% and 60\%) as they mimic a diploid sample. However, as strain proportions became more unbalanced, accuracy degraded and both methods wrongly inferred heterozygous sites as homozygous, introducing a bias towards inferring the haplotypes of dominant strains. We observed that strains with a relative proportion below 20\% were always masked out by the dominant strain (Figure~\ref{fig:switchVsMisCopy}(c)).
 
-\subsection{Run-time}
-
-The complexity of our program is $\mathcal{O}(lm^2)$ (see Figure~\ref{fig:runtime}), where $m$ and $l$ are the number of reference strains and sites respectively. In practice, we recommend dividing samples into distinct geographical regions to perform deconvolution. \textcolor{red}{We then compute the pairwise differences between two clonal strains, and use} the ten most different \donenum{REV1.22: ``ten most different'' -- different how? Define.} local clonal strains as as reference panel. The run time for deconvolution a field sample range between 1 and 6 hours, depending on the number variants in a sample: For example, it takes $5\frac{1}{2}$ hours to process sample {\textmd QG0182-C} over 372,884 sites.  We give worked examples of deconvolving mixed infections from {\it in vitro} samples in the Supplementary Material.
-
-
+\subsection{\textcolor{red}{Simulation from field samples}}
+\textcolor{red}{
+We conducted simulation studies to investigate how DEploid perform on field samples, where two scenarios of mixtures were considered: 25/75\% and 45/55\% over 8,071 sites. Twenty-two haplotypes were randomly selected from 212 Asian clonal samples, where the first twenty haplotypes were treated as candidates of the reference panel. Let $h_{21}$ and $h_{22}$ denote the genotypes for the 21st and 22nd haplotypes, the true WSAF was computed as $0.25 \times h_{21} + 0.75 \times h_{22}$ for the 25/75\% mixture, followed by adjusting from Eqn.\eqref{eqn:adj_q}. We assume that the sequencing coverage is the same as of the 11th haplotype, and mimic the alternative read count by drawing independent Binomial variables from the total depth with the probability of the adjusted WSAF. We subtract the alternative read count from the total coverage to obtain the reference allele count. DEploid correctly recovered the number of strains and proportions. As expected, we observed more switches and genotype errors in 45/55\% mixture than 25/75\% mixture, with means of 58.9 and 24.7 for switches, and 0.0184 and 0.0073 for genotype errors respectively (Figure~\ref{fig:simField}).
+}\donenum{REV1.2.1: simulation}
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=.45\textwidth]{Fig4.pdf}
-\caption{Run-time and scaling.  CPU time (seconds) for deconvolving chromosomes 12, 13 and 14 of sample {\textmd PG0412-C} with reference panels I, V and VI (size 4, 10 and 16 reference haplotypes respectively). The run-time is approximately linear with respect to the number of sites and shows the expected quadratic trend against the number of reference strains.}\label{fig:runtime}
+\includegraphics[width=.45\textwidth]{{simulationPf3k_CHROM14/switches_and_genotypepanel20-seg50}.pdf}
+\caption{Histograms of number of switches and genotype errors of deconvolution of 100 simulated Pf3k samples.}\label{fig:simField}
 \end{figure}
+
+
+
+
+\subsection{Run-time}
+
+The complexity of our program is $\mathcal{O}(lm^2)$, where $m$ and $l$ are the number of reference strains and sites respectively. In practice, we recommend dividing samples into distinct geographical regions to perform deconvolution. \textcolor{red}{We then compute the pairwise differences between two clonal strains, and use} the ten most different \donenum{REV1.22: ``ten most different'' -- different how? Define.} local clonal strains as as reference panel. The run time for deconvolution a field sample range between 1 and 6 hours, depending on the number variants in a sample: For example, it takes $5\frac{1}{2}$ hours to process sample {\textmd QG0182-C} over 372,884 sites.  We give worked examples of deconvolving mixed infections from {\it in vitro} samples in the Supplementary Material.
+
+
+
+%\begin{figure}[htb]
+%\centering
+%\includegraphics[width=.45\textwidth]{Fig4.pdf}
+%\caption{Run-time and scaling.  CPU time (seconds) for deconvolving chromosomes 12, 13 and 14 of sample {\textmd PG0412-C} with reference panels I, V and VI (size 4, 10 and 16 reference haplotypes respectively). The run-time is approximately linear with respect to the number of sites and shows the expected quadratic trend against the number of reference strains.}\label{fig:runtime}
+%\end{figure}
 
 
 \section{Discussion}
 
-The program \texttt{DEploid} and its analysis pipeline has been originally developed for {\it P. falciparum} studies. Nonetheless, with \textcolor{red}{some} parameter changes, \texttt{DEploid} can be used for deconvolution of any other data set with a mixture of samples from a single species, for example on data from {\it Plasmodium vivax} \citep{Pearson2016} or bacterial and viral pathogens. \textcolor{red}{However, each organism genome preserves its own unique biological signature, which reflects differently in sequence data. Variable data quality and sequencing artefacts will lead to different data filtering steps and parameter changes. We show examples and discuss the effect of parameters in the supplementary materials.}
-\donenum{REV2.2: Application to other species (Discussion).}
+The program \texttt{DEploid} and its analysis pipeline has been originally developed for {\it P. falciparum} studies. Nonetheless, with \textcolor{red}{some} parameter changes, \texttt{DEploid} can be used for deconvolution of any other data set with a mixture of samples from a single species, for example on data from {\it Plasmodium vivax} \citep{Pearson2016} or bacterial and viral pathogens. \textcolor{red}{However, each organism genome preserves its own unique biological signature, which reflects differently in sequence data. Variable data quality and sequencing artefacts will require to different filtering steps and parameter changes. We show examples and discuss the effect of parameters in the supplementary materials.} \donenum{REV2.2: Application to other species (Discussion).}
 
-\donenum[inline]{REV1.15: A typical reference panel would contain haplotypes from field samples constructed from the user. Therefore, one might expect results similar to Panel I in Figure 2. A reference panel like this does not seem to affect estimates of the number of strains or their relative proportions in an infection, however haplotype inference does not look flash. Perhaps address this in the discussion? If haplotype inference is not reliable then this tool is not terribly useful as other popular tools are available to estimate strain numbers and their relative proportions.}
-There are several limitation of the current implementation, the greatest of which is the quadratic scaling with reference panel size. \textcolor{red}{Note that a typical reference panel from field samples is not perfect, and does not guarantee all the genetic `foot print' are presented by the panel. Therefore, it would be ideal to include as many reference strains as possible (we show improved inference with a larger reference panel in supplementary material). However, this approach is computationally prohibitive.} In practice, current approaches to related problems such as haplotype phasing \citep{Delaneau2012} or inference from low-coverage sequencing experiments \citep{Davis2016} typically aim to select a few candidate haplotypes (which might be a mosaic) from a reference panel.  Alternatively, the reference panel data can itself be approximated, for example through graphical structures, as in BEAGLE \citep{Browning2007}, or represented through structures that enable efficient computation \citep{Lunter2016}. \textcolor{red}{Similarly, our current implementation only processes SNPs. To reconstruct the complete haplotype, we should also consider structural variants such as insertions and deletions.}
+There are several limitation of the current implementation, the greatest of which is the quadratic scaling with reference panel size. \textcolor{red}{Note that a typical reference panel from field samples is not perfect, and does not guarantee all the genetic `foot print' are presented by the panel. Therefore, it would be ideal to include as many reference strains as possible. However, this approach is computationally prohibitive.} \donenum{REV1.15: It is always better to deconvolve with a reference panel.} In practice, current approaches to related problems such as haplotype phasing \citep{Delaneau2012} or inference from low-coverage sequencing experiments \citep{Davis2016} typically aim to select a few candidate haplotypes (which might be a mosaic) from a reference panel.  Alternatively, the reference panel data can itself be approximated, for example through graphical structures, as in BEAGLE \citep{Browning2007}, or represented through structures that enable efficient computation \citep{Lunter2016}. \textcolor{red}{Similarly, our current implementation only processes SNPs. To reconstruct the complete haplotype, we should also consider structural variants such as insertions and deletions.}
 \donenum{REV2.4: InDels and structural variants. } Such extensions will be pursued in future work.
 
 \textcolor{red}{As technology arises, single molecule sequencing with long-read data has become available, e.g. PacBio or Oxford Nanopore Technologies. These technologies generate sequence data of lengths in kilobytes typically. Long-read data can better preserve the genetic linkage information than short-read data. Hence we expect higher quality phasing results when applying long-read data in principle. However, how to overcome the genotype error and artefacts in these technologies has not been tested by DEploid. As for future development, we will investigate how to adjust the model parameters to cope with different sequencing platforms.}
@@ -457,9 +408,10 @@ Browning, S.~R. and B.~L. Browning (2007)
 \newblock {\em Am. J. Hum. Genet.\/}~{\em 81\/}(5), 1084--1097.
 
 \bibitem[\protect\citeauthoryear{Chang}{Chang et~al.}{2017}]{Chang2017}
-Change, H.~H. et al. (2017)
+\textcolor{red}{Change, H.~H. et al. (2017)
 \newblock THE REAL McCOIL: A method for the concurrent estimation of the complexity of infection and SNP allele frequency for malaria parasites.
-\newblock {\em PLoS Comput. Biol.\/}~{\em 13\/}(1), e1005348.
+\newblock {\em PLoS Comput. Biol.\/}~{\em 13\/}(1), e1005348.}
+\donenum{Change, H.~H. et al. (2017)}
 
 \bibitem[\protect\citeauthoryear{Davis, Flint, Myers and Mott}{Davis}{2016}]{Davis2016}
 Davies, R.~W. {\em et al}. (2016)
@@ -548,9 +500,11 @@ Mathieson I. and McVean G. (2014).
 \newblock{\em PLoS Genet.\/}~{\em 10}(8), e1004528.
 
 \bibitem[\protect\citeauthoryear{McKenna}{McKenna et~al.}{2010}]{McKenna2010}
+\textcolor{red}{
 McKenna, A. et al. (2010).
 \newblock The Genome Analysis Toolkit: a MapReduce framework for analyzing next-generation DNA sequencing data.
 \newblock {\em Genome Res.\/}~{\em 20}, 1297--1303.
+}\donenum{McKenna, A. et al. (2010).}
 
 \bibitem[\protect\citeauthoryear{Miles, Iqbal, Vauterin, Pearson, Campino,
   Theron, Gould, Mead, Drury, O{\textquoteright}Brien, Ruano~Rubio, MacInnis,
