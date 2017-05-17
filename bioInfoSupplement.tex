@@ -343,7 +343,7 @@ In this example, the second inferred haplotype (Figure~\ref{fig:0396}~(d)) repre
 \includegraphics[width=1.3\textwidth]{{DEploid-Supplementary-Materials/PG0396-C_seed5k5.interpretDEploidFigure.2}.png}
 }
 \caption{(b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome. }
-\todonum[inline]{REV1.18: Figure S2.2: inconsistencies in WSAF in figures (a) and (b). Histogram of WSAF in panel (a) shows clustering around 0.3 and 1 while the distributions of WSAF across each chromosome in panel (b) cluster around 0.3 and 0? \textcolor{red}{JOE: I don't understand this comment...}}
+\donenum[inline]{REV1.18: Figure S2.2: inconsistencies in WSAF in figures (a) and (b). See caption of Figure~\ref{fig:0395}}
 \end{figure}
 
 \begin{figure}[ht]
@@ -519,7 +519,7 @@ We compare the simulated genotypes against the true genotypes of HB3/7G8: {\tt 0
 \input{supplementReset.tex}
 
 \section{Comparison to existing methods} \label{sup:sec:benchmark}
-\todonum{REV1.11.2: Parameters used in this analysis, and the analysis of other software, would also be useful.}
+\donenum{REV1.11.2: Parameters used in this analysis.}
 
 In order to show how our method can significantly advance studies in relation to mixed infections, we have compared our inference results on number of strains, strain proportions and haplotypes with \texttt{COIL} \citep{Galinsky2015}, \texttt{pfmix} \citep{Jack2016}, \texttt{BEAGLE} \citep{Browning2007} and \texttt{SHAPEIT} \citep{Delaneau2012}, using the 27 {\it in vitro} samples. Code and data are available online at \url{https://github.com/shajoezhu/DEploid-Supplementary-Materials/tree/master/benchMark}. \textcolor{red}{Note that genotype information is required for benchmarking against \texttt{COIL} and \texttt{SHAPEIT}, which are inferred by GATK Best Practices\citep{McKenna2010}.}
 
@@ -528,12 +528,12 @@ In order to show how our method can significantly advance studies in relation to
 \texttt{COIL} uses genotype information to infer number of strains. The program input is a text file. Each row contains the sample name, and its sequence, which takes homozygous reference alleles and encodes heterozygous site as ``N'', and missing site as ``X''. \textcolor{red}{We use a \texttt{python} script to extract reference and alternative allele information from the Pf3k VCF file, and encode `0/0' as the reference allele, `1/1' as the alternative allele, `0/1' as ``N'' and `./.' as ``X''.} We then submit the input file to the online portal \url{http://portals.broadinstitute.org/infect/malaria/coil//}, then inference results will then follow.
 
 \subsection{\texttt{pfmix}}
-\todonum[inline]{REV1.12: Figure 3: pfmix infers the number of strains and their proportions, therefore please add the numbers of strains estimated by pfmix to Figure 3 panel (a)}
+\donenum{REV1.12: Figure 3: pfmix infers the number of strains and their proportions}
 The \texttt{pfmix} method uses allele count information to infer the strain proportion. We extract reference and alternative allele counts, and save them in text files, which consist with three columns: chromosome information, position, and allele counts. \textcolor{red}{This method works sample-by-sample, infers the number of strains and proportions only based on the allele frequency imbalance within sample: It infers the strain proportions when assuming the number of strains from one to eight, then uses the Bayesian information criterion to choose the best model. As in the attempt of applying \texttt{pfmix} to the same dataset is unsuccessful, we ignore the model selection step of \texttt{pfmix}, and infer proportions directly with fixed number of strains.}
  %`R' code %To run the analysis, use the following command,
 
 \subsection{\texttt{BEAGLE}}
-\todonum{REV1.11.1: BEAGLE requires a reference dataset to infer haplotype phase, typically a large reference dataset. What reference dataset was used? Parameters used in this analysis, and the analysis of other software, would also be useful.}
+\donenum{REV1.11.1: BEAGLE requires a reference dataset to infer haplotype phase.}
 The software package \texttt{BEAGLE} input is a VCF file that contains the genotype likelihood information of all 27 samples. We express the genotype likelihood by $r \log_{10}(1-x) + a \log_{10}(x)$, where $r$ and $a$ denote the reference and alternative allele counts respectively. Let $x$ denote the error rate, which takes value of 0.01, 0.5 and 0.99, in the cases of homozygous reference, heterozygous and homozygous alternative respectively.
 %$$\begin{cases}
  %0.01, &\textrm{homozygous reference}, \\
