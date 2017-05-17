@@ -13,11 +13,19 @@
 \usepackage{listings}
 \usepackage{color}
 
-\usepackage[colorinlistoftodos]{todonotes}
-%\usepackage[disable]{todonotes}
+%\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[disable]{todonotes}
+
+\newcounter{todocounter}
+\newcommand{\todonum}[2][]
+{\stepcounter{todocounter}\todo[#1]{\thetodocounter: #2}}
 
 \newcommand{\done}[2][]
 {\todo[color=green!40, #1]{#2}}
+
+\newcommand{\donenum}[2][]
+{\stepcounter{todocounter}\done[#1]{\thetodocounter: #2}}
+
 
 \usepackage{xcolor}
 \usepackage{hyperref}
@@ -54,8 +62,6 @@
 }
 \lstset{language=bash}
 
-\usepackage{todonotes}
-\newcommand*{\Scale}[2][4]{\scalebox{#1}{$#2$}}%
 
 %\usepackage{tikz}
 \usetikzlibrary{positioning}
@@ -98,9 +104,11 @@
 \setcounter{page}{1}
 
 \maketitle
+\tableofcontents
 
 \setcounter{section}{0}
 
+\newpage
 \input{supplementReset.tex}
 
 %\begin{center}
@@ -109,11 +117,42 @@
 
 \section{Technical details} \label{sup:sec:alg}
 
-Here we describe the Gibbs-sampling algorithms used for updating both single haplotypes and pairs of haplotypes given estimated proportions for all strains and the allelic states of those haplotypes not being updated.  Unless stated otherwise, we use the notation described in the main article.
+\subsection{\textcolor{red}{Inference}}
+\subsubsection{Metropolis-Hastings update for proportions}\label{sec:updateP}
+
+We update $\mathbf{w}|n$, through the underlying log titres, $\mathbf{x}|n$. Specifically, we choose $i$ uniformly from $n$ and propose new $x_i'$s from $x_i' = x_i + \delta x$, where $\delta x \sim N(0, \sigma^2/s)$, and $s$ is a scaling factor. The new proposed proportion is therefore $\frac{\exp(x_k')}{\sum_{k=1}^n \exp(x_k')}$. Since the proposal distribution is symmetrical, the Hastings ratio is 1. A new update is accepted with probability
+
+ $$\min\left(1, \frac{P(\mathbf{w}'|n)}{P(\mathbf{w}|n)} \frac{L(\mathbf{w}', \mathbf{h} | \Xi, e, D)}{L(\mathbf{w}, \mathbf{h} | \Xi, e, D)}\right).$$
 
 
 
-\subsection{Gibbs update for single haplotype}
+\subsubsection{Gibbs update for single haplotype}
+
+We choose haplotype strain $s$ uniformly at random from $n$ strains to update.  At each site, given the current proportions, we can calculate the likelihood of the $0$ and $1$ states.  To achieve this, we first remove it from the current WSAF, i.e. subtract $ w_s \cdot h_s$ from Eqn.~(3), which gives
+
+\begin{equation}
+q_{i,-s} = \sum_{k\neq s} w_k \cdot h_k = \textrm{Eqn.~(3)} -  w_s \cdot h_s. \label{eqn:qij_full_sum_minus_s}
+\end{equation}
+
+\noindent Therefore, updating the allelic state of strain $s$ to $0$ and $1$, the expected WSAF becomes
+
+\begin{align}
+q_{i,h_s=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s}} \label{eqn:qij0}\\
+q_{i,h_s=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s}} + w_s \times 1. \label{eqn:qij1}
+\end{align}
+
+\noindent We substitute Equations~\eqref{eqn:qij0} and \eqref{eqn:qij1} into Eqn.~(5) after adjustment for read error.
+
+Given the structure of the hidden Markov model and the above likelihoods, the forward algorithm can be used to sample a path through the reference panel, and subsequent mis-copying, efficiently from the marginal posterior distribution.  In effect, the reference panel is used as a prior on haplotypes present in the sample (with recombination creating a mosaic of the different haplotypes) and the mis-copying process allows for recent mutation, recurrent mutation, gene conversion and some types of technical error.  Figure ~\ref{fig:ls} illustrates the approach.
+
+
+\begin{figure}[tbh]
+\centering
+\includegraphics[width=0.85\textwidth]{Fig1.pdf}
+\caption{The \citet{Li2003} algorithm as applied to the problem of multiple strain inference. Strain 1 haplotype is made up from reference haplotype segments of 1 and 2; and strain 2 haplotype is made up from reference haplotype segments of 3 and 4. With mis-copying, we allow strain states differ from the path: At the third last position of strain 1, the path is copied from reference haplotype 2, with the state of 0.}
+\label{fig:ls}
+\end{figure}
+
 
 Our goal is to sample the allelic states for the haplotype to be updated from the posterior distribution given the reference panel, the prior on paths through this panel, the rate of mis-copying, and the error distribution for read counts at sites.  This can be achieved through the use of the forward algorithm within the hidden Markov model formulation.
 
@@ -144,96 +183,153 @@ F(j,i+1)=\big(\rho_i' F(j,i) + \frac{1-\rho_i'}{|\Xi|}\sum_{k=1}^{|\Xi|}F(k,i)\b
 Once the forward matrix has been filled, we then sample first a path through the matrix using the standard approach and, conditional on this path, the mis-copying process.  The resultant haplotype is therefore drawn, as desired, from the posterior distribution of haplotypes.
 
 
-\subsection{Gibbs update for a pair of haplotypes}
+
+\subsubsection{Gibbs update for a pair of haplotypes}\label{sec:deconvolute}
+
+In order to improve mixing, we also perform Gibbs-sampling updates for pairs of haplotypes (given current proportions). The algorithm proceeds as for the single-haplotype update, though with a larger state space.  First, we sample a pair of haplotypes, $s_1$ and $s_2$, uniformly. As in Equation ~\eqref{eqn:qij_full_sum_minus_s}, we first remove their states from the WSAF:
+
+\begin{equation}
+\begin{split}
+q_{i,-s_1, -s_2} & ~ = ~ \sum_{k\neq s_1,s_2} w_k \cdot h_k \\
+                 & ~ = ~ \textrm{Eqn.~\eqref{eqn:qij_full_sum}} - w_{s_1} \cdot h_{s_1} - w_{s_2} \cdot h_{s_2}.
+\label{eqn:qij_full_sum_minus_s1_s2}
+\end{split}
+\end{equation}
+
+\noindent Considering all four possible combination of genotypes, we can then write down the expected WSAF:
+
+\begin{align}
+q_{i,h_{s_1}=0,h_{s_2}=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} \label{eqn:qij00}\\
+q_{i,h_{s_1}=0,h_{s_2}=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_1} \times 1 \label{eqn:qij10}\\
+q_{i,h_{s_1}=0,h_{s_2}=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_2} \times 1 \label{eqn:qij01}\\
+q_{i,h_{s_1}=0,h_{s_2}=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_1} \times 1 + w_{s_2} \times 1 \label{eqn:qij11}.
+\end{align}
+
+\noindent Substituting expressions.~\eqref{eqn:qij00} to~\eqref{eqn:qij11}, into Eqn.(5), we then obtain their associated likelihoods.
+
+As in the single-haplotype update, the hidden Markov model formulation enables us to sample a pair of paths through the reference panel (and the mis-copying process) efficiently from the marginal posterior distribution using the forward algorithm, that is given the other haplotypes and their inferred proportions.
+
 
 Similar to the previous section, we consider updating the allelic states of the pair of haplotypes $s_1$ and $s_2$ given the reference panel, the prior on paths through this panel, the rate of mis-copying, and the error distribution for read counts at sites.  However, here the underlying state is the pair of paths through the reference panel (hence the quadratic nature of the algorithm).
 
 At each site, the emission probabilities for each pair of paths (where the two paths may be copying the same haplotype in the reference panel) are given by combining the expected WSAF calculation of Equations 11-14 in the main text with the mis-copying process, as for the single haplotype case.  For the sake of brevity we omit the equations as they follow naturally, noting that the two haplotypes are not exchangeable due to their having different proportions.  As above, we complete the forward matrix, sample a pair of paths through the matrix and then the mis-copying process to provide a sample of strain haplotypes from the marginal posterior.
 
+\subsection{\textcolor{red}{Proof of the bound of the deviance}}
+Let $k$ denote the strain index, $w_{k}$ and $\hat{w}_{k}$ be the expected and inferred proportion of strain $k$ receptively. Let the expression $\sum_{k} w_{k}^{2}$ to denote the inverse of the effective number of strains. We find the deviance between the expected and inferred proportions are bounded by the following inequality:
+\begin{equation}
+    \sum_{k} |(w_{k} - \hat{w}_{k})^{2}| \leq  |\sum_{k} w_{k}^{2} - \sum_{k} \hat{w}_{k}^{2}|, \label{eqn:ineq}
+\end{equation}
+where
+$$
+    LHS = \sum_{k} \sqrt{((w_{k} - \hat{w}_{k})^{2})^{2}},
+$$
+and
+$$
+    RHS = |\sum_{k} w_{k}^{2} - \hat{w}_{k}^{2}| = \sum_{k} | w_{k}^{2} - \hat{w}_{k}^{2}| = \sum_{k} \sqrt{( w_{k}^{2} - \hat{w}_{k}^{2})^{2}}.
+$$
+By deriving $((w_{k} - \hat{w}_{k})^{2})^{2} \leq ( w_{k}^{2} - \hat{w}_{k}^{2})^{2}$, we show that the inequality~\eqref{eqn:ineq} holds.
 
+
+\newpage
 \input{supplementReset.tex}
 
 
 \section{DEploid examples} \label{sup:sec:deploid}
 
-Our program {\texttt DEploid } is freely available, including C++ source code at \url{https://github.com/mcveanlab/DEploid} under the conditions of the GPLv3 license. A detailed document can be found at \url{http://deploid.readthedocs.io/en/latest/}. An R version is available at \url{https://github.com/mcveanlab/DEploid-r}.
 
-\subsection{Data exploration example}
+Our program \texttt{DEploid} is freely available, including C++ source code at \url{https://github.com/mcveanlab/DEploid} under the conditions of the GPLv3 license. A detailed document can be found at \url{http://deploid.readthedocs.io/en/latest/}. An R version is available at \url{https://github.com/mcveanlab/DEploid-r}.
+
+\subsection{Data exploration \textcolor{red}{and filtering}}
+\donenum{REV1.16: Was any filtering of poor quality SNPs performed? This would seem prudent for haplotype phasing.}
+\donenum{REV3.8 Such erroneous markers are not currently inferred by DEploid}
 As a demonstration, we show some examples of mixed {\em P. falciparum} genome deconvolution using one of the reference panels described in the main article (Reference Panel V). All data used in this chapter is avaiable at \url{https://github.com/shajoezhu/DEploid-Supplementary-Materials}. First, we use an {\tt R} script to plot and explore the data of a mixed sample. For instance, sample {\textmd PG0395-C} is a mixture of strains HB3, 7G8 and Dd2 with equal proportions, we run the following command
 
 \linespread{1}
 \begin{lstlisting}
-R --slave "--args -vcf PG0395-C.wg.vcf.gz
-    -plaf labStrains_PLAF.txt
-    -exclude labStrainsExclude.txt
-    -o PG0395-C" < ~/DEploid/utilities/dataExplore.r
+~/DEploid/utilities/dataExplore.r -vcf PG0395-C.vcf.gz \
+    -plaf labStrains.eg.PLAF.txt \
+    -o PG0395-C
 \end{lstlisting}
 \linespread{1.5}
 
-where ``{\tt -vcf PG0395-C.wg.vcf.gz}'' defines the input VCF file. Notice that, in this example, we assume all variant sites are single nucleotide polymorphisms, and every site is tagged with {\tt PASS} at the {\tt QUAL} column. The read counts of the reference and alternative alleles must be presented in the {\tt AD} field at all sites; ``{\tt -plaf labStrains\_PLAF.txt}'' contains the population allele frequencies calculated from total read counts (see main article Secion 2.1 Notations). Note that we use option ``{\tt -exclude labStrainsExclude.txt}'' to skip deconvolving sites at which the alternative allele counts are zeros.
+where \textcolor{red}{``{\tt -vcf PG0395-C.vcf.gz}''} defines the input VCF file. Notice that, in this example, we assume all variant sites are single nucleotide polymorphisms, and every site is tagged with {\tt PASS} at the {\tt QUAL} column. The read counts of the reference and alternative alleles must be presented in the {\tt AD} field at all sites; \textcolor{red}{``{\tt -plaf labStrains.eg.PLAF.txt}''} contains the population allele frequencies calculated from total read counts (see main article Secion 2.1 Notations).
+\textcolor{red}{This command produces two files with prefix specified by the flag ``{\tt -o}'': 1. An image file of panel figures used for exploring the allele counts. 2. A text file listed potential outliers.}
+
+\textcolor{red}{We find markers with high frequencies in both reference and alternative allele count can mislead our model to fit extra strains. We then use a threshold of $ \geq 99.5\%$ coverage (default) to identify markers with extremely high allele counts. These markers often appears in clusters as a result of poor mapping. We further expand this list of potential ``bad markers'' by considering their nearest 10 neighbours on both sides along the genome, and identify the nearest markers as ``to be excluded'' if overlaps are found (see Figure~\ref{fig:0395}).}
+
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=.9\textwidth]{{supplementDEploidExample/PG0395-CaltVsRefAndWSAFvsPLAFHi}.png}
-\caption{Data exploration of sample {\textmd PG0395-C}. From left to right, it shows:
-1. Alternative read counts vs reference read counts.
-2. Histogram of the allele frequencies within sample.
-3. Allele frequencies at the population level (PLAF) vs allele frequencies within the sample (WSAF).
+\includegraphics[width=.9\textwidth]{{supplementDEploidExample/PG0395-CaltVsRefAndWSAFvsPLAF}.png}
+\caption{\textcolor{red}{Data exploration of sample {\textmd PG0395-C}. From top to bottom, then from left to right, it shows:
+1. Total allele counts across all markers. We use the threshold (red line) to identify markers with extremely high allele counts. Red crosses indicate markers that are filtered out, coloured in black in sub-figures 2 and 4.
+2. Alternative read counts vs reference read counts.
+3. Histogram of the allele frequencies within sample. Note that we exclude markers with WSAF strictly equal to 0s and 1s in the histogram.
+4. Allele frequencies at the population level (PLAF) vs allele frequencies within the sample (WSAF).}
 }\label{fig:0395}
 \end{figure}
 
-The number of clusters in Figure~\ref{fig:0395} can provide some intuition on the number of mixed strains, see Figure~\ref{fig:0396}~(a). However, this can be misleading, as the number of clusters does not always reflect the true number of mixed strains. In the example shown in Figure~\ref{fig:0395}, the alternative vs reference counts figure only show two clusters, but the true number of mixture is three.
+The number of clusters in Figure~\ref{fig:0395} can provide some intuition on the number of mixed strains, see Figure~\ref{fig:0395}~(a). However, this can be misleading, as the number of clusters does not always reflect the true number of mixed strains. In the example shown in Figure~\ref{fig:0395}, the alternative vs reference counts figure only show two clusters, but the true number of mixture is three.
 
-Similar to the alternative vs reference counts figure, the number of WSAF modes can be used as an indication of the number of strains and proportions within a field isolate (Figure~\ref{fig:0396}~(a)). Again, this is not always true, Figure~\ref{fig:0395} shows that two modes of WSAF at approximately 0.33 and 0.66, but the true number of mixed strains is three, and the proportions are 1/3, 1/3 and 1/3.
+Similar to the alternative vs reference counts figure, the number of WSAF modes can be used as an indication of the number of strains and proportions within a field isolate (Figure~\ref{fig:0395}~(a)). Again, this is not always true, Figure~\ref{fig:0395} shows that two modes of WSAF at approximately 0.33 and 0.66, but the true number of mixed strains is three, and the proportions are 1/3, 1/3 and 1/3. \textcolor{red}{Consequently, a complex mixture of strains with even proportions is difficult to deconvolve without using a reference panel.}
 
 
 \subsection{Deconvolution of sample {\textmd PG0396-C}}
 The following example shows a specific {\textmd DEploid} command to deconvolute the mixed sample {\textmd PG0396-C}:
 \linespread{1}
 \begin{lstlisting}
-dEploid -vcf PG0396-C.wg.vcf.gz \
-    -plaf labStrains_PLAF.txt \
-    -exclude labStrainsExclude.txt \
-    -panel labStrainsPanelFinal.txt \
+dEploid -vcf PG0396-C.vcf.gz \
+    -plaf labStrains.eg.PLAF.txt \
+    -exclude exclude.txt \
+    -panel labStrains.eg.panel.txt \
     -seed 5 \
     -nSample 250 \
     -rate 8 \
     -burn 0.67 \
-    -k 3 \
-    -o PG0396-C_seed5k3 \
-    -exportPostProb
+    -k 5 \
+    -o PG0396-C_seed5k5
 \end{lstlisting}
 \linespread{1.5}
 where flags ``{\tt -vcf}'', ``{\tt -plaf}'' and ``{\tt -exclude}'' are used in the same manner as in the previous example; ``{\tt -panel labStrainsPanelFinal.txt}'' specifies a text file including haplotypes of lab strains 3D7, HB3, 7G8 and Dd2; options ``{\tt -nSample}'', ``{\tt -rate}'' and ``{\tt -burn}'' specify the total number of MCMC samples to take, the sampling rate and the burn-in fraction of the MCMC chain respectively. For detailed documentation, please see \url{http://deploid.readthedocs.io/en/latest/input.html}.
 
 
-We use a utility {\tt R} script to plot and interpret the output produced by DEploid. The following command is used to generate Figures~\ref{fig:0396} (a) -- (e).
+We use \textcolor{red}{{\texttt DEploid} to compute the posterior probabilities of the deconvolved haplotypes using the Li and Stephen's algorithm}, and a utility {\tt R} script to plot and interpret the output produced by DEploid. The following command is used to generate Figures~\ref{fig:0396} (a) -- (e).
 \linespread{1}
 \begin{lstlisting}
-R --slave "--args -vcf PG0396-C.wg.vcf.gz
-    -plaf labStrains_PLAF.txt
-    -exclude labStrainsExclude.txt
-    -dEprefix PG0396-C_seed5k3
-    -o PG0396-C_seed5k3" < ~/DEploid/utilities/interpretDEploid.r
+initialProp=$( cat PG0396-C_seed5k5.prop | tail -1 | sed -e "s/\t/ /g" )
+
+dEploid -vcf PG0396-C.vcf.gz \
+    -plaf labStrains.eg.PLAF.txt \
+    -exclude exclude.txt \
+    -panel labStrains.eg.panel.txt \
+    -painting PG0396-C_seed5k5.hap \
+    -o PG0396-C_seed5k5 \
+    -initialP ${initialProp}
+
+~/DEploid/utilities/interpretDEploid.r -vcf PG0396-C.vcf.gz \
+    -plaf labStrains.eg.PLAF.txt \
+    -exclude exclude.txt \
+    -dEprefix PG0396-C_seed5k5 \
+    -o PG0396-C_seed5k5
 \end{lstlisting}
 \linespread{1.5}
 
 
-In this example, the second inferred haplotype (Figure~\ref{fig:0396}~(d)) represents the 7G8 strain, which has relative proportion of 1/2. The remaining two strains have approximately equal proportions, which increase the difficulty to deconvolute them. In practice, we find more switching errors when deconvolving samples containing strains at similar proportions, for example, Figure~\ref{fig:0396}~(c) and (e) both show high probabilities of copying from strains HB3 and Dd2. More specificly, Figure~\ref{fig:0396}~(c) panel 1 shows almost every position of inferred haplotype chromosome 1 is copying from strain HB3; but chromosome 2 is copying from strain Dd2; chromosome 3 is partly copying from strains HB3 and Dd2, with presence of one switching error. These observations suggest that our program DEploid can characterize the main genome diversities within a mixed samples, yet there is still room to improve to overcome the switching errors.
+In this example, the second inferred haplotype (Figure~\ref{fig:0396}~(d)) represents the 7G8 strain, which has relative proportion of 1/2. The remaining two strains have approximately equal proportions, which increase the difficulty to \textcolor{red}{deconvolve}. In practice, we find more switching errors when deconvolving samples containing strains at similar proportions, for example, Figure~\ref{fig:0396}~(c) and (e) both show high probabilities of copying from strains HB3 and Dd2. More \textcolor{red}{specifically}, Figure~\ref{fig:0396}~(c) panel 1 shows almost every position of inferred haplotype chromosome 1 is copying from strain HB3; but chromosome 2 is copying from strain Dd2; chromosome 3 is partly copying from strains HB3 and Dd2, with presence of one switching error. These observations suggest that our program DEploid can characterize the main genome diversities within a mixed samples, yet there is still room to improve to overcome the switching errors.
 
 
 
 \begin{figure}[htp]
 \centering
 \subfloat[][]{
-\includegraphics[width=0.9\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.interpretDEploidFigure.1}.png}
+\includegraphics[width=0.9\textwidth]{{DEploid-Supplementary-Materials/PG0396-C_seed5k5.interpretDEploidFigure.1}.png}
 }
 \caption{Sample {\textmd PG0396-C} deconvolution with Reference Panel V. (a) Diagnostic panels from the \texttt{DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue \textcolor{red}{dots} show the expected WSAF inferred from our model (see Equation~(3) in main article). The next three plots from left to right show: 1. MCMC samples for the strain proportions, with the fraction of each color indicating the proportion of a different strain at each MCMC sample. The three colored blocks suggest that there are three strains within sample {\textmd PG0396-C}, with proportions approximately 1/4, 1/4 and 1/2.
 2. Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. A low correlation suggests poor fitting.
 3. Log likelihood of the MCMC chain. This figure is used to indicate whether the MCMC has converged. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain porportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively. }
 \label{fig:0396}
-\done[inline]{REV1: Figure S2.2 ‘blue dots’}
-\todo[inline]{REV1: figure is far too small}
+\donenum[inline]{REV1.19: Figure S2.2 ‘blue dots’}
+\donenum[inline]{REV1.1: figure is far too small}
 \end{figure}
 
 \newpage
@@ -244,24 +340,55 @@ In this example, the second inferred haplotype (Figure~\ref{fig:0396}~(d)) repre
 \ContinuedFloat
 \centering
 \subfloat[][]{
-\includegraphics[width=1.3\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.interpretDEploidFigure.2}.png}
+\includegraphics[width=1.3\textwidth]{{DEploid-Supplementary-Materials/PG0396-C_seed5k5.interpretDEploidFigure.2}.png}
 }
 \caption{(b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome. }
-\todo[inline]{REV1: Figure S2.2: inconsistencies in WSAF in figures (a) and (b). Histogram of WSAF in panel (a) shows clustering around 0.3 and 1 while the distributions of WSAF across each chromosome in panel (b) cluster around 0.3 and 0? \textcolor{red}{JOE: I don't understand this comment...}}
+\todonum[inline]{REV1.18: Figure S2.2: inconsistencies in WSAF in figures (a) and (b). Histogram of WSAF in panel (a) shows clustering around 0.3 and 1 while the distributions of WSAF across each chromosome in panel (b) cluster around 0.3 and 0? \textcolor{red}{JOE: I don't understand this comment...}}
 \end{figure}
 
 \begin{figure}[ht]
 \ContinuedFloat
 \centering{}
 \subfloat[][]{
-\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single0}.pdf}
+\includegraphics[width=1.3\textwidth]{{DEploid-Supplementary-Materials/PG0396-C_seed5k5.single0}.png}
 }
+\caption{}
+\end{figure}
+
+\begin{figure}[ht]
+\ContinuedFloat
+\centering{}
+
 \subfloat[][]{
-\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single1}.pdf}
+\includegraphics[width=1.3\textwidth]{{DEploid-Supplementary-Materials/PG0396-C_seed5k5.single1}.png}
 }
+\caption{}
+\end{figure}
+
+\begin{figure}[ht]
+\ContinuedFloat
+\centering{}
 \subfloat[][]{
-\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0396-C_seed5k3.single2}.pdf}
-}\\
+\includegraphics[width=1.3\textwidth]{{DEploid-Supplementary-Materials/PG0396-C_seed5k5.single2}.png}
+}
+\caption{}
+\end{figure}
+
+\begin{figure}[ht]
+\ContinuedFloat
+\centering{}
+\subfloat[][]{
+\includegraphics[width=1.3\textwidth]{{DEploid-Supplementary-Materials/PG0396-C_seed5k5.single3}.png}
+}
+\caption{}
+\end{figure}
+
+\begin{figure}[ht]
+\ContinuedFloat
+\centering{}
+\subfloat[][]{
+\includegraphics[width=1.3\textwidth]{{DEploid-Supplementary-Materials/PG0396-C_seed5k5.single4}.png}
+}
 \caption{(c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the Reference Panel V. In each figure, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively. Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.
 }
 \end{figure}
@@ -269,85 +396,105 @@ In this example, the second inferred haplotype (Figure~\ref{fig:0396}~(d)) repre
 \pagebreak[4]
 \global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}
 
+\subsection{\textcolor{red}{Deconvolution of extremely unbalanced samples}}
+\textcolor{red}{While deconvolving the 27 lab-mixed samples with default settings, we overestimat the number of strains as three for samples PG0399-C, PG0400-C and PG0413-C 14, 19 and 18 times respectively from 30 replicates. In all cases, DEploid returns decent haplotype for the dominant strain, but chop the minor strain into two parts overall (in multiple segments), and fulfil them with haplotype segments from the dominant strain. This over-fitting procedure can achieve a higher likelihood than the model that we expect to reflect the truth. In order to improve the inference, we rerun the deconvolution 30 times with $\sigma^{2} = 10$ and other parameters unchanged. Such modification uses a unimodal model (intuition is shown in Figure~\ref{fig:changeSigma}) to update the proportion, and ensures that a robust estimates for the dominate strain, which explains the main feature for extremely unbalanced mixtures. We estimate the number of strains correctly 26, 26 25 times out of 30 for samples PG0399-C, PG0400-C and PG0413-C respectively. }
+
+\begin{figure}[h]
+\centering{}
+\subfloat[][]{
+\includegraphics[width=.6\textwidth]{{deconv/effectiveK/eff_k_both.veryImbalanced}.pdf}
+}\\
+\subfloat[][]{
+\includegraphics[width=0.4\textwidth, height = 0.35\textwidth]{{changeSigma/plotSd0.09}.pdf}
+}
+\subfloat[][]{
+\includegraphics[width=0.4\textwidth, height = 0.35\textwidth]{{changeSigma/plotSd0.03}.pdf}
+}\\
+\caption{Figure (a) shows the changes in inferring the effective number of strains when using $\sigma^{2} = 10$. The convolution of normal distribution $N(i/6, \sigma^{2})$, for $i \in (1,5)$, where $\sigma^{2} = 0.09$ in (b) and $\sigma^{2} = 0.03$ in (c). With a larger value of $\sigma^{2}$, the convolution behaves in a fashion of a unimodal distribution. Whereas a small value of $\sigma^{2}$ will result in a multi-modal fashion, which is more suitable for sparse updates. }\label{fig:changeSigma}
+\end{figure}
 
 \newpage
-\subsection{Deconvolution of sample {\textmd PG0415-C}}
 
-As metioned in the main article, we assume that there are more strains than necessary, and only keep strains with inferred relative proportions greater than 0.01 in practice. In the following example, we show the deconvolution of a clonal sample ({\textmd PG0415-C}) when starting from three strains.
+%\subsection{\textcolor{red}{Simulation of field samples}}
+%~\todonum{REV1.2.1: generated mixture experiment,}
 
-\linespread{1}
-\begin{lstlisting}
-dEploid -vcf PG0415-C.wg.vcf.gz \
-    -panel labStrainsPanelFinal.csv \
-    -plaf labStrains_PLAF.txt \
-    -exclude labStrainsExclude.txt \
-    -seed 2 \
-    -nSample 250 \
-    -rate 8 \
-    -burn 0.67 \
-    -k 3 \
-    -o PG0415-C_seed2k3 \
-    -exportPostProb
-\end{lstlisting}
+%\subsection{Deconvolution of sample {\textmd PG0415-C}}
 
-%R --slave "--args -vcf PG0415-C.wg.vcf.gz
-    %-plaf labStrains_PLAF.txt
-    %-exclude labStrainsExclude.txt
-    %-dEprefix PG0415-C_seed2k3
-    %-o PG0415-C_seed2k3" < ~/DEploid/utilities/interpretDEploid.r
+%As metioned in the main article, we assume that there are more strains than necessary, and only keep strains with inferred relative proportions greater than 0.01 in practice. In the following example, we show the deconvolution of a clonal sample ({\textmd PG0415-C}) when starting from three strains.
 
-\linespread{1.5}
+%\linespread{1}
+%\begin{lstlisting}
+%dEploid -vcf PG0415-C.wg.vcf.gz \
+    %-panel labStrainsPanelFinal.csv \
+    %-plaf labStrains_PLAF.txt \
+    %-exclude labStrainsExclude.txt \
+    %-seed 2 \
+    %-nSample 250 \
+    %-rate 8 \
+    %-burn 0.67 \
+    %-k 3 \
+    %-o PG0415-C_seed2k3 \
+    %-exportPostProb
+%\end{lstlisting}
 
-Figure~\ref{fig:0415}~(a) and (e) suggests that our program successfully dropped out one strain, reduced the number of strains to two. However, our model overfits this clonal sample as a mixture of two strains. This is caused by a number of problematic sites with both high number of alternative and reference allele counts, resulting in high leverage in our model. When we paint the haplotypes with the reference panel strains, Figure~\ref{fig:0415} (c) and (d) suggest that both haplotypes are in fact copying from the same strain (7G8).
+%%R --slave "--args -vcf PG0415-C.wg.vcf.gz
+    %%-plaf labStrains_PLAF.txt
+    %%-exclude labStrainsExclude.txt
+    %%-dEprefix PG0415-C_seed2k3
+    %%-o PG0415-C_seed2k3" < ~/DEploid/utilities/interpretDEploid.r
 
+%\linespread{1.5}
 
-\begin{figure}[htp]
-\centering
-\subfloat[][]{
-\includegraphics[width=.9\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.1}.png}
-}
-\caption{Sample {\textmd PG0415-C} deconvolution with Reference Panel V. (a) Diagnostic panels from the \texttt{DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue \textcolor{red}{dots} show the expected WSAF inferred from our model (see Eqn.~(3) in main article). The next three plots from left to right show: 1. MCMC samples for the strain proportions. 2. Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. 3. Log likelihood of the MCMC chain. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain porportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively. }
-\label{fig:0415}
-\done[inline]{REV1: Figure S2.2 ‘blue dots’}
-\todo[inline]{REV1: figure is far too small}
-\end{figure}
-
-\pagebreak[4]
- \global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}
-\begin{landscape}
-\begin{figure}[ht]
-\ContinuedFloat
-\centering
-\subfloat[][]{
-\includegraphics[width=1.3\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.2}.png}
-}
-\caption{(b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome. }
-\end{figure}
-
-\begin{figure}[ht]
-\ContinuedFloat
-\centering
-\subfloat[][]{
-\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single0}.pdf}
-}\label{fig:pg0415.postprob_a}
-\subfloat[][]{
-\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single1}.pdf}
-}\label{fig:pg0415.postprob_b}
-\subfloat[][]{
-\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single2}.pdf}
-}
-\caption{(c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the reference panel V. In each figure, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively. Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.}
-\end{figure}
-\end{landscape}
-\pagebreak[4]
-\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}
+%Figure~\ref{fig:0415}~(a) and (e) suggests that our program successfully dropped out one strain, reduced the number of strains to two. However, our model overfits this clonal sample as a mixture of two strains. This is caused by a number of problematic sites with both high number of alternative and reference allele counts, resulting in high leverage in our model. When we paint the haplotypes with the reference panel strains, Figure~\ref{fig:0415} (c) and (d) suggest that both haplotypes are in fact copying from the same strain (7G8).
 
 
+%\begin{figure}[htp]
+%\centering
+%\subfloat[][]{
+%\includegraphics[width=.9\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.1}.png}
+%}
+%\caption{Sample {\textmd PG0415-C} deconvolution with Reference Panel V. (a) Diagnostic panels from the \texttt{DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue \textcolor{red}{dots} show the expected WSAF inferred from our model (see Eqn.~(3) in main article). The next three plots from left to right show: 1. MCMC samples for the strain proportions. 2. Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. 3. Log likelihood of the MCMC chain. The colored dots mark the likelihoods of the model when specific MCMC steps are used: updating the strain porportions, painting a single haplotype and painting a pair of haplotypes are marked in green red and blue respectively. }
+%\label{fig:0415}
+%\done[inline]{REV1: Figure S2.2 ‘blue dots’}
+%\todo[inline]{REV1: figure is far too small}
+%\end{figure}
+
+%\pagebreak[4]
+ %\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 90}
+%\begin{landscape}
+%\begin{figure}[ht]
+%\ContinuedFloat
+%\centering
+%\subfloat[][]{
+%\includegraphics[width=1.3\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.interpretDEploidFigure.2}.png}
+%}
+%\caption{(b) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome. }
+%\end{figure}
+
+%\begin{figure}[ht]
+%\ContinuedFloat
+%\centering
+%\subfloat[][]{
+%\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single0}.pdf}
+%}\label{fig:pg0415.postprob_a}
+%\subfloat[][]{
+%\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single1}.pdf}
+%}\label{fig:pg0415.postprob_b}
+%\subfloat[][]{
+%\includegraphics[width=.4\textwidth]{{supplementDEploidExample/PG0415-C_seed2k3.single2}.pdf}
+%}
+%\caption{(c) (d) and (e) show the posterior painting probabilities for the deconvoluted strains when using the reference panel V. In each figure, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively. Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from left to right, then top to bottom.}
+%\end{figure}
+%\end{landscape}
+%\pagebreak[4]
+%\global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}
+
+\newpage
 \input{supplementReset.tex}
 
 
 \section{Assessing coverage requirements} \label{sup:sec:coverage}
-
+\donenum{REV1.2.2: a simulated data set, looking at coverage}
 In order to investigate how sensitive our method is to the sequence coverage, we simulate alternative and reference alleles read counts, and assess how the deconvoluted haplotypes compare to the truth. The previous section has shown that switching errors are common when two strain have similar proportions. Therefore here we consider to simulate data with uneven proportions.
 
 We simulate total coverage from a Poisson distribution. Specifically we set the distribution mean to 10, 30, 40, and 50. Given the simulated total coverage, we then use a binomial distribution to simulate alternative allele counts using the expected WSAF calculated using Equation~(3), where the allele states are of HB3 and 7G8, and the relative proportion used are 85\% and 15\% respectively, to mock sequence data of sample {\textmd PG0402-C} at different depths. Note that the expected WSAFs are adjusted using a constant error rate 0.01 (see Equation~(4)). In this experiment, we only simulated data for chromosome 14, in particular at sites the PLAFs are non-zero (2425 sites in total). We then use DEploid to deconvolute the data, with a fixed number of strains of two.
@@ -367,24 +514,26 @@ We compare the simulated genotypes against the true genotypes of HB3/7G8: {\tt 0
 \caption{Error rates for inferred genotypes at different read depths.}\label{fig:sup.coverage}
 \end{figure}
 
-\input{supplementReset.tex}
 
 \newpage
-\section{Comparison to existing methods} \label{sup:sec:benchmark}
-\todo{REV1: Parameters used in this analysis, and the analysis of other software, would also be useful.}
+\input{supplementReset.tex}
 
-In order to show how our method can significantly advance studies in relation to mixed infections, we have compared our inference results on number of strains, strain proportions and haplotypes with \texttt{COIL}, \texttt{pfmix}, \texttt{BEAGLE} and \texttt{SHAPEIT}, using the 27 {\it in vitro} samples. Code and data are available online at \url{https://github.com/shajoezhu/DEploid-Supplementary-Materials/tree/master/benchMark}. \textcolor{red}{Note that genotype information is required for benchmarking against \texttt{COIL} and \texttt{SHAPEIT}, which are inferred by GATK Best Practices.}
+\section{Comparison to existing methods} \label{sup:sec:benchmark}
+\todonum{REV1.11.2: Parameters used in this analysis, and the analysis of other software, would also be useful.}
+
+In order to show how our method can significantly advance studies in relation to mixed infections, we have compared our inference results on number of strains, strain proportions and haplotypes with \texttt{COIL} \citep{Galinsky2015}, \texttt{pfmix} \citep{Jack2016}, \texttt{BEAGLE} \citep{Browning2007} and \texttt{SHAPEIT} \citep{Delaneau2012}, using the 27 {\it in vitro} samples. Code and data are available online at \url{https://github.com/shajoezhu/DEploid-Supplementary-Materials/tree/master/benchMark}. \textcolor{red}{Note that genotype information is required for benchmarking against \texttt{COIL} and \texttt{SHAPEIT}, which are inferred by GATK Best Practices\citep{McKenna2010}.}
 
 \subsection{\texttt{COIL}}
-\todo{REV1:  COIL uses genotype information. How did you generate the genotype data used here? Perhaps more information on data processing would be useful.}
+\donenum{REV1.10:  COIL uses genotype information. How did you generate the genotype data used here? Perhaps more information on data processing would be useful.}
 \texttt{COIL} uses genotype information to infer number of strains. The program input is a text file. Each row contains the sample name, and its sequence, which takes homozygous reference alleles and encodes heterozygous site as ``N'', and missing site as ``X''. \textcolor{red}{We use a \texttt{python} script to extract reference and alternative allele information from the Pf3k VCF file, and encode `0/0' as the reference allele, `1/1' as the alternative allele, `0/1' as ``N'' and `./.' as ``X''.} We then submit the input file to the online portal \url{http://portals.broadinstitute.org/infect/malaria/coil//}, then inference results will then follow.
 
 \subsection{\texttt{pfmix}}
-The \texttt{pfmix} method uses allele count information to infer the strain proportion. We extract reference and alternative allele counts, and save them in text files, which consist with three columns: chromosome information, position, and allele counts. This method works sample-by-sample. The original method requires user to provide a maximum number of strains to check. Since we already know the truth, we feed the program with the correct strain number, and use MCMC samples to infer the proportion.
+\todonum[inline]{REV1.12: Figure 3: pfmix infers the number of strains and their proportions, therefore please add the numbers of strains estimated by pfmix to Figure 3 panel (a)}
+The \texttt{pfmix} method uses allele count information to infer the strain proportion. We extract reference and alternative allele counts, and save them in text files, which consist with three columns: chromosome information, position, and allele counts. \textcolor{red}{This method works sample-by-sample, infers the number of strains and proportions only based on the allele frequency imbalance within sample: It infers the strain proportions when assuming the number of strains from one to eight, then uses the Bayesian information criterion to choose the best model. As in the attempt of applying \texttt{pfmix} to the same dataset is unsuccessful, we ignore the model selection step of \texttt{pfmix}, and infer proportions directly with fixed number of strains.}
  %`R' code %To run the analysis, use the following command,
 
 \subsection{\texttt{BEAGLE}}
-\todo{REV1: BEAGLE requires a reference dataset to infer haplotype phase, typically a large reference dataset. What reference dataset was used? Parameters used in this analysis, and the analysis of other software, would also be useful.}
+\todonum{REV1.11.1: BEAGLE requires a reference dataset to infer haplotype phase, typically a large reference dataset. What reference dataset was used? Parameters used in this analysis, and the analysis of other software, would also be useful.}
 The software package \texttt{BEAGLE} input is a VCF file that contains the genotype likelihood information of all 27 samples. We express the genotype likelihood by $r \log_{10}(1-x) + a \log_{10}(x)$, where $r$ and $a$ denote the reference and alternative allele counts respectively. Let $x$ denote the error rate, which takes value of 0.01, 0.5 and 0.99, in the cases of homozygous reference, heterozygous and homozygous alternative respectively.
 %$$\begin{cases}
  %0.01, &\textrm{homozygous reference}, \\
@@ -401,6 +550,158 @@ We first convert allele count information into genotype likelihood, then use \te
 
 \subsection{\texttt{SHAPEIT}}
 The program \texttt{SHAPEIT} takes the genotype information of all 27 samples, and phase the haplotypes chromosome-by-chromosome. The input VCF file must include attribute \texttt{GT} in the \texttt{FORMAT} field. We split the VCF file by chromosome IDs. Then use \texttt{SHAPEIT} to phase the haplotypes, which are saved in plain text files. We then concatenate the output files, and extract the haplotypes in each sample. \textcolor{red}{Note that we do not apply any additional reference panel for this test. }
+
+
+\begin{thebibliography}{}
+
+%\bibitem[\protect\citeauthoryear{Arnot}{Arnot}{1998}]{Arnot1998}
+%Anita, D. (1998).
+%\newblock Unstable malaria in Sudan: the influence of the dry season: clone
+  %multiplicity of {\it Plasmodium falciparum} infections in individuals exposed to
+  %variable levels of disease transmission.
+%\newblock {\em Trans. R. Soc. Trop. Med. Hyg.\/}~{\em 92\/}(6), 580--585.
+
+%\bibitem[\protect\citeauthoryear{Bell, de Roode, Sim Read, and Koella}{Bell et~al.}{2006}]{Bell2006}
+%Bell A.~S. {\em et al.} (2006)
+%\newblock Within-host competition in genetically diverse malaria infection: parasite virulence and competitive success.
+%\newblock {\em Evolution\/}~{\em 60}(7), 1358--1371.
+
+\bibitem[\protect\citeauthoryear{Browning and Browning}{Browning and
+  Browning}{2007}]{Browning2007}
+Browning, S.~R. and B.~L. Browning (2007)
+\newblock Rapid and accurate haplotype phasing and missing-data inference for
+  whole-genome association studies by use of localised haplotype clustering.
+\newblock {\em Am. J. Hum. Genet.\/}~{\em 81\/}(5), 1084--1097.
+
+%\bibitem[\protect\citeauthoryear{Chang}{Chang et~al.}{2017}]{Chang2017}
+%\textcolor{red}{Change, H.~H. et al. (2017)
+%\newblock THE REAL McCOIL: A method for the concurrent estimation of the complexity of infection and SNP allele frequency for malaria parasites.
+%\newblock {\em PLoS Comput. Biol.\/}~{\em 13\/}(1), e1005348.}
+%\donenum{Change, H.~H. et al. (2017)}
+
+%\bibitem[\protect\citeauthoryear{Davis, Flint, Myers and Mott}{Davis}{2016}]{Davis2016}
+%Davies, R.~W. {\em et al}. (2016)
+%Rapid genotype imputation from sequence without reference panels.
+%\newblock{\em Nat. Genet.\/}~{\em 48\/}, 965--969.
+
+\bibitem[\protect\citeauthoryear{Delaneau, Marchini, and Zagury}{Delaneau et~al.}{2012}]{Delaneau2012}
+Delaneau, O. {\em et al}. (2012)
+\newblock A linear complexity phasing method for thousands of genomes.
+\newblock {\em Nat. Methods\/}~{\em 9\/}(2), 179--181.
+
+%\bibitem[\protect\citeauthoryear{de~Roode, Culleton, Bell, and Read}{de~Roode
+  %et~al.}{2004}]{deRoode2004}
+%de~Roode, J. {\em et al}. (2004)
+%\newblock Competitive release of drug resistance following drug treatment of mixed {\it Plasmodium chabaudi} infections.
+%\newblock {\em Malar. J.\/}~{\em 3\/}(33), 1--6.
+
+%\bibitem[\protect\citeauthoryear{de~Roode, Pansini, Cheesman, Helinski,
+  %Huijben, Wargo, Bell, Chan, Walliker, and Read}{de~Roode
+  %et~al.}{2005}]{deRoode2005}
+%de~Roode, J. {\em et al}. (2005)
+%\newblock Virulence and competitive ability in genetically diverse malaria infections.
+%\newblock {\em Proc. Natl. Acad. Sci. USA\/}~{\em 102\/}(21), 7624--7628.
+
+\bibitem[\protect\citeauthoryear{Galinsky}{Galinsky et~al.}{2015}]{Galinsky2015}
+Galinsky, K. {\em et al}. (2015)
+\newblock COIL: a methodology for evaluating malarial complexity of infection using likelihood from single nucleotide polymorphism data.
+\newblock {\em Malar. J.\/}~{\em14\/}(4), 1--9.
+
+%\bibitem[\protect\citeauthoryear{Harris and Nielsen}{Harris and Nielsen}{2013}]{Harris2013}
+%Harris K. and Nielsen R. (2013).
+%\newblock{Inferring Demographic History from a Spectrum of Shared Haplotype Lengths}.
+%\newblock{\em PLoS Genet.\/}~{\em9/}(6), e1003521.
+
+%\bibitem[\protect\citeauthoryear{Hastings and D\'Alessandro}{Hastings and
+  %D\'Alessandro}{2000}]{Hastings2000}
+%Hastings, I. and U.~D'Alessandro (2000).
+%\newblock Modelling a predictable disaster: the rise and spread of drug-resistant malaria.
+%\newblock {\em Parasitol. Today\/}~{\em 16\/}(8), 340--347.
+
+%\bibitem[\protect\citeauthoryear{Howie, Donnelly, and Marchini}{Howie
+  %et~al.}{2009}]{Howie2009}
+%Howie, B.~N. {\em et al}. (2009)
+%\newblock A flexible and accurate genotype imputation method for the next generation of genome-wide association studies.
+%\newblock {\em PLoS Genet.\/}~{\em 5\/}(6), e1000529.
+
+%\bibitem[\protect\citeauthoryear{Lawson et~al.}{Lawson et~al.}{2012}]{Lawson2012}
+%Lawson D.~J. {\em et al}. (2012)
+%\newblock{Inference of Population Structure using Dense Haplotype Data}.
+%\newblock{\em PLoS Genet.\/}~{\em 8\/}(1), e1002453.
+
+\bibitem[\protect\citeauthoryear{Li and Stephens}{Li and
+  Stephens}{2003}]{Li2003}
+Li, N. and M.~Stephens (2003)
+\newblock {Modeling linkage disequilibrium and identifying recombination
+  hotspots using single-nucleotide polymorphism data}.
+\newblock {\em Genetics\/}~{\em 165\/}(4), 2213--2233.
+
+%\bibitem[\protect\citeauthoryear{Lunter}{Lunter}{2016}]{Lunter2016}
+%Lunter, G. (2016)
+%\newblock {Fast haplotype matching in very large cohorts using the Li and Stephens model}.
+%\newblock {\em bioRxiv\/}, 10.1101/048280.
+
+%\bibitem[\protect\citeauthoryear{MalariaGEN}{MalariaGEN}{2008}]{MalariaGen2008}
+%MalariaGEN (2008)
+%\newblock A global network for investigating the genomic epidemiology of
+  %malaria.
+%\newblock {\em Nature\/}~{\em 456\/}(7223), 732--737.
+
+%\bibitem[\protect\citeauthoryear{McKenna}{McKenna et~al.}{2010}]{McKenna2010}
+%\textcolor{red}{
+%McKenna, A. et al. (2010).
+%\newblock The Genome Analysis Toolkit: a MapReduce framework for analyzing next-generation DNA sequencing data.
+%\newblock {\em Genome Res.\/}~{\em 20}, 1297--1303.
+%}\donenum{McKenna, A. et al. (2010).}
+
+%\bibitem[\protect\citeauthoryear{Miles, Iqbal, Vauterin, Pearson, Campino,
+  %Theron, Gould, Mead, Drury, O{\textquoteright}Brien, Ruano~Rubio, MacInnis,
+  %Mwangi, Samarakoon, Ranford-Cartwright, Ferdig, Hayton, Su, Wellems, Rayner,
+  %McVean, and Kwiatkowski}{Miles et~al.}{2016}]{Miles2016}
+%Miles, A. {\em et al}. (2015)
+%\newblock Indels, structural variation, and recombination drive genomic diversity in {\it Plasmodium falciparum}.
+%\newblock {\em Genome Res.\/}~{\em26\/}, 1288--1299.
+
+%\bibitem[\protect\citeauthoryear{Pearson, Amato, Auburn, Miotto,
+  %Almagro-Garcia, Amaratunga, Suon, Mao, Noviyanti, Trimarsanto, Marfurt,
+  %Anstey, William, Boni, Dolecek, Tran, White, Michon, Siba, Tavul, Harrison,
+  %Barry, Mueller, Ferreira, Karunaweera, Randrianarivelojosia, Gao, Hubbart,
+  %Hart, Jeffery, Drury, Mead, Kekre, Campino, Manske, Cornelius, MacInnis,
+  %Rockett, Miles, Rayner, Fairhurst, Nosten, Price, and Kwiatkowski}{Pearson
+  %et~al.}{2016}]{Pearson2016}
+%Pearson, R.~D. {\em et al}. (2016)
+%\newblock {Genomic analysis of local variation and recent evolution in {\it Plasmodium vivax}}.
+%\newblock {\em Nat. Genet.\/}~{\em 48}, 959--964.
+
+%\bibitem[\protect\citeauthoryear{O\'Connell, Gurdasani and Delaneau}{O'Connell et~al.}{2016}]{Oconnell2014}
+%O'Connell J., {\em et al}. (2014)
+%\newblock {A General Approach for Haplotype Phasing across the Full Spectrum of Relatedness}.
+%\newblock {\em PLoS Genet.\/}~{\em 10\/}(4), e1004234.
+
+%\bibitem[\protect\citeauthoryear{Pf3k}{Pf3k}{2016}]{Pf3k2016}
+%The Pf3k Project: pilot data release 5 (2016)
+%\newblock {www.malariagen.net/data/pf3k-5} [accessed 1 June 2016]
+
+\bibitem[\protect\citeauthoryear{O'Brien}{O'Brien et~al.}{2016}]{Jack2016}
+O'Brien D,J. {\em et al}. (2016)
+\newblock Inferring Strain Mixture within Clinical {\em Plasmodium falciparum} Isolates from Genomic Sequence Data.
+\newblock {\em PLoS Comput. Biol.\/}~{\em 12\/}(6): e1004824.
+
+%\bibitem[\protect\citeauthoryear{Sabetil,Reich,Higgins, Levine,Richter}{Sabetil et~al.}{2002}]{Sabeti2002}
+%Sabeti1. P.~C. {\em et al}. (2002)
+%\newblock {Detecting recent positive selection in the human genome from haplotype structure}.
+%\newblock {\em Nature\/}~{\em 419\/}, 832--837.
+
+\bibitem[\protect\citeauthoryear{Wendler}{Wendler}{2015}]{Wendler2015}
+Wendler, J. (2015)
+\newblock {\em Accessing complex genomic variation in} {P}lasmodium falciparum {\em natural infection}.
+\newblock {Ph.\ D. thesis, University of Oxford.}
+
+%\bibitem[\protect\citeauthoryear{WHO}{WHO}{2016}]{WHO2016}
+%WHO. (2016)
+%\newblock {World Malaria Report 2015}.
+%\newblock {\em World Health Organization\/}.
+\end{thebibliography}
 
 
 \end{document}
