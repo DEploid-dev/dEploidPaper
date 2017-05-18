@@ -124,7 +124,7 @@ fun.plotHapWithProp <- function( hap, prop, fig.title, max.at ){
     xrange = c(0, max.at)
     yrange = c(0, 1)
 #    plot( xrange, yrange, type= "n", xlim=xrange, ylim = yrange, ylab="", main=fig.title, xlab = "", cex.lab = 2, cex.main = 4, cex.axis=2)
-    plot( xrange, yrange, type= "n", xlim=xrange, ylim = yrange, ylab="", main=fig.title, xlab = "", cex.lab = 2, cex.main = 3, cex.axis=2)
+    plot( xrange, yrange, type= "n", xlim=xrange, ylim = yrange, ylab="", main=fig.title, xlab = "", cex.lab = 2, cex.main = 3, cex.axis=2, xaxt="n")
 
     xleft = 0:(haplength-1)
     xright = xleft+1
@@ -138,6 +138,9 @@ fun.plotHapWithProp <- function( hap, prop, fig.title, max.at ){
       ytop = ycum[k+1]
       rect(xleft, ybottom, xright, ytop, col = tmpHap , border = "transparent")
     }
+    lab.at = c(1, 400, 800, 1200, 1600, 2000, 2369)
+    axis(1, at=lab.at, labels=lab.at, las=1, lwd = 0, cex=2, cex.axis=2.4)
+
 }
 
 fun.computeErrors3 <- function(hap, ref1, ref2, ref3){
@@ -219,3 +222,110 @@ fun.computeErrors3 <- function(hap, ref1, ref2, ref3){
                     mutError = mutError ))
 
 }
+
+
+measure.error.joe<-function(h.pair, h.pair.true, rel.cost.switch=2, do.plot=FALSE) {
+    l <- ncol(h.pair);
+    n.hap <- nrow(h.pair)
+    possible.permn = combinat::permn(1:n.hap)
+    n.permn = length(possible.permn)
+    v<-rep(0, n.permn);
+    vn<-v;
+
+    tb<-array(0, c(n.permn, l));
+
+    for ( j in 1:n.permn){
+        v[j] = sum(h.pair[,1]!=h.pair.true[possible.permn[[j]],1]);
+    }
+
+    ee <- rep(0, n.permn)
+    for (i in 2:l) {
+        for ( j in 1:n.permn){
+            ee[j] = sum(h.pair[,i]!=h.pair.true[possible.permn[[j]],i]);
+            ones = rep(1, n.permn)
+            ones[j] = 0
+            tmp <- v + rel.cost.switch * ones
+            vn[j] <- min(tmp) + ee[j]
+            tb[j, i] <- which.min(tmp)
+        }
+        v<-vn;
+    }
+
+    #decode
+    wm<-which.min(v);
+    op<-array(0, l);
+    n.s<-0;
+
+    if (wm!=0){
+        n.gt<-sum(h.pair[,l]!=h.pair.true[possible.permn[[wm]],l]);
+    }
+
+
+    op[l]<-wm;
+    for (i in l:2) {
+        wmp<-tb[wm,i];
+        if (wmp!=wm) n.s<-n.s+1;
+
+        if (wmp!=0){
+            n.gt <- n.gt + sum(h.pair[,i-1] != h.pair.true[possible.permn[[wmp]],i-1]);
+        }
+
+        wm<-wmp;
+        op[i-1]<-wm;
+    }
+	cat("\nDecoding gives:\nNo. switches:\t", n.s, "\nNo. GT errs:\t", n.gt, "\n\n");
+
+	if (do.plot) {
+		plot(0,0,type="n", xlab="Position", ylab="", yaxt="n", xlim=c(0,ncol(h.pair)), bty="n", ylim=c(-0.5,1.5));
+		image(x=1:ncol(h.pair), z=t(rbind(h.pair, rep(0, ncol(h.pair)), h.pair.true)), col=c("white", "black"),
+			add=T);
+		del<-which(diff(op)!=0);
+		if (length(del)>0) points(x=del, y=rep(0.5, length(del)), pch="|", col="red");
+
+		w2<-which(op==2);
+		for (i in w2) h.pair[,i]<-h.pair[2:1,i];
+		wd1<-which(h.pair[1,] != h.pair.true[1,]);
+		wd2<-which(h.pair[2,] != h.pair.true[2,]);
+		if (length(wd1)>0) points(x=wd1, y=rep(1.2, length(wd1)), pch=25, col="blue", cex=0.5);
+		if (length(wd2)>0) points(x=wd2, y=rep(1.2, length(wd2)), pch=25, col="green", cex=0.5);
+	}
+
+#	return(c(n.s, n.gt));
+        return (list(switchError = n.s,
+                 mutError = n.gt,
+                 op = op) )
+}
+
+measure.error.joe.2<-function(h.pair, h.pair.true, rel.cost.switch=2, do.plot=FALSE) {
+    hapAndError = measure.error.joe(h.pair, h.pair.true, rel.cost.switch, do.plot)
+
+    n.hap = nrow(h.pair)
+#    cat("n.hap = ", n.hap, "\n")
+    switchError = rep(0, n.hap)
+    mutError = rep(0, n.hap)
+    possible.permn = combinat::permn(1:n.hap)
+
+    l = ncol(h.pair.true)
+    hap = array(0, c(nrow(h.pair), l));
+    for ( i in 1:l ){
+        hap[,i] = possible.permn[[hapAndError$op[i]]]
+    }
+
+    for ( j in 1:n.hap ){
+        switchError[j] = sum((hap[j,-l] - hap[j, -1]) != 0)
+    }
+
+    for ( i in 1:l ){
+        hap[h.pair[,i] != h.pair.true[hap[,i],i], i ] = 0
+    }
+
+    for ( j in 1:n.hap ){
+        mutError[j] = sum(hap[j,] == 0)
+    }
+
+    return ( list ( hap = t(hap),
+                    switchError = switchError,
+                    mutError = mutError ))
+
+}
+
