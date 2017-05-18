@@ -66,7 +66,8 @@ Ref2Name = "7G8"
             tmpProp = prop.corrected[rearranged.Index]
         }
 
-        hapAndError = fun.computeErrors2( tmpHap, tmpRef1, tmpRef2)
+        tmpRef = cbind(tmpRef1, tmpRef2)
+        hapAndError = measure.error.joe.2(t(tmpHap), t(tmpRef),2)
 
         tmpTitle = paste(rownames(table(panel[,1]))[chrom], sum(hapAndError$switchError), "switch errors", sum(hapAndError$mutError), "miss copy errors")
 
@@ -81,6 +82,7 @@ Ref2Name = "7G8"
         mutError = mutError + hapAndError$mutError
     }
     if ( length(prop.corrected) == 2 ){
+        printed.prop = sort(printed.prop, decreasing=T)[sort.int(mutError, decreasing=F, index.return=T)$ix]
         write.table(cbind(printed.prop, switchError, mutError), file = paste(prefix,".errorCount", sep=""), quote = F, row.names=F, col.names=F)
     }
     dev.off()
