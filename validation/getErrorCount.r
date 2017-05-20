@@ -54,6 +54,7 @@ Ref2Name = "7G8"
 
     switchError = c(0, 0)
     mutError = c(0, 0)
+    dropError = c(0, 0)
     for ( chrom in 1:length(beginAt)){
         tmpHap = hap.corrected[beginAt[chrom]:endAt[chrom],,drop=FALSE]
         tmpProp = prop.corrected
@@ -67,7 +68,7 @@ Ref2Name = "7G8"
         }
 
         tmpRef = cbind(tmpRef1, tmpRef2)
-        hapAndError = measure.error.joe.2(t(tmpHap), t(tmpRef),2)
+        hapAndError = measure.error.joe.with.drop.2strain.2(t(tmpHap), t(tmpRef),2)
 
         tmpTitle = paste(rownames(table(panel[,1]))[chrom], sum(hapAndError$switchError), "switch errors", sum(hapAndError$mutError), "miss copy errors")
 
@@ -80,10 +81,12 @@ Ref2Name = "7G8"
 	cat("mutError ", mutError,"\n")
 	cat("hapAndError$mutError ", hapAndError$mutError,"\n")
         mutError = mutError + hapAndError$mutError
+        dropError = dropError + hapAndError$dropError
+
     }
     if ( length(prop.corrected) == 2 ){
-        printed.prop = sort(printed.prop, decreasing=T)[sort.int(mutError, decreasing=F, index.return=T)$ix]
-        write.table(cbind(printed.prop, switchError, mutError), file = paste(prefix,".errorCount", sep=""), quote = F, row.names=F, col.names=F)
+        printed.prop = sort(printed.prop, decreasing=T)[sort.int(mutError+dropError, decreasing=F, index.return=T)$ix]
+        write.table(cbind(printed.prop, switchError, mutError, dropError), file = paste(prefix,".withDrop.errorCount", sep=""), quote = F, row.names=F, col.names=F)
     }
     dev.off()
 
