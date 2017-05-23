@@ -72,9 +72,9 @@ Ref2Name = "7G8"
 
         tmpTitle = paste(rownames(table(panel[,1]))[chrom], sum(hapAndError$switchError), "switch errors", sum(hapAndError$mutError), "miss copy errors")
 
-        fun.plotHapWithProp (hapAndError$hap, tmpProp,
-             tmpTitle,
-             max(chromLength))
+#        fun.plotHapWithProp (hapAndError$hap, tmpProp,
+#             tmpTitle,
+#             max(chromLength))
 	cat("switchError ", switchError, "\n")
 	cat("hapAndError$switchError ", hapAndError$switchError,"\n")
         switchError = switchError + hapAndError$switch.error
