@@ -462,17 +462,21 @@ print(n.permn)
 }
 
 
-measure.error.joe.with.drop.2strain<-function(h.pair, h.pair.true, rel.cost.switch=2, rel.cost.drop = 1, do.plot=FALSE) {
+measure.error.joe.with.drop.2strain <-function(h.pair, h.pair.true, rel.cost.switch=2, do.plot=FALSE) {
     l <- ncol(h.pair);
     n.hap <- nrow(h.pair)
     possible.permn = combinat::permn(1:n.hap)
-    current.len = length(possible.permn)
 
 possible.permn[[3]] = c(1,1)
 possible.permn[[4]] = c(2,2)
 
+#possible.permn = list()
+#possible.permn[[1]] = c(1,1)
+#possible.permn[[2]] = c(2,2)
+#possible.permn[[3]] = c(1,2)
+#possible.permn[[4]] = c(2,1)
+
     n.permn = length(possible.permn)
-print(n.permn)
     v<-rep(0, n.permn);
     vn<-v;
 
@@ -482,10 +486,15 @@ print(n.permn)
         v[j] = sum(h.pair[,1]!=h.pair.true[possible.permn[[j]],1]);
     }
 
+#rel.cost.drop.current = 0
     ee <- rep(0, n.permn)
+    same.path <- rep(0, n.permn)
+
     for (i in 2:l) {
+#        rel.cost.drop.current = rel.cost.drop.current + 1
         for ( j in 1:n.permn){
             ee[j] = sum(h.pair[,i]!=h.pair.true[possible.permn[[j]],i]);
+
             ones = rep(1, n.permn)
             ones[j] = 0
             drop.ones = rep(1, n.permn)
@@ -495,11 +504,27 @@ print(n.permn)
             } else {
                 drop.ones[3:4] = 0
             }
-            tmp <- v + rel.cost.switch * ones + rel.cost.drop*drop.ones
+#            tmp <- v + rel.cost.switch * ones
+            tmp <- v + rel.cost.switch * ones + same.path *drop.ones
+
             vn[j] <- min(tmp) + ee[j]
-            tb[j, i] <- which.min(tmp)
+            transit.to = which.min(tmp)
+
+            if ( j == transit.to ){
+                same.path = same.path + 1
+            } else {
+                same.path = 0
+            }
+
+            tb[j, i] <- transit.to
         }
+
+
+#        if ( rel.cost.drop.current > rel.cost.drop){
+#            rel.cost.drop.current = 0
+#        }
         v<-vn;
+#        cat ("site ", i, " cost: ", v,"\n")
     }
 
     #decode
@@ -523,26 +548,6 @@ print(n.permn)
 
         wm<-wmp;
         op[i-1]<-wm;
-    }
-
-
-	if (do.plot) {
-        par(mfrow=c(2,1))
-		plot(0,0,type="n", xlab="Position", ylab="", yaxt="n", xlim=c(0,ncol(h.pair)), bty="n", ylim=c(-0.5,1.5));
-		image(x=1:ncol(h.pair), z=t(rbind(h.pair, rep(0, ncol(h.pair)), h.pair.true)), col=c("white", "black"),
-			add=T);
-		del<-which(diff(op[1,])!=0);
-		if (length(del)>0) points(x=del, y=rep(0.5, length(del)), pch="|", col="red");
-
-        for ( j in 1:n.hap ){
-            wd1<-which(h.pair[j,] != h.pair.true[j,]);
-    #
-            if (length(wd1)>0) {
-                points(x=wd1, y=rep(1.2, length(wd1)), pch=25, col=j+1, cex=0.5);
-            }
-
-        }
-        image(t(op))
     }
 
     k.eff.permn = rep(0, n.permn)
@@ -572,12 +577,67 @@ print(n.permn)
 #    definite.switch = sum(!changed.permn.at %in% changed.k.eff.at)
     dropTimes = sum(diff(drop.strain) != 0) #length(changed.k.eff.at)
     dropError = sum(drop.strain != 0)
-    cat("\nDecoding gives:\nNo. switches:\t", n.s - dropTimes, "\nNo. GT errs:\t", n.gt, "\nNo. Drop errs:\t", dropError,"\n");
+    cat("\nDecoding gives:\nNo. switches:\t", n.s - dropTimes, "\nNo. GT errs:\t", n.gt, "\nNo. Drop switches", dropTimes, "\nNo. Drop errs:\t", dropError,"\n");
+
+
+    hap.pair.true.idx = array(unlist(possible.permn[op]), c(2, length(op)))
+    genotype.error = rep(0, n.hap)
+    switch.error = rep(0, n.hap)
+    drop.error = rep(0, n.hap)
+    for ( j in 1:n.hap ){
+        wd1 = c()
+        for ( i in 1:l ){
+            if ( h.pair[j,i] != h.pair.true[hap.pair.true.idx[j,i],i] ){
+                wd1 = c(wd1, i)
+            }
+        }
+        genotype.error[j] = length(wd1)
+    }
+
+    switch.error[1] = (sum(diff(hap.pair.true.idx[1,])!=0))
+    switch.error[2] = (sum(diff(hap.pair.true.idx[2,])!=0))
+    drop.error[1] = (sum(drop.strain == 1))
+    drop.error[2] = (sum(drop.strain == 2))
+
+	if (do.plot) {
+#        par(mfrow=c(2,1))
+        layout(matrix(c(1,1,1,1,2,2), 3, 2, byrow = T))
+		plot(0,0,type="n", xlab="Position", ylab="", yaxt="n", xlim=c(0,ncol(h.pair)), bty="n", ylim=c(-0.5,1.5));
+		image(x=1:ncol(h.pair), z=t(rbind(h.pair, rep(0, ncol(h.pair)), h.pair.true)), col=c("white", "black"),
+			add=T);
+		del<-which(diff(op[1,])!=0);
+		if (length(del)>0) {points(x=del, y=rep(0.5, length(del)), pch="|", col="red");}
+
+
+        for ( j in 1:n.hap ){
+            wd1 = c()
+            for ( i in 1:l ){
+                if ( h.pair[j,i] != h.pair.true[hap.pair.true.idx[j,i],i] ){
+                    wd1 = c(wd1, i)
+                }
+            }
+
+            if (length(wd1)>0) {
+                points(x=wd1, y=rep(1.2, length(wd1)), pch=25, col=j+1, cex=0.5);
+#                print(length(wd1))
+            }
+
+        }
+		plot(0,0,type="n", xlab="Position", ylab="", yaxt="n", xlim=c(0,ncol(h.pair)), bty="n", ylim=c(-0.5,1.5));
+#        image(x=1:ncol(h.pair), z = t(rbind(op, array(drop.strain,c(1,l)))), col = heat.colors(4), add=T)
+        image(x=1:ncol(h.pair), z = t(op), col = heat.colors(4), add=T)
+    }
+
+
         return (list(switchError = n.s - dropTimes,
                  mutError = n.gt,
                  dropError = dropError,
                  op = op, drop.strain = drop.strain,
-                 possible.permn = possible.permn) )
+                 possible.permn = possible.permn, tb = tb,
+                 switch.error = switch.error,
+                 drop.error = drop.error,
+                 genotype.error = genotype.error )
+                 )
 }
 
 
