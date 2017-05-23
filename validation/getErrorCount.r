@@ -68,7 +68,7 @@ Ref2Name = "7G8"
         }
 
         tmpRef = cbind(tmpRef1, tmpRef2)
-        hapAndError = measure.error.joe.with.drop.2strain.2(t(tmpHap), t(tmpRef),2)
+        hapAndError = measure.error.joe.with.drop.2strain(t(tmpHap), t(tmpRef),2)
 
         tmpTitle = paste(rownames(table(panel[,1]))[chrom], sum(hapAndError$switchError), "switch errors", sum(hapAndError$mutError), "miss copy errors")
 
@@ -77,11 +77,11 @@ Ref2Name = "7G8"
              max(chromLength))
 	cat("switchError ", switchError, "\n")
 	cat("hapAndError$switchError ", hapAndError$switchError,"\n")
-        switchError = switchError + hapAndError$switchError
+        switchError = switchError + hapAndError$switch.error
 	cat("mutError ", mutError,"\n")
 	cat("hapAndError$mutError ", hapAndError$mutError,"\n")
-        mutError = mutError + hapAndError$mutError
-        dropError = dropError + hapAndError$dropError
+        mutError = mutError + hapAndError$genotype.error
+        dropError = dropError + hapAndError$drop.error
 
     }
     if ( length(prop.corrected) == 2 ){
