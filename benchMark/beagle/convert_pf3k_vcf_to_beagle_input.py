@@ -1,1 +1,0 @@
-../../DEploid-Supplementary-Materials/benchMark/beagle/convert_pf3k_vcf_to_beagle_input.py

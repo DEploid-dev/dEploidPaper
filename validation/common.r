@@ -333,7 +333,7 @@ measure.error.joe.2<-function(h.pair, h.pair.true, rel.cost.switch=2, do.plot=FA
 
 }
 
-measure.error.joe.with.drop<-function(h.pair, h.pair.true, rel.cost.switch=2, rel.cost.drop = 1, do.plot=FALSE) {
+measure.error.joe.with.drop<-function(h.pair, h.pair.true, rel.cost.switch=2,  do.plot=FALSE) {
     l <- ncol(h.pair);
     n.hap <- nrow(h.pair)
     possible.permn = combinat::permn(1:n.hap)
@@ -375,6 +375,8 @@ print(n.permn)
     }
 
     ee <- rep(0, n.permn)
+    same.path <- rep(0, n.permn)
+
     for (i in 2:l) {
         for ( j in 1:n.permn){
             ee[j] = sum(h.pair[,i]!=h.pair.true[possible.permn[[j]],i]);
@@ -387,9 +389,20 @@ print(n.permn)
             } else {
                 drop.ones[7:24] = 0
             }
-            tmp <- v + rel.cost.switch * ones + rel.cost.drop*drop.ones
+
+
+            tmp <- v + rel.cost.switch * ones + same.path *drop.ones
+
             vn[j] <- min(tmp) + ee[j]
-            tb[j, i] <- which.min(tmp)
+            transit.to = which.min(tmp)
+
+            if ( j == transit.to ){
+                same.path = same.path + 1
+            } else {
+                same.path = 0
+            }
+
+            tb[j, i] <- transit.to
         }
         v<-vn;
     }
@@ -454,7 +467,7 @@ print(n.permn)
     dropTimes = sum(diff(drop.strain) != 0)
     dropError = sum(drop.strain != 0)
     cat("\nDecoding gives:\nNo. switches:\t", n.s-dropTimes, "\nNo. GT errs:\t", n.gt, "\nNo. Drop errs:\t", dropError,"\n");
-        return (list(switchError = n.s - dropTimes,
+        return (list(switchError = n.s, # - dropTimes,
                  mutError = n.gt,
                  dropError = dropError,
                  op = op, drop.strain = drop.strain,

@@ -1,5 +1,5 @@
 .PHONY: all clean
-all: clean bioInfo.pdf
+all: clean bioInfo.pdf bioInfo_todo.pdf
 
 mainfigures = $(shell grep png bioInfo.tex | sed -e "s/^.*{/figures\//g" -e "s/\}//g" )
 supDEploidfigures = $(shell grep png bioInfoSupplementDEploid.tex | sed -e "s/^.*{//g" -e "s/\}//g" )
@@ -12,6 +12,11 @@ coverLetter.pdf: coverLetter.tex
 bioInfo.pdf: bioInfo.tex
 	pdflatex bioInfo.tex
 	pdflatex bioInfo.tex
+
+bioInfo_todo.pdf: bioInfo.pdf
+	sed -e "s/\\\usepackage\[disable\]{todonotes}/\\\usepackage\[colorinlistoftodos\]{todonotes}/" bioInfo.tex > bioInfo_todo.tex
+	pdflatex bioInfo_todo.tex
+	pdflatex bioInfo_todo.tex
 
 natMethods.pdf: natMethods.tex
 	pdflatex natMethods.tex
@@ -28,6 +33,12 @@ natMethods.bbl: natMethods.bib
 bioInfoSupplement.pdf: bioInfoSupplement.tex ${supDEploidfigures} ${supCoveragefigures} ${suptex} supplementReset.tex
 	pdflatex bioInfoSupplement.tex
 	pdflatex bioInfoSupplement.tex
+
+
+bioInfoSupplement_todo.pdf: bioInfoSupplement.pdf
+	sed -e "s/\\\usepackage\[disable\]{todonotes}/\\\usepackage\[colorinlistoftodos\]{todonotes}/" bioInfoSupplement.tex > bioInfoSupplement_todo.tex
+	pdflatex bioInfoSupplement_todo.tex
+	pdflatex bioInfoSupplement_todo.tex
 
 clean:
 	rm -f *.blg *snm *nav *.bbl *.ps *.dvi *.aux *.toc *.idx *.ind *.ilg *.log *.out bioInfo.pdf

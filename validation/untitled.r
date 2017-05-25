@@ -3,8 +3,10 @@ plaftab=read.table("labStrains.wg.PLAF.txt",header=T)
 nonZeroIndex = which(plaftab$PLAF>0)
 write.table (plaftab[nonZeroIndex,], file = "labStrains.eg.PLAF.txt", quote=F, sep="\t", row.names=F)
 
-sampleName = "PG0402-C"
-sampleName = "PG0390-C"
+sampleName = "PG0394-C"
+#sampleName = "PG0389-C"
+#sampleName = "PG0390-C"
+#sampleName = "PG0402-C"
 vcfName = paste(sampleName, ".wg.vcf", sep="")
 skipNum = as.numeric(system(paste("cat ", vcfName, " | head -500 | grep \"##\" | wc -l"), T))
 vcf  = read.table( vcfName, skip=skipNum, header=T, comment.char="", stringsAsFactors = FALSE, check.names=FALSE)
