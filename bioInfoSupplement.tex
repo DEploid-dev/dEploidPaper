@@ -246,7 +246,7 @@ As a demonstration, we show some examples of mixed {\em P. falciparum} genome de
 
 \linespread{1}
 \begin{lstlisting}
-~/DEploid/utilities/dataExplore.r -vcf PG0395-C.vcf.gz \
+~/DEploid/utilities/dataExplore.r -vcf PG0395-C.eg.vcf.gz \
     -plaf labStrains.eg.PLAF.txt \
     -o PG0395-C
 \end{lstlisting}
@@ -260,7 +260,7 @@ where \textcolor{red}{``{\tt -vcf PG0395-C.vcf.gz}''} defines the input VCF file
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=.9\textwidth]{{supplementDEploidExample/PG0395-CaltVsRefAndWSAFvsPLAF}.png}
+\includegraphics[width=.9\textwidth]{{figures/PG0395-CaltVsRefAndWSAFvsPLAF}.png}
 \caption{\textcolor{red}{Data exploration of sample {\textmd PG0395-C}. From top to bottom, then from left to right, it shows:
 1. Total allele counts across all markers. We use the threshold (red line) to identify markers with extremely high allele counts. Red crosses indicate markers that are filtered out, coloured in black in sub-figures 2 and 4.
 2. Alternative read counts vs reference read counts.
@@ -278,7 +278,7 @@ Similar to the alternative vs reference counts figure, the number of WSAF modes 
 The following example shows a specific {\textmd DEploid} command to deconvolute the mixed sample {\textmd PG0396-C}:
 \linespread{1}
 \begin{lstlisting}
-dEploid -vcf PG0396-C.vcf.gz \
+dEploid -vcf PG0396-C.eg.vcf.gz \
     -plaf labStrains.eg.PLAF.txt \
     -exclude exclude.txt \
     -panel labStrains.eg.panel.txt \
@@ -298,7 +298,7 @@ We use \textcolor{red}{{\texttt DEploid} to compute the posterior probabilities 
 \begin{lstlisting}
 initialProp=$( cat PG0396-C_seed5k5.prop | tail -1 | sed -e "s/\t/ /g" )
 
-dEploid -vcf PG0396-C.vcf.gz \
+dEploid -vcf PG0396-C.eg.vcf.gz \
     -plaf labStrains.eg.PLAF.txt \
     -exclude exclude.txt \
     -panel labStrains.eg.panel.txt \
@@ -306,7 +306,7 @@ dEploid -vcf PG0396-C.vcf.gz \
     -o PG0396-C_seed5k5 \
     -initialP ${initialProp}
 
-~/DEploid/utilities/interpretDEploid.r -vcf PG0396-C.vcf.gz \
+~/DEploid/utilities/interpretDEploid.r -vcf PG0396-C.eg.vcf.gz \
     -plaf labStrains.eg.PLAF.txt \
     -exclude exclude.txt \
     -dEprefix PG0396-C_seed5k5 \
@@ -322,7 +322,7 @@ In this example, the second inferred haplotype (Figure~\ref{fig:0396}~(d)) repre
 \begin{figure}[htp]
 \centering
 \subfloat[][]{
-\includegraphics[width=0.9\textwidth]{{DEploid-Supplementary-Materials/PG0396-C_seed5k5.interpretDEploidFigure.1}.png}
+\includegraphics[width=0.9\textwidth]{{figures/PG0396-C_seed5k5.interpretDEploidFigure.1}.png}
 }
 \caption{Sample {\textmd PG0396-C} deconvolution with Reference Panel V. (a) Diagnostic panels from the \texttt{DEploid} output. The top three panels recap the data exploration process, with an enhanced PLAF vs WASF plot: red dots show observed WSAF, which is calculated by read counts; blue \textcolor{red}{dots} show the expected WSAF inferred from our model (see Equation~(3) in main article). The next three plots from left to right show: 1. MCMC samples for the strain proportions, with the fraction of each color indicating the proportion of a different strain at each MCMC sample. The three colored blocks suggest that there are three strains within sample {\textmd PG0396-C}, with proportions approximately 1/4, 1/4 and 1/2.
 2. Expected WSAF vs observed WSAF. We use the correlation between the observed and expected WSAF as a sanity check for our model. A low correlation suggests poor fitting.
@@ -336,7 +336,7 @@ In this example, the second inferred haplotype (Figure~\ref{fig:0396}~(d)) repre
 \ContinuedFloat
 \centering{}
 \subfloat[][]{
-\includegraphics[width=1\textwidth]{{DEploid-Supplementary-Materials/PG0396-C_seed5k5.ring}.png}
+\includegraphics[width=1\textwidth]{{figures/PG0396-C_seed5k5.ring}.png}
 }
 \caption{\textcolor{red}{Posterior painting probabilities for the deconvoluted strains when using the Reference Panel V. In each track, 3D7, HB3, 7G8 and Dd2 are represented by colors red, light orange, yellow and dark orange respectively. Each panel represents the posterior probability of a chromosome. Chromosomes 1 -- 14 are ordered from 3pm clockwise. The width of each track is proportional to the inferred proportions in decreasing order towards the centre.}
 }
@@ -351,7 +351,7 @@ In this example, the second inferred haplotype (Figure~\ref{fig:0396}~(d)) repre
 \ContinuedFloat
 \centering
 \subfloat[][]{
-\includegraphics[width=1.3\textwidth]{{DEploid-Supplementary-Materials/PG0396-C_seed5k5.interpretDEploidFigure.2}.png}
+\includegraphics[width=1.3\textwidth]{{figures/PG0396-C_seed5k5.interpretDEploidFigure.2}.png}
 }
 \caption{(c) Expected WSAF (blue) and observed WSAF (red) across the genome. This figure highlights the genome diversity within the mixed sample across the genome. }
 \donenum[inline]{REV1.18: Figure S2.2: inconsistencies in WSAF in figures (a) and (b). See caption of Figure~\ref{fig:0395}}

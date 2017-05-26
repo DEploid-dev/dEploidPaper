@@ -2,7 +2,7 @@
 all: clean bioInfo.pdf bioInfo_todo.pdf
 
 mainfigures = $(shell grep png bioInfo.tex | sed -e "s/^.*{/figures\//g" -e "s/\}//g" )
-supDEploidfigures = $(shell grep png bioInfoSupplementDEploid.tex | sed -e "s/^.*{//g" -e "s/\}//g" )
+supDEploidfigures = $(shell grep png bioInfoSupplement.tex | sed -e "s/^.*{//g" -e "s/\}//g" )
 supCoveragefigures = $(shell grep png bioInfoSupplementCoverage.tex | sed -e "s/^.*{//g" -e "s/\}//g" )
 suptex = $(shell grep "\.tex" bioInfoSupplement.tex | sed -e "s/^.*{//g" -e "s/\}//g" )
 
