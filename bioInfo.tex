@@ -227,7 +227,7 @@ This data set only contains two unmixed samples, which is insufficient for const
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=0.48\textwidth]{deconv/effectiveK/eff_k_both.pdf}
+\includegraphics[width=0.48\textwidth]{Fig1.pdf}
 \caption{\textcolor{red}{Experimental validation and effective number of strains inferred by \texttt{DEploid}. We use Reference Panel V to deconvolve the same lab-mixed samples, assuming 3 and 5 strains within a sample. Each experiment is repeated without a reference panel. Black crosses indicate the true effective number of strains. Red crosses indicate median values obtained from 30 replicates when using a panel and assuming that the maximum number of strains is 5. The coloured dots show the inferred effective number of strains across replicates with intensity proportional to fraction.}}
 \label{fig:jason}
 \donenum[inline]{REV2.1: mcmc rerun}
@@ -332,7 +332,7 @@ created {\it in silico} mixtures from 212 clonal samples of Asian origin with tw
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=.45\textwidth]{{switches_and_genotypepanel20-withDrop}.pdf}
+\includegraphics[width=.45\textwidth]{{Fig4}.pdf}
 \caption{Histograms of switch error and genotype error across 78 simulated Pf3k samples. We excluded four cases out of the 100 experiments where simulated haplotypes were over 99\% identical and 18 cases where average coverage was below 20. }\label{fig:simField}
 \end{figure}
 
@@ -352,7 +352,7 @@ The complexity of our program is $\mathcal{O}(lm^2)$, where $m$ and $l$ are the 
 
 \section{Discussion}
 
-The program \texttt{DEploid} and its analysis pipeline has been originally developed for {\it P. falciparum} studies. Nonetheless, with \textcolor{red}{some} parameter changes, \texttt{DEploid} can potentially be used for deconvolution of other data sets with a mixture of samples from a single species, for example on data from {\it Plasmodium vivax} \citep{Pearson2016} or bacterial and viral pathogens. \textcolor{red}{However, it is likely that fine-tuning of parameters (for example, relating to mis-copying rates, read over-dispersion and recombination), filtering of data sets to remove poorly-genotyped variants and collation of appropriate reference panels will be necessary to achieve effective results.  We show examples and discuss the effect of fine-tuning parameters in the Supplementary Material. } 
+The program \texttt{DEploid} and its analysis pipeline has been originally developed for {\it P. falciparum} studies. Nonetheless, with \textcolor{red}{some} parameter changes, \texttt{DEploid} can potentially be used for deconvolution of other data sets with a mixture of samples from a single species, for example on data from {\it Plasmodium vivax} \citep{Pearson2016} or bacterial and viral pathogens. \textcolor{red}{However, it is likely that fine-tuning of parameters (for example, relating to mis-copying rates, read over-dispersion and recombination), filtering of data sets to remove poorly-genotyped variants and collation of appropriate reference panels will be necessary to achieve effective results.  We show examples and discuss the effect of fine-tuning parameters in the Supplementary Material. }
 
 \donenum{REV2.2: Application to other species (Discussion).}
 
