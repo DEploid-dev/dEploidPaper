@@ -191,7 +191,7 @@ In order to improve mixing, we also perform Gibbs-sampling updates for pairs of 
 \begin{equation}
 \begin{split}
 q_{i,-s_1, -s_2} & ~ = ~ \sum_{k\neq s_1,s_2} w_k \cdot h_k \\
-                 & ~ = ~ \textrm{Eqn.~\eqref{eqn:qij_full_sum}} - w_{s_1} \cdot h_{s_1} - w_{s_2} \cdot h_{s_2}.
+                 & ~ = ~ \textrm{Eqn.~(3)} - w_{s_1} \cdot h_{s_1} - w_{s_2} \cdot h_{s_2}.
 \label{eqn:qij_full_sum_minus_s1_s2}
 \end{split}
 \end{equation}
@@ -200,9 +200,9 @@ q_{i,-s_1, -s_2} & ~ = ~ \sum_{k\neq s_1,s_2} w_k \cdot h_k \\
 
 \begin{align}
 q_{i,h_{s_1}=0,h_{s_2}=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} \label{eqn:qij00}\\
-q_{i,h_{s_1}=0,h_{s_2}=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_1} \times 1 \label{eqn:qij10}\\
-q_{i,h_{s_1}=0,h_{s_2}=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_2} \times 1 \label{eqn:qij01}\\
-q_{i,h_{s_1}=0,h_{s_2}=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + \cdot w_{s_1} \times 1 + w_{s_2} \times 1 \label{eqn:qij11}.
+q_{i,h_{s_1}=0,h_{s_2}=0} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + w_{s_1} \times 1 \label{eqn:qij10}\\
+q_{i,h_{s_1}=0,h_{s_2}=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + w_{s_2} \times 1 \label{eqn:qij01}\\
+q_{i,h_{s_1}=0,h_{s_2}=1} & = \textrm{Eqn.~\eqref{eqn:qij_full_sum_minus_s1_s2}} + w_{s_1} \times 1 + w_{s_2} \times 1 \label{eqn:qij11}.
 \end{align}
 
 \noindent Substituting expressions.~\eqref{eqn:qij00} to~\eqref{eqn:qij11}, into Eqn.(5), we then obtain their associated likelihoods.
@@ -361,7 +361,7 @@ In this example, the second inferred haplotype (Figure~\ref{fig:0396}~(d)) repre
 \global\pdfpageattr\expandafter{\the\pdfpageattr/Rotate 0}
 
 \subsection{\textcolor{red}{Deconvolution of extremely unbalanced samples}}
-\textcolor{red}{While deconvolving the 27 lab-mixed samples with default settings, we overestimat the number of strains as three for samples PG0399-C, PG0400-C and PG0413-C 14, 19 and 18 times respectively from 30 replicates. In all cases, DEploid returns decent haplotype for the dominant strain, but chop the minor strain into two parts overall (in multiple segments), and fulfil them with haplotype segments from the dominant strain. This over-fitting procedure can achieve a higher likelihood than the model that we expect to reflect the truth. In order to improve the inference, we rerun the deconvolution 30 times with $\sigma^{2} = 10$ and other parameters unchanged. Such modification uses a unimodal model (intuition is shown in Figure~\ref{fig:changeSigma}) to update the proportion, and ensures that a robust estimates for the dominate strain, which explains the main feature for extremely unbalanced mixtures. We estimate the number of strains correctly 26, 26 25 times out of 30 for samples PG0399-C, PG0400-C and PG0413-C respectively. }
+\textcolor{red}{While deconvolving the 27 lab-mixed samples with default settings, we overestimate the number of strains as three for samples PG0399-C, PG0400-C and PG0413-C 14, 19 and 18 times respectively from 30 replicates. In all cases, DEploid returns decent haplotype for the dominant strain, but chop the minor strain into two parts overall (in multiple segments), and fulfil them with haplotype segments from the dominant strain. This over-fitting procedure can achieve a higher likelihood than the model that we expect to reflect the truth. In order to improve the inference, we rerun the deconvolution 30 times with $\sigma^{2} = 10$ and other parameters unchanged. Such modification uses a unimodal model (intuition is shown in Figure~\ref{fig:changeSigma}) to update the proportion, and ensures that a robust estimates for the dominate strain, which explains the main feature for extremely unbalanced mixtures. We estimate the number of strains correctly 26, 26 25 times out of 30 for samples PG0399-C, PG0400-C and PG0413-C respectively. }
 
 \begin{figure}[h]
 \centering{}
