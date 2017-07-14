@@ -85,7 +85,7 @@ The presence of multiple strains of {\it P. falciparum} makes fine scale analysi
 
 In comparison to the problem of phasing haplotypes within diploid organisms, deconvolving the strains of a multiple infection differs because of uncertainty in the number of strains present and their relative proportions.  Consequently, existing tools for phasing diploid organisms, such as BEAGLE \citep{Browning2007}, IMPUTE2 \citep{Howie2009} and SHAPEIT \citep{Delaneau2012, Oconnell2014}, are not appropriate. \citet{Galinsky2015}, \citet{Jack2016} \donenum{REV1.20: O'Brien (2016)} \textcolor{red}{and} \citet{Chang2017} have attempted to address the multiple infection problem by inferring the number and proportions of strains from allele frequencies within samples.  However, since they do not infer haplotypes, these approaches have limited applicability.
 
-As part of the Pf3k project \citep{Pf3k2016}, an effort to map the genetic diversity of {\it P. falciparum} at global scale, we have developed algorithms and a software package implementation \texttt{DEploid}, for deconvolving multiple infections. The program estimates the number of different genetic types present in the isolate, the proportion or abundance of each strain and their sequences (i.e. haplotypes). To our knowledge, \texttt{DEploid} is the first package able to deconvolute strain haplotypes and provides a unique opportunity for researchers to study the epidemiology of {\it P. falciparum}.
+As part of the Pf3k project (\url{www.malariagen.net/data/pf3k-5}), an effort to map the genetic diversity of {\it P. falciparum} at global scale, we have developed algorithms and a software package implementation \texttt{DEploid}, for deconvolving multiple infections. The program estimates the number of different genetic types present in the isolate, the proportion or abundance of each strain and their sequences (i.e. haplotypes). To our knowledge, \texttt{DEploid} is the first package able to deconvolute strain haplotypes and provides a unique opportunity for researchers to study the epidemiology of {\it P. falciparum}.
 
 
 \section{Methods}
@@ -213,7 +213,7 @@ To infer the haplotypes present in a mixed infection and their relative proporti
 
 \item {\bf Reporting} We aim to provide users with a single point estimate of the haplotypes and their proportions, although the full chain is also available for analysis.  To achieve this we report values at the last iteration - i.e. we report a single sample from the posterior.  However, to measure robustness, we typically repeat the deconvolution with multiple random starting points\textcolor{red}{. We use a majority vote rule on the inferred number of strains; we then select the chain with the lowest average deviance (after removing the burn-in) as our estimate. The deviance measures the difference in log likelihood between the fitted and saturated models, the latter being inferred by setting the WSAF to that of the observed values.} These parameters can be modified by users to achieve a preferred balance between computational speed and confidence.  By default, we set the MCMC sampling rate as 5, with the first 50\% of samples removed as burn in and 800 samples used for estimation.
 
-\item {\bf Reference panel construction}. To infer clonal samples for the reference panel we use the Pf3k \citep{Pf3k2016} project data, running the algorithm without LD on all samples and identifying those with a dominant haplotype (proportion > 0.99) as clonal.  These clonal samples are grouped by region of sampling to form location-specific reference panels.  In addition, we have included a number of reference strains, described in more detail below.
+\item {\bf Reference panel construction}. To infer clonal samples for the reference panel we use the Pf3k project data, running the algorithm without LD on all samples and identifying those with a dominant haplotype (proportion > 0.99) as clonal.  These clonal samples are grouped by region of sampling to form location-specific reference panels.  In addition, we have included a number of reference strains, described in more detail below.
 
 \end{itemize}
 
@@ -227,7 +227,7 @@ This data set only contains two unmixed samples, which is insufficient for const
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=0.48\textwidth]{Fig1.pdf}
+\includegraphics[width=0.48\textwidth]{{Fig1-1.png}}
 \caption{\textcolor{red}{Experimental validation and effective number of strains inferred by \texttt{DEploid}. We use Reference Panel V to deconvolve the same lab-mixed samples, assuming 3 and 5 strains within a sample. Each experiment is repeated without a reference panel. Black crosses indicate the true effective number of strains. Red crosses indicate median values obtained from 30 replicates when using a panel and assuming that the maximum number of strains is 5. The coloured dots show the inferred effective number of strains across replicates with intensity proportional to fraction.}}
 \label{fig:jason}
 \donenum[inline]{REV2.1: mcmc rerun}
@@ -246,7 +246,7 @@ Similarly, for samples {\textmd PG0398-C} to {\textmd PG0415-C}, we let variable
 }
 \begin{itemize}
 
-\item \textcolor{red}{Panel I: five Asian and five African clonal strains from the Pf3k \citep{Pf3k2016} resource: {\textmd PD0498-C}, {\textmd PD0500-C}, {\textmd PD0660-C}, {\textmd PH0047-Cx}, {\textmd PH0064-C}, {\textmd PT0002-CW}, {\textmd PT0007-CW}, {\textmd PT0008-CW}, {\textmd PT0014-CW}, {\textmd PT0018-CW};}
+\item \textcolor{red}{Panel I: five Asian and five African clonal strains from the Pf3k resource: {\textmd PD0498-C}, {\textmd PD0500-C}, {\textmd PD0660-C}, {\textmd PH0047-Cx}, {\textmd PH0064-C}, {\textmd PT0002-CW}, {\textmd PT0007-CW}, {\textmd PT0008-CW}, {\textmd PT0014-CW}, {\textmd PT0018-CW};}
 
 \item \textcolor{red}{Panel II: panel I with the addition of HB3;}
 
@@ -263,7 +263,7 @@ Similarly, for samples {\textmd PG0398-C} to {\textmd PG0415-C}, we let variable
 
 \subsection{Accuracy}
 
-\noindent \textcolor{red}{Our validation experiments use variant calls of these 27 lab-mixed {\it in vitro} samples, which are produced by the Pf3k pipeline \citep{Pf3k2016} based on GATK best practices \citep{McKenna2010} on 2512 field isolates and 128 lab samples. The filter threshold is set at a level for which false positive genotype calls (calling a variant that doesn't exist) and false negative calls (not calling a true variant) are equal. From the 18,570 high-quality biallelic SNPs, we observe a small number of heterozygous sites with high coverage, which can potentially cause our model to over-fit the data with additional strains. After the filtering step (see Supplementary Material for details), we deconvolve the remaining 17,530 sites for all experiments in the rest of this section, unless specified otherwise.}
+\noindent \textcolor{red}{Our validation experiments use variant calls of these 27 lab-mixed {\it in vitro} samples, which are produced by the Pf3k pipeline based on GATK best practices \citep{McKenna2010} on 2512 field isolates and 128 lab samples. The filter threshold is set at a level for which false positive genotype calls (calling a variant that doesn't exist) and false negative calls (not calling a true variant) are equal. From the 18,570 high-quality biallelic SNPs, we observe a small number of heterozygous sites with high coverage, which can potentially cause our model to over-fit the data with additional strains. After the filtering step (see Supplementary Material for details), we deconvolve the remaining 17,530 sites for all experiments in the rest of this section, unless specified otherwise.}
 \donenum{REV1.6:  How many SNPs?}
 \donenum{REV1.16: filtering}
 \donenum{REV3.8: filter erroneous markers}
@@ -271,7 +271,7 @@ Similarly, for samples {\textmd PG0398-C} to {\textmd PG0415-C}, we let variable
 
 \begin{figure*}[hbt]
 \centerline{
-\includegraphics[width=0.85\textwidth]{Fig2.pdf}
+\includegraphics[width=0.85\textwidth]{{Fig2-1}.png}
 }
 \caption{Comparison of true and inferred haplotypes for Chromosome 14 \textcolor{red}{(2,369 SNPs)} in sample {\textmd PG0396-C} without linkage disequilibrium (top) and using Reference Panels I to IV (from the second to the bottom). Reference Panel V gives results equivalent Panel IV and Panel VI gives results similar to Panel I.  Red bars mark wrongly inferred positions. The yellow, cyan and white background label the haplotype segments from strains 7G8, HB3 and Dd2 respectively. The switch errors are obtained by counting the changes of a strain segment mapped to reference strains; the genotype errors are the discordance between the strain and the mapped reference segments. \textcolor{red}{These results demonstrate the value of including reference strains similar to those present in the sample being analysed.}}
 \label{fig:differentRefPanel}
@@ -287,7 +287,7 @@ Similarly, for samples {\textmd PG0398-C} to {\textmd PG0415-C}, we let variable
 
 \begin{figure*}[htb]
 \centerline{
-\includegraphics[width=0.85\textwidth]{Fig3.pdf}
+\includegraphics[width=0.85\textwidth]{{Fig3-1}.png}
 }
 \caption{Comparison of \texttt{DEploid} and existing tools (\texttt{COIL}, \texttt{pfmix}, \texttt{BEAGLE}, and \texttt{SHAPEIT}). (a) Estimates for the number of strains present in each mixed infection (artificially mixed in the lab) as given by \texttt{COIL} and \texttt{DEploid}. (b) \textcolor{red}{Comparison of the inferred effective number of strains of each mixture as given by \texttt{pfmix} and \texttt{DEploid}.} (c) Relationship between strain proportions and haplotype inference accuracy in the experimental validation for \texttt{DEploid} and \texttt{BEAGLE}/\texttt{SHAPEIT} (only mixtures of two strains). We used Reference Panel V to deconvolute all 27 samples with default settings. Each point represents a deconvolved haplotype with 17,530 sites. Point shape refers to strain and colour indicates the method applied. \textcolor{red}{We use LOESS smoothing to show the trend of error vs. strain proportion. Top panel shows switch error rate, the middle panel indicates genotyping error rate and the bottom panel indicates genotyping error rate through strain dropout.} \textcolor{red}{Note that zero switch error is represented as points below one. In summary, we find that \texttt{DEploid} results for the number of strains and relative proportions in a mixture are comparable to those achieved by existing methods, while inferred haplotypes are considerably better than from other methods.}}
 \label{fig:switchVsMisCopy}
@@ -332,7 +332,7 @@ created {\it in silico} mixtures from 212 clonal samples of Asian origin with tw
 
 \begin{figure}[htb]
 \centering
-\includegraphics[width=.45\textwidth]{{Fig4}.pdf}
+\includegraphics[width=.45\textwidth]{{Fig4-1}.png}
 \caption{Histograms of switch error and genotype error across 78 simulated Pf3k samples. We excluded four cases out of the 100 experiments where simulated haplotypes were over 99\% identical and 18 cases where average coverage was below 20. }\label{fig:simField}
 \end{figure}
 
@@ -517,9 +517,9 @@ O'Connell J., {\em et al}. (2014)
 \newblock {A General Approach for Haplotype Phasing across the Full Spectrum of Relatedness}.
 \newblock {\em PLoS Genet.\/}~{\em 10\/}(4), e1004234.
 
-\bibitem[\protect\citeauthoryear{Pf3k}{Pf3k}{2016}]{Pf3k2016}
-The Pf3k Project: pilot data release 5 (2016)
-\newblock {www.malariagen.net/data/pf3k-5} [accessed 1 June 2016]
+%\bibitem[\protect\citeauthoryear{Pf3k}{Pf3k}{2016}]{Pf3k2016}
+%The Pf3k Project: pilot data release 5 (2016)
+%\newblock {www.malariagen.net/data/pf3k-5} [accessed 1 June 2016]
 
 \bibitem[\protect\citeauthoryear{O'Brien}{O'Brien et~al.}{2016}]{Jack2016}
 O'Brien D,J. {\em et al}. (2016)
